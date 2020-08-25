@@ -17,6 +17,7 @@ import gui_styles_tk as gui_styles
 import file_menu as fm
 import about_tkinter as about_tk
 import components_tk
+import undo_redo_tk
 
 class MainApplication(tk.Frame):
 	def __init__(self, parent, *args, **kwargs):
@@ -40,7 +41,9 @@ class MainApplication(tk.Frame):
 		
 		
 		self.setup_project_page()
-
+		
+		self.states = undo_redo_tk.Undo_Redo(self)
+		
 	def setup_variables(self):
 		
 		self.version = '0.02'
@@ -48,11 +51,11 @@ class MainApplication(tk.Frame):
 		
 	def setup_main_frames(self):
 	
-		self.rootpane = tk.PanedWindow(root, orient=tk.HORIZONTAL)
+		self.rootpane = tk.PanedWindow(self.parent, orient=tk.HORIZONTAL)
 		self.rootpane.grid(row=1,column=0, columnspan=4,sticky="nsew")
-		root.grid_rowconfigure(1, weight=1)
-		root.grid_columnconfigure(3, weight=1)
-		self.frame = Frame(root)
+		self.parent.grid_rowconfigure(1, weight=1)
+		self.parent.grid_columnconfigure(3, weight=1)
+		self.frame = Frame(self.parent)
 
 		self.setup_main_treeview()
 		self.frame.grid(row=0,column=0, sticky="n")
@@ -111,6 +114,13 @@ class MainApplication(tk.Frame):
 		file_menu.add_command(label = 'Save                     Ctrl+S', command = lambda self=self: fm.save(mainapp= self))
 		#file_menu.add_command(label = 'Save As', command = lambda self=self, mode='save as': fm.save(self, mode))
 
+		#________ EDIT ________				  
+		edit_menu = tk.Menu(menu, tearoff = 0)
+		menu.add_cascade(label='Edit',menu=edit_menu)
+		
+		edit_menu.add_command(label = 'Undo                     Ctrl+Z', command = lambda: self.states.undo())
+		edit_menu.add_command(label = 'Redo                     Ctrl+Y', command = lambda: self.states.redo())
+		
 
 		#________ INSERT ________					  
 		insert_menu = tk.Menu(menu, tearoff = 0)
@@ -134,7 +144,7 @@ class MainApplication(tk.Frame):
 		item_iid = event.widget.selection()[0]
 		parent_iid = event.widget.parent(item_iid)
 		
-		ids_to_ignore = ['A320 Aircraft', '737 Aircraft', 'A320 Seats',
+		ids_to_ignore = ['A320 Aircraft', '737 Aircraft', 'A320 Seats', '737 Seats',
 						'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs']
 
 		if parent_iid:
@@ -185,5 +195,7 @@ if __name__ == "__main__":
 	root.bind('<Control-n>', lambda event, MA=MA: fm.new_project(event, MA))
 	root.bind('<Control-o>', lambda event, MA=MA: fm.load(event, MA))
 	root.bind('<Control-s>', lambda event, MA=MA: fm.save(event, MA))
+	root.bind('<Control-z>', lambda event, MA=MA: MA.states.undo())
+	root.bind('<Control-y>', lambda event, MA=MA: MA.states.redo())
 	root.mainloop()
 		

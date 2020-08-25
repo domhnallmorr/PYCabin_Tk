@@ -261,7 +261,7 @@ class Seat_Page_Tk(tk.Frame):
 		self.master.wait_window(self.w.top)
 		
 		if self.w.button == 'ok':
-				self.update_component(self.w, 'new')
+				self.update_component(self.w, self.w.mode)
 				if orig_treeview_node != self.backend.treeview_node:
 					components_tk.aircraft_type_changed(self.mainapp, self)		
 					
@@ -433,8 +433,8 @@ class Edit_Seat_Window_Tk(object):
 		self.ok_button.grid(row=8,column=10,columnspan=2, pady=5,sticky="nsew")
 
 		# cancel button
-		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=12, columnspan=2, pady=5,sticky="nsew")
+		self.cancel_button=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
+		self.cancel_button.grid(row=8,column=12, columnspan=2, pady=5,sticky="nsew")
 
 		self.button = 'cancel'
 		

@@ -6,10 +6,11 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 import seats_draw
 
+
 class Seat_Backend():
 
-	def __init__(self, parent_page, controller):
-		self.controller = controller #main append
+	def __init__(self, parent_page, mainapp):
+		self.mainapp = mainapp #main app
 		self.parent_page = parent_page #this is the tkinter frame associated with this BE.
 		self.setup_variables()	
 		self.setup_seat_plot()
@@ -135,10 +136,8 @@ class Seat_Backend():
 
 	def update_component(self, source, type):
 		#pass current joint through to state class (for undo redo)
-		# if type != 'undo_redo':
-			# self.controller.states.component_updated(type, self, Seat_Saved_State)
-		# elif type == 'new':
-			# self.controller.states.component_updated(type, self, Seat_Saved_State)
+		if type != 'undo_redo':
+			self.mainapp.states.component_updated(type, self, self.save_class)
 		self.update_variables(source)
 		
 		
@@ -333,4 +332,5 @@ class Seat_Saved_State():
 		Seat_Backend.setup_variables(self)
 		Seat_Backend.update_variables(self, seat)
 		
+		self.treeview_node = seat.parent_page.treeview_iid
 		

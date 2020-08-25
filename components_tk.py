@@ -15,7 +15,7 @@ def new_component(self, type):
 	
 	if type == 'Seat':
 		self.w=seats_tk.Edit_Seat_Window_Tk(self, self.master, mode, None)
-		self.master.wait_window(self.w.top)
+		#self.master.wait_window(self.w.top)
 		
 		
 	if self.w.button == 'ok':
@@ -49,14 +49,16 @@ def insert_component(self, nc, parent_node):
 	nc.treeview_iid = iid
 	show_frame(self, name)
 	
-def insert_new_item_into_side_treeview(self, parent_node, item_name, component_fe):
+def insert_new_item_into_side_treeview(mainapp, parent_node, item_name, component_fe):
 
 	
 	if 'Aircraft' in parent_node:
 		icon = component_fe.mainapp.icons.ac_icon2
-		iid = self.main_treeview.insert(parent_node,'end', text=item_name, image = icon)
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = icon)
+	elif 'Seats' in parent_node:
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.seat_icon2 )
 	else:
-		iid = self.main_treeview.insert(parent_node,'end', text=item_name)	
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name)	
 	return iid
 	
 def show_frame(self, page_name):
@@ -118,19 +120,24 @@ def delete_component(mainapp):
 				# message = 'Cannot delete seat\n Ensure it is not installed in any existing LOPAs'
 				
 		if delete_ok:
+			index = mainapp.main_treeview.index(component.treeview_iid)
 			delete_item_from_main_treeview(mainapp, component.backend.title, component.backend)
-			# self.states.undo_stack.append({'type': 'deleted component', 'component': component.backend,
-												# 'new_class': component.backend.save_class(component.backend)})
-											
+			mainapp.states.undo_stack.append({'type': 'deleted component', 'component': component.backend,
+												'new_class': component.backend.save_class(component.backend), 'index': index})
+			
+			 
 		else:
 			tkinter.messagebox.showerror(master=mainapp, title='Error', message=message)
 	
 	show_frame(mainapp, 'Project')
 	
-def delete_item_from_main_treeview(mainapp, component_name, component):
+def delete_item_from_main_treeview(mainapp, component_name, component_backend, show_project = True):
 	
-	mainapp.main_treeview.detach(component.parent_page.treeview_iid)		
+	mainapp.main_treeview.detach(component_backend.parent_page.treeview_iid)		
 
+	if show_project:
+		show_frame(mainapp, 'Project')
+		
 def copy_component(mainapp):
 
 	component = mainapp.frames[mainapp.main_treeview.item(mainapp.main_treeview.selection()[0], 'text')]
@@ -162,3 +169,4 @@ def get_treeview_node(backend):
 			node = '737 Seats'
 			
 	return node
+	
