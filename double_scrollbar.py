@@ -26,7 +26,7 @@ class Double_ScrollableFrame:
 		self.vsb.grid(row=0, column=1, sticky='ns')
 		self.hsb = ttk.Scrollbar(self.outer, orient=tk.HORIZONTAL)
 		self.hsb.grid(row=1, column=0, sticky='ew')
-		self.canvas = tk.Canvas(self.outer, highlightthickness=0, width=width, height=height)
+		self.canvas = tk.Canvas(self.outer, highlightthickness=0, width=width, height=height, bg='blue')
 		self.canvas.grid(row=0, column=0, sticky='nsew')
 		self.outer.rowconfigure(0, weight=1)
 		self.outer.columnconfigure(0, weight=1)
@@ -42,11 +42,14 @@ class Double_ScrollableFrame:
 
 		self.inner = tk.Frame(self.canvas)
 		# pack the inner Frame into the Canvas with the topleft corner 4 pixels offset
-		self.canvas.create_window(4, 4, window=self.inner, anchor='nw')
-		self.inner.bind("<Configure>", self._on_frame_configure)
+		self.canvas.create_window(4, 4, window=self.inner, anchor='nw', tags='frame')
+		#self.inner.bind("<Configure>", self.FrameWidth)
+		#self.inner.bind("<Configure>", lambda event, canvas=self.canvas: self.onFrameConfigure(canvas))
+		self.canvas.bind("<Configure>", self._on_frame_configure)
 
 		self.outer_attr = set(dir(tk.Widget))
-
+		
+		self.inner_width_set = False
 	def __getattr__(self, item):
 		if item in self.outer_attr:
 			# geometry attributes etc (eg pack, destroy, tkraise) are passed on to self.outer
@@ -56,11 +59,18 @@ class Double_ScrollableFrame:
 			return getattr(self.inner, item)
 
 	def _on_frame_configure(self, event=None):
+
 		x1, y1, x2, y2 = self.canvas.bbox("all")
 		height = self.canvas.winfo_height()
 		width = self.canvas.winfo_width()
 		self.canvas.config(scrollregion = (0,0, max(x2, width), max(y2, height)))
+		self.canvas.itemconfig('frame', width = max(x2, width))
 
+
+	def FrameWidth(self, event):
+		canvas_width = event.width
+		self.canvas.itemconfig('frame', width = canvas_width)
+		
 	def _bind_mouse(self, event=None):
 		self.canvas.bind_all("<4>", self._on_mousewheel)
 		self.canvas.bind_all("<5>", self._on_mousewheel)

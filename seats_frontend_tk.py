@@ -18,7 +18,7 @@ from matplotlib.figure import Figure
 import treeview_functions
 import scrollable_frame
 import double_scrollbar
-
+import inspect
 '''
 V0.02 Initial Issue
 
@@ -47,9 +47,6 @@ class Seat_Page_Tk(tk.Frame):
 		
 		
 		self.set_grid_configures()
-
-		#self.dummy_canvas = tk.Canvas(self.main_scroll_frame.inner, height=200, bg="blue")
-		#self.dummy_canvas.grid(row=10, column=0, columnspan = 1, rowspan = 2,sticky='NSEW',padx=5, pady=5, ipadx=2, ipady=5)
 
 	def setup_notebook(self):
 		self.note = ttk.Notebook(self)
@@ -113,7 +110,7 @@ class Seat_Page_Tk(tk.Frame):
 
 		self.seat_description_label = gui_styles_tk.create_label(self.main_frame,'')
 		self.seat_description_label.grid(row = 2, column = 1, columnspan=5,pady=2,padx=2, sticky="nsew")
-
+		
 		self.manu_label = gui_styles_tk.create_label(self.main_frame,'')
 		self.manu_label.grid(row = 3, column = 0,pady=2,padx=2, sticky="nsew")
 		#
@@ -195,7 +192,7 @@ class Seat_Page_Tk(tk.Frame):
 	def set_grid_configures(self):
 	
 		self.main_scroll_frame.inner.grid_columnconfigure(7, weight=1)
-		self.main_frame.grid_columnconfigure(4, weight=1)
+		#self.main_frame.grid_columnconfigure(4, weight=1)
 		self.preview_frame.grid_columnconfigure(10, weight=1)
 		#self.main_scroll_frame.inner.grid_rowconfigure(9, weight=1)
 		

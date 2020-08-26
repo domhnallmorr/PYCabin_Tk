@@ -25,7 +25,7 @@ class MainApplication(tk.Frame):
 		user32 = ctypes.windll.user32
 		self.screen_width = (user32.GetSystemMetrics(0))
 		self.screen_height = (user32.GetSystemMetrics(1))
-		
+
 		self.parent = parent
 		
 		
@@ -91,8 +91,8 @@ class MainApplication(tk.Frame):
 		self.main_treeview.bind('<<TreeviewSelect>>',lambda event, : self.ProcessOnSingleClick_Main_Tree(event))
 
 		self.popup_menu = tk.Menu(self, tearoff=0)
-		self.popup_menu.add_command(label="Delete",command= lambda mainapp=self: components_tk.delete_component(mainapp))		
-		self.popup_menu.add_command(label="Copy",command= lambda mainapp=self: components_tk.copy_component(mainapp))		
+		self.popup_menu.add_command(label="Delete        ",command= lambda mainapp=self: components_tk.delete_component(mainapp))		
+		self.popup_menu.add_command(label="Copy          ",command= lambda mainapp=self: components_tk.copy_component(mainapp))		
 		self.main_treeview.bind("<Button-3>", self.popup)
 
 		self.ids_not_allowed = ['Project', 'Aircraft', 'A320 Aircraft', '737 Aircraft', 'Aircraft', 'Seats', 'A320 Seats',
@@ -119,7 +119,7 @@ class MainApplication(tk.Frame):
 		menu.add_cascade(label='Edit',menu=edit_menu)
 		
 		edit_menu.add_command(label = 'Undo                     Ctrl+Z', command = lambda: self.states.undo())
-		edit_menu.add_command(label = 'Redo                     Ctrl+Y', command = lambda: self.states.redo())
+		edit_menu.add_command(label = 'Redo                      Ctrl+Y', command = lambda: self.states.redo())
 		
 
 		#________ INSERT ________					  

@@ -15,7 +15,7 @@ def new_component(self, type):
 	
 	if type == 'Seat':
 		self.w=seats_tk.Edit_Seat_Window_Tk(self, self.master, mode, None)
-		#self.master.wait_window(self.w.top)
+		self.master.wait_window(self.w.top)
 		
 		
 	if self.w.button == 'ok':
@@ -48,7 +48,7 @@ def insert_component(self, nc, parent_node):
 	iid = insert_new_item_into_side_treeview(self, parent_node, name, nc)
 	nc.treeview_iid = iid
 	show_frame(self, name)
-	
+
 def insert_new_item_into_side_treeview(mainapp, parent_node, item_name, component_fe):
 
 	

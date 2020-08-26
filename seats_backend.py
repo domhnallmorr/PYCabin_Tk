@@ -278,6 +278,9 @@ class Seat_Backend():
 		if draw_side:
 			
 			if self.seat_type == 'Triple Economy':
+				if canvas_type == 'matplotlib':
+					canvas[1].set_xlim([-11,32])
+					canvas[1].set_ylim([-6,51])
 				if self.profile == 'Generic':
 					seats_draw.economy_seat_generic_side_view(self, canvas[1], canvas_type, side_datum)
 			
