@@ -7,7 +7,15 @@ class Undo_Redo():
 			
 		self.undo_stack = []
 		self.redo_stack = []
+	
+	def reset(self, undo = True, redo = True):
+	
+		if undo:
+			self.undo_stack = []
 		
+		if redo:
+			self.redo_stack = []
+			
 	def undo(self, event=None):
 	
 
@@ -51,9 +59,8 @@ class Undo_Redo():
 				self.redo_stack.append({'type': 'new', 'component': component_backend,
 														'new_class': component_backend.save_class(component_backend)})				
 			self.undo_stack.pop(-1)
-			
-	def redo(self):
 
+	def redo(self):
 
 		if len(self.redo_stack) > 0:
 			
@@ -88,14 +95,23 @@ class Undo_Redo():
 				# self.undo_stack.append({'type': 'edit', 'component': action['component'],
 												# 'new_class': component.save_class(component)})
 				
+			if action['type'] == 'edit':
+				component_backend = action['component']
+				name = action['component'].title
+				save_class = action['new_class']
+
+				self.undo_stack.append({'type': 'edit', 'component': action['component'],
+												'new_class': component_backend.save_class(component_backend)})			
 				
 			self.mainapp.frames[component.title].update_component(action['new_class'], 'undo_redo')
 			
 			
 			self.redo_stack.pop(0)
 			
-
+		
 	def component_updated(self, update_type, component, save_class):
 		
 		self.undo_stack.append({'type': update_type, 'component': component,
 														'new_class': save_class(component)})
+														
+		self.reset(undo=False, redo=True)

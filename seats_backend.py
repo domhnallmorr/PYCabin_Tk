@@ -183,6 +183,13 @@ class Seat_Backend():
 		srp_y = float(self.srp_y)
 		
 		if draw_top_down:
+			if canvas_type == 'matplotlib':
+				canvas[0].set_xlim([-20,40])
+				if self.side == 'LHS':
+					canvas[0].set_ylim([5,-75])
+				elif self.side == 'RHS':
+					canvas[0].set_ylim([-5,75])
+				
 			x = top_down_datum[0]
 			y = top_down_datum[1]
 			
@@ -281,6 +288,7 @@ class Seat_Backend():
 				if canvas_type == 'matplotlib':
 					canvas[1].set_xlim([-11,32])
 					canvas[1].set_ylim([-6,51])
+					
 				if self.profile == 'Generic':
 					seats_draw.economy_seat_generic_side_view(self, canvas[1], canvas_type, side_datum)
 			

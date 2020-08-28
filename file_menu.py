@@ -63,6 +63,10 @@ def load(event=None, mainapp=None):
 			seat = Load('Seat', seat)
 			components_tk.create_component(mainapp, 'Seat', seat, 'new')		
 
+	# reset undo and redo stacks
+	mainapp.states.reset(undo=True, redo=True)
+	
+	
 class Load():
 	def __init__(self, type, component_data):
 

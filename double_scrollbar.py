@@ -26,7 +26,7 @@ class Double_ScrollableFrame:
 		self.vsb.grid(row=0, column=1, sticky='ns')
 		self.hsb = ttk.Scrollbar(self.outer, orient=tk.HORIZONTAL)
 		self.hsb.grid(row=1, column=0, sticky='ew')
-		self.canvas = tk.Canvas(self.outer, highlightthickness=0, width=width, height=height, bg='blue')
+		self.canvas = tk.Canvas(self.outer, highlightthickness=0, width=width, height=height)
 		self.canvas.grid(row=0, column=0, sticky='nsew')
 		self.outer.rowconfigure(0, weight=1)
 		self.outer.columnconfigure(0, weight=1)
