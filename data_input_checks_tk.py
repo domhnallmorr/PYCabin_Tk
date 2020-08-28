@@ -116,3 +116,37 @@ def check_title_input(entry_data, mainapp):
 					title_msg = 'Already Exists, Choose Another'
 					break
 	return title_good, title_msg
+	
+def check_title_clash(user_input, original_title, mainapp, type = 'Title'):
+	
+	title_good = True
+	title_msg = None
+	
+	# Check if title is blank
+	if user_input.strip() == '':
+		title_good = False
+		title_msg = f'Blank {type} Not Allowed'
+
+	if title_good:
+		# Check if title in reserved ids
+		
+		if user_input in mainapp.ids_not_allowed:
+			
+			title_good = False
+			title_msg = '{user_input} is Reserved, Choose Another'
+
+	if title_good:
+		if user_input != original_title: # the original title, before user editted it
+			# Check Component Does not exits already
+			components = components_tk.get_all_components(mainapp, 'all')
+			
+			for component in components['All']:
+				component_title = mainapp.frames[component].backend.title
+		
+				if component_title == user_input:
+					title_good = False
+					title_msg = f'{user_input} Already Exists, Choose Another Title'
+					break
+	return title_good, title_msg
+
+	

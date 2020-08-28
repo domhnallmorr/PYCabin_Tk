@@ -186,7 +186,7 @@ class Seat_Backend():
 			if canvas_type == 'matplotlib':
 				canvas[0].set_xlim([-20,40])
 				if self.side == 'LHS':
-					canvas[0].set_ylim([5,-75])
+					canvas[0].set_ylim([-75, 5])
 				elif self.side == 'RHS':
 					canvas[0].set_ylim([-5,75])
 				

@@ -13,6 +13,20 @@ V0.02 initial issue
 def new_component(self, type):
 	mode = 'new'
 	
+	if type == 'Seats - Multiple':
+		self.w=seats_tk.Multiple_Seat_Window_Tk(self, self.master)
+		self.master.wait_window(self.w.top)	
+		mode = 'new multiple'
+		
+		
+		if self.w.button == 'ok':
+			data = self.w.data
+			self.w=seats_tk.Edit_Seat_Window_Tk(self, self.master, mode, None)
+			self.master.wait_window(self.w.top)	
+			
+			if self.w.button == 'ok':
+				self.w.data = data
+			
 	if type == 'Seat':
 		self.w=seats_tk.Edit_Seat_Window_Tk(self, self.master, mode, None)
 		self.master.wait_window(self.w.top)
@@ -23,7 +37,21 @@ def new_component(self, type):
 		
 
 def create_component(self, type, source, update_type, insert=True):
-
+	
+	if type == 'Seats - Multiple':
+		if update_type == 'new multiple':
+			for d in source.data:
+				if d.strip() != '':
+					source.part_no = d.split(',')[0].strip()
+					source.description = d.split(',')[1].strip()
+					source.side = d.split(',')[2].strip()
+					#
+					new_component = seats_tk.Seat_Page_Tk(container=self.container, mainapp=self,)
+					new_component.update_component(source, 'new')
+					ac_type = new_component.backend.aircraft_type
+					if ac_type == 'A320 Family':
+						insert_component(self, new_component, 'A320 Seats')	
+		
 	if type == 'Seat':
 		if update_type == 'new':
 			new_component = seats_tk.Seat_Page_Tk(container=self.container, mainapp=self,)
@@ -74,12 +102,12 @@ def get_all_components(mainapp, type):
 	
 	if type == 'all':
 		components_dict = {'All': []}
-		types = ['seat']
+		types = ['Seats']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 		
 	
-	if type == 'seat':
+	if type == 'Seats':
 		components_dict = {'All': [], 'A320 Family': [], 'A320 Family LHS': [], 'A320 Family RHS': [],
 					'B737 Family': [], 'B737 Family LHS': [], 'B737 Family RHS': []}
 	

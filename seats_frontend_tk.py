@@ -282,7 +282,7 @@ class Edit_Seat_Window_Tk(object):
 		self.setup_widgets()
 		
 		
-		if self.mode == 'new':
+		if 'new' in self.mode: #also covers 'new - multiple'
 			self.set_default_values()
 		else:
 			self.set_values()
@@ -308,32 +308,39 @@ class Edit_Seat_Window_Tk(object):
 	def setup_widgets(self):
 		# __________ Seat Details __________
 		#setup labels
-		if self.mode != 'new multiple':
-			labels = ['Seat Part No.:', 'Description:', 'Side:', 'Aircraft:', 'Seat Type:', 'IAT:', 'Profile:', 'Manufacturer:']
-			row = 2
-		else:
-			labels = ['Aircraft:', 'Seat Type:', 'IAT:', 'Profile:', 'Manufacturer:']
-			row = 5
+		#if self.mode != 'new multiple':
+		labels = ['Seat Part No.:', 'Description:', 'Side:', 'Aircraft:', 'Seat Type:', 'IAT:', 'Profile:', 'Manufacturer:']
+		row = 2
+		#else:
+		#	labels = ['Aircraft:', 'Seat Type:', 'IAT:', 'Profile:', 'Manufacturer:']
+		#	row = 5
 		gui_styles_tk.create_multiple_labels(self.details_frame, labels, row, 2, 20, 2, 2)
 			
 		style = gui_styles_tk.create_entry_style()
 		#entries/comboboxes
+		if self.mode == 'new multiple':
+			state = 'disabled'
+		else:
+			state = 'normal'
+
+		self.part_no_entry=Entry(self.details_frame, width=60, state=state)		
+		self.part_no_entry.grid(row=2,column=3, columnspan = 2, padx=2, pady=2,sticky = 'NSEW')
+		
 		if self.mode != 'new multiple':
-			self.part_no_entry=Entry(self.details_frame, width=60)		
-			self.part_no_entry.grid(row=2,column=3, columnspan = 2, padx=2, pady=2,sticky = 'NSEW')
 			self.data_checks['Part Number'] = ['title', self.part_no_entry, self.orig_part_no]
 			
-			self.description_entry=Entry(self.details_frame, width=60)		
-			self.description_entry.grid(row=3,column=3, columnspan=2, padx=2, pady=2,sticky = 'NSEW')
+		self.description_entry=Entry(self.details_frame, width=60, state = state)		
+		self.description_entry.grid(row=3,column=3, columnspan=2, padx=2, pady=2,sticky = 'NSEW')
 
-			
+		if self.mode == 'edit':
 			if self.seat_used:
 				state = 'disabled'
 			else:
 				state = 'normal'
 				
-			self.side_combo= ttk.Combobox(self.details_frame, values=['LHS', 'RHS'], state=state)
-			self.side_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.side_combo= ttk.Combobox(self.details_frame, values=['LHS', 'RHS'], state=state)
+		self.side_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
+		if self.mode != 'new multiple':
 			self.data_checks['Side'] = ['combo', self.side_combo, 'in values']
 			
 		if self.mode == 'edit':
@@ -419,11 +426,6 @@ class Edit_Seat_Window_Tk(object):
 		self.srp_y_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['SRP Y'] = ['entry', self.srp_y_entry, 'float positive']
 		
-		if self.mode == 'new multiple':
-			self.comment_text = tk.Text(self.mul_frame, width = 90, height = 35)
-			self.comment_text.grid(row=1, column=0, columnspan = 8, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
-			self.comment_text.insert('end', 'Part No., Description, Side',)
-		
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
@@ -505,9 +507,7 @@ class Edit_Seat_Window_Tk(object):
 			self.part_no = self.part_no_entry.get().strip()
 			self.description = self.description_entry.get()
 			self.side = self.side_combo.get()
-		else:
-			self.data = self.comment_text.get("1.0",'end')
-			self.data = self.data.split('\n')
+
 		self.manufacturer = self.manufacturer_entry.get()
 		self.aircraft_type = self.aircraft_combo.get()
 		self.seat_type = self.seat_type_combo.get()
@@ -537,4 +537,101 @@ class Edit_Seat_Window_Tk(object):
 			self.cmm_version = ''
 			self.cmm_date= ''					
 			self.cmm_install= ''					
+
+class Multiple_Seat_Window_Tk(object):
+	def __init__(self, mainapp, master):
+
+		top=self.top=Toplevel(master)
+		top.grab_set()
+		self.mainapp = mainapp
+		
+		self.setup_label_frames()
+		
+		self.setup_widgets()
+		
+	def setup_label_frames(self):
+	
+		self.details_frame = LabelFrame(self.top,text="Enter Seat Details Below:")
+		self.details_frame.grid(row=2, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		
+	def setup_widgets(self):
+	
+		self.comment_text = tk.Text(self.details_frame, width = 90, height = 20)
+		self.comment_text.grid(row=1, column=0, columnspan = 8, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.default_text = 'Part No., Description, Side (LHS or RHS)'
+		self.comment_text.insert('end', self.default_text)
+		
+		# ok button
+		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
+		self.ok_button.grid(row=4,column=3,columnspan=1, pady=5,sticky="nsew")
+
+		# cancel button
+		self.cancel_button=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
+		self.cancel_button.grid(row=4,column=4, columnspan=1, pady=5,sticky="nsew")
+
+		self.button = 'cancel'
+		
+	def cleanup(self, button):
+	
+		self.button = button
+		
+		if self.button == 'ok':
+			self.check_data_input()
+		
+			if self.data_ok:
+				
+				self.top.destroy()
+		else:
+			self.top.destroy()
+				
+	def check_data_input(self):
+		
+		self.data_ok = True
+		
+		titles = []
+		
+		data = self.comment_text.get("1.0",'end')
+		data = data.split('\n')
+		
+		if data[0] == self.default_text:
+			data.pop(0)
+		
+		if len(data) == 1:
+			self.data_ok = False
+			msg = 'Enter at Least 1 Seat into Text Box'
+		else:
+			for d in data:
+				if d.strip() != '':
+					if len(d.split(',')) != 3: # check format is correct with 2 commas
+						self.data_ok = False
+						msg = f'{d}\n must be in format Part Number, Description, LHS or RHS'
+						break
 					
+					else:
+						if d.split(',')[-1].strip().lower() not in ['lhs', 'rhs']: #check side is LHS or RHS
+							self.data_ok = False
+							msg = f'{d}\n Side (3rd Field) must be either LHS or RHS'
+							break
+							
+					if self.data_ok: #check for clash with existing components
+						
+						self.data_ok, msg = data_input_checks_tk.check_title_clash(d.split(',')[0].strip(), None, self.mainapp, 'Part Number')
+						
+						if not self.data_ok:
+							break
+							
+					if self.data_ok:
+						
+						if d.split(',')[0].strip() in titles:
+							
+							self.data_ok = False
+							msg = f'{d.split(",")[0].strip()} Entered More Than Once'
+							break
+						else:
+							titles.append(d.split(',')[0].strip())
+						
+		if not self.data_ok:
+			tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
+			
+		else:
+			self.data = data

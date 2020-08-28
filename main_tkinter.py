@@ -1,7 +1,3 @@
-'''
-V0.02 Initial Version
-Added insert menu to add seats
-'''
 
 import ctypes
 import tkinter as tk
@@ -46,7 +42,7 @@ class MainApplication(tk.Frame):
 		
 	def setup_variables(self):
 		
-		self.version = '0.02'
+		self.version = '0.03'
 		self.save_file = None
 		
 	def setup_main_frames(self):
@@ -56,7 +52,10 @@ class MainApplication(tk.Frame):
 		self.parent.grid_rowconfigure(1, weight=1)
 		self.parent.grid_columnconfigure(3, weight=1)
 		self.frame = Frame(self.parent)
-
+		
+		self.sidebar_frame = tk.Frame()
+		self.sidebar_frame.grid_rowconfigure(1, weight=1)
+		self.rootpane.add(self.sidebar_frame)
 		self.setup_main_treeview()
 		self.frame.grid(row=0,column=0, sticky="n")
 		
@@ -68,7 +67,18 @@ class MainApplication(tk.Frame):
 		self.frames = {}
 		
 	def setup_main_treeview(self):
-		self.main_treeview = ttk.Treeview(self.rootpane,selectmode='browse')
+	
+		tk.Button(self.sidebar_frame, image = self.close_icon2, background='white', relief=FLAT,
+			command= lambda action = False: self.open_close_all_nodes(action)).grid(row=0, column=0, sticky='w', padx = 0)
+		tk.Button(self.sidebar_frame, image = self.open_icon2, background='white', relief=FLAT,
+			command= lambda action = True: self.open_close_all_nodes(action)).grid(row=0, column=1, sticky='w', padx = 0)
+		tk.Button(self.sidebar_frame, image = self.up_icon2, background='white', relief=FLAT,
+			command = self.moveUp).grid(row=0, column=2, sticky='w', padx = 0)
+		tk.Button(self.sidebar_frame, image = self.down_icon2, background='white', relief=FLAT,
+			command = self.moveDown).grid(row=0, column=3, sticky='w', padx = 0)
+
+		self.main_treeview = ttk.Treeview(self.sidebar_frame,selectmode='browse', show="tree")
+		self.main_treeview.grid(row=1, column=0, columnspan = 20, sticky='nsew')
 		fi = self.folder_icon2
 		abi = self.airbus_icon2
 		bi = self.boeing_icon2
@@ -86,19 +96,23 @@ class MainApplication(tk.Frame):
 		item = self.main_treeview.insert("Seats",'end','A320 Seats',text=' A320 Family',image = abi)
 		item = self.main_treeview.insert("Seats",'end','737 Seats',text=' 737 Family',image = bi)
 		
-		self.rootpane.add(self.main_treeview)
+		#self.rootpane.add(self.main_treeview)
 		
 		self.main_treeview.bind('<<TreeviewSelect>>',lambda event, : self.ProcessOnSingleClick_Main_Tree(event))
 
 		self.popup_menu = tk.Menu(self, tearoff=0)
 		self.popup_menu.add_command(label="Delete        ",command= lambda mainapp=self: components_tk.delete_component(mainapp))		
-		self.popup_menu.add_command(label="Copy          ",command= lambda mainapp=self: components_tk.copy_component(mainapp))		
+		self.popup_menu.add_command(label="Copy          ",command= lambda mainapp=self: components_tk.copy_component(mainapp))
+		
+		#self.popup_menu.add_separator()
+		
+		
 		self.main_treeview.bind("<Button-3>", self.popup)
 
 		self.ids_not_allowed = ['Project', 'Aircraft', 'A320 Aircraft', '737 Aircraft', 'Aircraft', 'Seats', 'A320 Seats',
 								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs']		
 		
-		self.treeview_nodes = {'seat': ['A320 Seats', '737 Seats']}
+		self.treeview_nodes = {'Seats': ['A320 Seats', '737 Seats']}
 		
 		
 
@@ -133,6 +147,11 @@ class MainApplication(tk.Frame):
 		insert_component_menu = tk.Menu(menu, tearoff = 0)
 		insert_menu.add_cascade(label = 'Components',menu = insert_component_menu)
 		insert_component_menu.add_command(label = 'Seat', command = lambda self=self, type='Seat': components_tk.new_component(self, type))
+		insert_component_menu.add_command(label = 'Multiple Seats', command = lambda self=self, type='Seats - Multiple': components_tk.new_component(self, type))
+		
+		# ________ DATABASE ________
+		db_menu = tk.Menu(menu, tearoff = 0)
+		menu.add_cascade(label='Database',menu=db_menu)
 		
 		# ________ ABOUT ________
 		about_menu = tk.Menu(menu, tearoff = 0)
@@ -154,7 +173,24 @@ class MainApplication(tk.Frame):
 			if (event.widget.item(item_iid, 'text')) == 'Project':
 				components_tk.show_frame(self, "Project")
 			
-	
+	def open_close_all_nodes(self, action):
+		
+		for node in self.treeview_nodes:
+			self.main_treeview.item(node, open=action)
+			
+			for node in self.treeview_nodes[node]:
+				self.main_treeview.item(node, open=action)
+
+	def moveUp(self):
+		leaves = self.main_treeview.selection()
+		for i in leaves:
+			self.main_treeview.move(i, self.main_treeview.parent(i), self.main_treeview.index(i)-1)
+
+	def moveDown(self):
+		leaves = self.main_treeview.selection()
+		for i in leaves:
+			self.main_treeview.move(i, self.main_treeview.parent(i), self.main_treeview.index(i)+1)
+		
 	def setup_fonts(self):
 	
 		self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")

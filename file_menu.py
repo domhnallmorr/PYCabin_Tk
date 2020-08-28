@@ -28,7 +28,7 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.01\Pycabin_Frontend_Tk\test.json'
+	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.json'
 	write_save_file(mainapp)
 	
 def write_save_file(mainapp):
@@ -49,7 +49,7 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.01\Pycabin_Frontend_Tk\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.json') as f:
 		data = json.load(f)
 		
 	# ______ Project _________________
