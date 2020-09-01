@@ -14,6 +14,7 @@ import file_menu as fm
 import about_tkinter as about_tk
 import components_tk
 import undo_redo_tk
+import database_tk
 
 class MainApplication(tk.Frame):
 	def __init__(self, parent, *args, **kwargs):
@@ -44,6 +45,7 @@ class MainApplication(tk.Frame):
 		
 		self.version = '0.03'
 		self.save_file = None
+		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.db'
 		
 	def setup_main_frames(self):
 	
@@ -152,6 +154,9 @@ class MainApplication(tk.Frame):
 		# ________ DATABASE ________
 		db_menu = tk.Menu(menu, tearoff = 0)
 		menu.add_cascade(label='Database',menu=db_menu)
+
+		db_menu.add_command(label = 'Add Components to Database', command = lambda self=self: database_tk.add_components(self))
+
 		
 		# ________ ABOUT ________
 		about_menu = tk.Menu(menu, tearoff = 0)

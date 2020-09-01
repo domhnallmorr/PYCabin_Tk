@@ -6,6 +6,12 @@ except ImportError:
 	import Tkinter as tk
 	import ttk
 
+def setup_scrollable_frame(page, parent, mainapp):
+	
+	#self.main_scroll_frame = scrollable_frame.ScrollableFrame(self.main_tab, self.mainapp)
+	page.main_scroll_frame = Double_ScrollableFrame(parent, mainapp)
+	page.main_scroll_frame.pack(fill=tk.BOTH, expand=True)		
+		
 class Double_ScrollableFrame:
 	"""
 	A vertically scrolled Frame that can be treated like any other Frame
