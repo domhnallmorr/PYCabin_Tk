@@ -45,7 +45,8 @@ class MainApplication(tk.Frame):
 		
 		self.version = '0.03'
 		self.save_file = None
-		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.db'
+		# self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.db'
+		self.cabin_database = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.db'
 		
 	def setup_main_frames(self):
 	
@@ -156,6 +157,7 @@ class MainApplication(tk.Frame):
 		menu.add_cascade(label='Database',menu=db_menu)
 
 		db_menu.add_command(label = 'Add Components to Database', command = lambda self=self: database_tk.add_components(self))
+		db_menu.add_command(label = 'Load Components From Database', command = lambda self=self: database_tk.load_components(self))
 
 		
 		# ________ ABOUT ________

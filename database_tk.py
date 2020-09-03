@@ -2,12 +2,15 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import *
+import tkinter.messagebox
 
 import components_tk
 import gui_styles_tk
 import double_scrollbar
 
 import sqlite3
+import getpass
+from datetime import date
 
 
 def add_components(mainapp):
@@ -16,6 +19,19 @@ def add_components(mainapp):
 	mainapp.w=Add_Components_To_DB(mainapp, mainapp.master, type)
 	mainapp.master.wait_window(mainapp.w.top)	
 
+def load_components(mainapp):
+
+	mainapp.w=Load_Components_From_DB(mainapp, mainapp.master, type)
+	mainapp.master.wait_window(mainapp.w.top)	
+
+def connect_to_database(self):
+	self.conn = sqlite3.connect(self.mainapp.cabin_database)
+	self.c = self.conn.cursor()
+
+def disconnect_from_database(self):
+	self.c.close()
+	self.conn.close()
+		
 class Add_Components_To_DB():
 
 	def __init__(self, mainapp, master, type):
@@ -75,7 +91,7 @@ class Add_Components_To_DB():
 				text = 'No'
 			l = tk.Label(self.main_frame, text = text, bg = 'light grey', relief='solid', borderwidth=0.5)
 			l.grid(row=row, column = 3, sticky='NSEW')
-			if text != 'Yes':
+			if text == 'Yes but different values':
 				l.bind("<Button-1>",lambda event, component=component: self.show_comparison(event, component))
 			row += 1
 		
@@ -102,23 +118,17 @@ class Add_Components_To_DB():
 		self.button = button
 		
 		if self.button == 'ok':
-			self.connect_to_database()
+			connect_to_database(self)
 			self.get_components_to_add()
 			self.add_components_to_db()
 			
 			self.conn.commit()
-			self.disconnect_from_database()
+			disconnect_from_database(self)
 			
 		else:
 			self.top.destroy()
 			
-	def connect_to_database(self):
-		self.conn = sqlite3.connect(self.mainapp.cabin_database)
-		self.c = self.conn.cursor()
-	
-	def disconnect_from_database(self):
-		self.c.close()
-		self.conn.close()
+
 
 	def get_components_to_add(self):
 		self.components_too_add = []
@@ -129,23 +139,36 @@ class Add_Components_To_DB():
 				self.components_too_add.append(self.mainapp.frames[component].backend)
 			
 	def add_components_to_db(self):
-	
-		for component_bkend in self.components_too_add:
-			if component_bkend.type == 'Seat':
-				comments = component_bkend.parent_page.comment_text.get("1.0","end")
+		
+		msg = tkinter.messagebox.askokcancel(title=None, message='Do You Wish to Commit the Selected Components to the Database? This Cannot be Undone')
+		if msg:
+			for component_bkend in self.components_too_add:
+				try:
+					user = getpass.getuser()
+				except:
+					user = 'unknown'
+				save_dict = component_bkend.gen_save_dict()
 				
-				self.c.execute("INSERT INTO seats (part_no, aircraft, description, manufacturer, side, type, iat, profile, width, width_inbd, armrest_width, length_fwd, length_aft, cushion_height, height, stud_distance, srp_x, srp_y, weight, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-					  (component_bkend.part_no, component_bkend.aircraft_type, component_bkend.description, component_bkend.manufacturer, component_bkend.side, component_bkend.seat_type, component_bkend.iat, component_bkend.profile, component_bkend.width, 
-						component_bkend.width_inbd, component_bkend.armrest_width, component_bkend.length_fwd, component_bkend.length_aft, component_bkend.cushion_height, component_bkend.height, component_bkend.stud_distance, 
-						component_bkend.srp_x, component_bkend.srp_y, component_bkend.weight_lbs, comments))
-	
+				if save_dict['Title'] in self.components_in_db:
+					command = f'UPDATE seats SET "Data" = "{str(save_dict)}" WHERE Title = "{save_dict["Title"]}"'
+					print(command)
+					self.c.execute(command)
+				else:
+					self.c.execute('INSERT INTO seats ("Title", "Data", "Date", "User", "Project") VALUES (?, ?, ?, ?, ?)',
+										(save_dict['Title'], str(save_dict), date.today().strftime("%b-%d-%Y"), user, "Project"))
+					
+				self.conn.commit()
+				
+			tkinter.messagebox.showinfo(title=None, message='Database Successfully Updated')
 	def check_which_components_in_database(self):
 	
-		self.connect_to_database()
+		connect_to_database(self)
 		
-		search_terms = tuple(self.components_dict['All'])
+		search_terms = str(tuple(self.components_dict['All']))
+		if search_terms[-2] == ',': #remove trailing comma (causes sql syntax error)
+			search_terms = search_terms[:-2] + ')'
 
-		self.c.execute(f'SELECT * FROM seats WHERE "Part Number" IN {search_terms}')
+		self.c.execute(f'SELECT * FROM seats WHERE "Title" IN {search_terms}')
 		data = self.c.fetchall()
 		
 		col_names = [description[0] for description in self.c.description]
@@ -153,9 +176,7 @@ class Add_Components_To_DB():
 		self.components_in_db_dict = {}
 		for d in data:		
 			component_bkend = self.mainapp.frames[d[0]].backend
-			component_dict = {}
-			for index, col in enumerate(col_names):
-				component_dict[col] = d[index]
+			component_dict = eval(d[1])
 				
 			is_same, component_bkend_dict = self.compare_db_and_mainapp_data(component_bkend, component_dict)
 			self.components_in_db_dict[d[0]] = {'db data': component_dict, 'is same': is_same, 'tk_data': component_bkend_dict}
@@ -206,7 +227,7 @@ class Comparison_Screen():
 		tk.Label(self.top, text = 'Database Data', relief='solid', borderwidth=0.5).grid(row=2, column=3, sticky='NSEW')
 		row = 3
 		for widget in self.db_page.components_in_db_dict[self.component]['db data']:
-			tk.Label(self.top, text = widget, bg = 'light grey', relief='solid', borderwidth=0.5).grid(row=row, column=1, sticky='NSEW')
+			tk.Label(self.top, text = widget, bg = 'white', relief='solid', borderwidth=0.5).grid(row=row, column=1, sticky='NSEW')
 			
 			tk_data = self.db_page.components_in_db_dict[self.component]['tk_data'][widget]
 			db_data = self.db_page.components_in_db_dict[self.component]['db data'][widget]
@@ -219,3 +240,50 @@ class Comparison_Screen():
 			tk.Label(self.top, text = db_data, bg = color, relief='solid', borderwidth=0.5).grid(row=row, column=3, sticky='NSEW')
 			
 			row += 1
+			
+class Load_Components_From_DB():
+
+	def __init__(self, mainapp, master, type):
+
+		top=self.top=Toplevel(master)
+		top.grab_set()
+		self.master = master
+		self.mainapp = mainapp
+		double_scrollbar.setup_scrollable_frame(self, self.top, self.mainapp) #creates self.main_scroll_frame
+		
+		self.setup_label_frames()
+		self.setup_widgets()
+		
+	def setup_label_frames(self):
+		
+		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text=f"Options:")
+		self.main_frame.grid(row=2, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		
+		self.table_frame = LabelFrame(self.main_scroll_frame.inner,text=f"Database Components:")
+		self.table_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+	
+	def setup_widgets(self):
+	
+		self.type_combo= ttk.Combobox(self.main_frame, values=['Seat'], state='readonly')
+		self.type_combo.grid(row=1,column=1,padx=2, pady=2,sticky = 'NSEW')
+		
+		self.search_entry = Entry(self.main_frame, width=60)		
+		self.search_entry.grid(row=1,column=2, columnspan=2, padx=2, pady=2,sticky = 'NSEW')
+		
+		self.search_button=Button(self.main_frame,text='Search', command= self.search)
+		self.search_button.grid(row=1,column=4,columnspan=2, pady=5,sticky="nsew")
+		
+	def search(self):
+		
+		search = self.search_entry.get()
+		
+		if search.strip() != '':
+			connect_to_database(self)
+			self.c.execute(f"SELECT * FROM seats WHERE Title LIKE '%{search}%'")
+			data = self.c.fetchall()
+			
+			print(data)
+			
+			disconnect_from_database(self)
+		
+		
