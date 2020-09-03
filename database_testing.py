@@ -7,8 +7,8 @@ from datetime import date
 def setup_db():
 
 	#conn = sqlite3.connect(":memory:")
-	#conn = sqlite3.connect(r"C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.db")
-	conn = sqlite3.connect(r"C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.db")
+	conn = sqlite3.connect(r"C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.db")
+	#conn = sqlite3.connect(r"C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.db")
 	c = conn.cursor()
 	return conn, c
 
@@ -65,7 +65,7 @@ def search_for_component(c, search):
 def load_json(conn, c):
 	user = getpass.getuser()
 	
-	with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.json') as f:
 		data = json.load(f)
 		if 'Seats' in data.keys():
 			print(data['Seats'])
@@ -92,4 +92,3 @@ conn.commit()
 # read_all_from_db(c)
 c.close()
 conn.close()
-

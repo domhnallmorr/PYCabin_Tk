@@ -61,7 +61,7 @@ def load(event=None, mainapp=None):
 	
 		for seat in data['Seats']:
 			seat = Load('Seat', seat)
-			components_tk.create_component(mainapp, 'Seat', seat, 'new')		
+			components_tk.create_component(mainapp, 'Seat', seat, 'new')
 
 	# reset undo and redo stacks
 	mainapp.states.reset(undo=True, redo=True)

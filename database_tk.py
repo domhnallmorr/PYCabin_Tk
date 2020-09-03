@@ -7,6 +7,8 @@ import tkinter.messagebox
 import components_tk
 import gui_styles_tk
 import double_scrollbar
+import treeview_functions
+import file_menu
 
 import sqlite3
 import getpass
@@ -254,6 +256,8 @@ class Load_Components_From_DB():
 		self.setup_label_frames()
 		self.setup_widgets()
 		
+		self.top.geometry('{}x{}'.format(800, 400))  
+		
 	def setup_label_frames(self):
 		
 		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text=f"Options:")
@@ -272,6 +276,24 @@ class Load_Components_From_DB():
 		
 		self.search_button=Button(self.main_frame,text='Search', command= self.search)
 		self.search_button.grid(row=1,column=4,columnspan=2, pady=5,sticky="nsew")
+
+		self.load_button=Button(self.table_frame,text='Load Selected', command= self.load)
+		self.load_button.grid(row=0,column=2,columnspan=1, pady=5,sticky="nsew")
+		
+		self.search_tree = ttk.Treeview(self.table_frame, selectmode="extended",columns=("A","B",'C', 'D'),height = 10)
+		#self.monument_tree.grid(row=1,column=0, columnspan= 6,sticky="nsew")
+		self.search_tree.heading("#0", text="#")
+		self.search_tree.column("#0",minwidth=0,width=60, stretch='NO')
+		self.search_tree.heading("A", text="Title")	  
+		self.search_tree.column("A",minwidth=0,width=200, stretch='NO') 
+		self.search_tree.heading("B", text="Date")	  
+		self.search_tree.column("B",minwidth=0,width=150, stretch='NO')
+		self.search_tree.heading("C", text="User")	  
+		self.search_tree.column("C",minwidth=0,width=130, stretch='NO')	
+		self.search_tree.heading("D", text="Project")	  
+		self.search_tree.column("D",minwidth=0,width=130, stretch='NO')	
+		
+		self.search_tree.grid(row=1,column=2,columnspan=6, pady=5,sticky="nsew")
 		
 	def search(self):
 		
@@ -280,10 +302,57 @@ class Load_Components_From_DB():
 		if search.strip() != '':
 			connect_to_database(self)
 			self.c.execute(f"SELECT * FROM seats WHERE Title LIKE '%{search}%'")
-			data = self.c.fetchall()
+			self.search_data = self.c.fetchall()
 			
-			print(data)
+			if len(self.search_data) == 0:
+				tkinter.messagebox.showwarning(title=None, message='No Matching Component Found')
+			else:
+				tree_data = []
+				for index, row in enumerate(self.search_data):
+					tree_data.append([index+1, row[0], row[2], row[3], row[4]])
+				
+				disconnect_from_database(self)
+				
+				treeview_functions.write_data_to_treeview(self.search_tree, 'replace', tree_data)
 			
-			disconnect_from_database(self)
+	def load(self):
+	
+		items = self.search_tree.selection()
+		clash = False
 		
+		indexs = []
+		titles = []
+		for item in items:
 		
+			indexs.append(self.search_tree.item(item, 'text'))
+			titles.append(self.search_tree.item(item, 'values')[0])
+			
+		components_dict = components_tk.get_all_components(self.mainapp, 'Seats')
+		
+		for component in components_dict['All']:
+		
+			if component in titles:
+				clash = True
+		
+		if clash:
+			msg = tkinter.messagebox.askokcancel(title=None, message='Any Existing Components Will be Overwritten, Do You Want to Proceed?')
+			
+		else:
+			msg = True
+			
+		if msg:
+			
+			for i in indexs:
+				data = eval(self.search_data[i-1][1])
+				title = data['Title']
+
+				seat = file_menu.Load('Seat', data)
+				
+				if title not in components_dict['All']:
+					
+					components_tk.create_component(self.mainapp, 'Seat', seat, 'new')
+					
+				else:
+					self.mainapp.frames[title].update_component(seat, 'edit')
+			
+			tkinter.messagebox.showinfo(title=None, message='Componenents Successfully Loaded')
