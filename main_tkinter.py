@@ -15,6 +15,7 @@ import about_tkinter as about_tk
 import components_tk
 import undo_redo_tk
 import database_tk
+import seat_summary_tk
 
 class MainApplication(tk.Frame):
 	def __init__(self, parent, *args, **kwargs):
@@ -37,15 +38,17 @@ class MainApplication(tk.Frame):
 		self.setup_main_frames()
 		
 		
+		self.setup_seat_summary_page()
 		self.setup_project_page()
 		
 		self.states = undo_redo_tk.Undo_Redo(self)
-		
+		components_tk.show_frame(self, 'Seats')
+		components_tk.show_frame(self, 'Project')
 	def setup_variables(self):
 		
-		self.version = '0.03'
+		self.version = '0.04'
 		self.save_file = None
-		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.db'
+		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.04\test.db'
 		
 	def setup_main_frames(self):
 	
@@ -97,7 +100,11 @@ class MainApplication(tk.Frame):
 		item = self.main_treeview.insert("",'end','Seats',text='Seats',image = fi)
 		item = self.main_treeview.insert("Seats",'end','A320 Seats',text=' A320 Family',image = abi)
 		item = self.main_treeview.insert("Seats",'end','737 Seats',text=' 737 Family',image = bi)
-		
+
+		# ________ Monuments ________
+		item = self.main_treeview.insert("",'end','Monuments',text='Monuments',image = fi)
+		item = self.main_treeview.insert("Monuments",'end','A320 Monuments',text='A320 Family',image = abi)
+		item = self.main_treeview.insert("A320 Monuments",'end','A320 Windbreakers',text='Windbreakers',)		
 		#self.rootpane.add(self.main_treeview)
 		
 		self.main_treeview.bind('<<TreeviewSelect>>',lambda event, : self.ProcessOnSingleClick_Main_Tree(event))
@@ -114,7 +121,7 @@ class MainApplication(tk.Frame):
 		self.ids_not_allowed = ['Project', 'Aircraft', 'A320 Aircraft', '737 Aircraft', 'Aircraft', 'Seats', 'A320 Seats',
 								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs']		
 		
-		self.treeview_nodes = {'Seats': ['A320 Seats', '737 Seats']}
+		self.treeview_nodes = {'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Monuments']}
 		
 		
 
@@ -177,7 +184,9 @@ class MainApplication(tk.Frame):
 		if not parent_iid:
 			if (event.widget.item(item_iid, 'text')) == 'Project':
 				components_tk.show_frame(self, "Project")
-			
+			if (event.widget.item(item_iid, 'text')) == 'Seats':
+				components_tk.show_frame(self, "Seats")
+				
 	def open_close_all_nodes(self, action):
 		
 		for node in self.treeview_nodes:
@@ -211,6 +220,12 @@ class MainApplication(tk.Frame):
 		# self.frames['Project'].grid_columnconfigure(0, weight=1)
 		
 		self.current_frame = self.frames['Project']
+		
+	def setup_seat_summary_page(self):
+	
+		self.frames['Seats'] = seat_summary_tk.Seat_Page_Summary_Tk(self.container, self)
+		self.frames['Seats'].pack(fill="both", expand=True)
+		
 	def popup(self,event):
 		try:
 			self.popup_menu.selection = self.main_treeview.set(self.main_treeview.identify_row(event.y))
