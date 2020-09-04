@@ -6,8 +6,9 @@ import tkinter.messagebox
 
 import gui_styles_tk as gui_styles
 from tksheet import Sheet
-
+from colour import Color
 import components_tk
+import seats_frontend_tk as seats_tk
 
 class Seat_Page_Summary_Tk(tk.Frame):
 
@@ -42,6 +43,11 @@ class Seat_Page_Summary_Tk(tk.Frame):
 		self.opt = tk.OptionMenu(self.main_frame, self.opt_var, *['Dimensions', 'Weights & SRP'])
 		self.opt.grid(row=1, column=1, sticky='nsew')
 		
+		self.apply_var = tk.StringVar()
+		self.apply_var.trace("w", self.apply_multiple_values)
+		self.apply = tk.OptionMenu(self.main_frame, self.apply_var, *['Apply Dimensions to Multiple Seats'])
+		self.apply.grid(row=1, column=2, sticky='nsew')	
+		
 	def update_table(self, *args):
 	
 		if self.opt_var.get() == 'Dimensions':
@@ -56,17 +62,45 @@ class Seat_Page_Summary_Tk(tk.Frame):
 		
 		self.get_seat_data()
 		
-		for s in self.seat_data:
+		if len(self.seat_data) != 0:
 			idx = 0
-			
-			if self.opt_var.get() == 'Dimensions':
-				v = (s['Title'], s['Width'], s['Width Inbd'], s['Length Aft'], s['Length Fwd'], s['Height'],
-					s['Cushion Height'], s['Stud Distance'], s['Armrest Width'])
-			else:
-				v = (s['Title'], s['Weight'], s['SRP X'], s['SRP Y'])
+			for s in self.seat_data:
 				
-			self.sheet.insert_row(values = v, idx = idx) 
-			idx+=1
+				if self.opt_var.get() == 'Dimensions':
+					v = (s['Title'], s['Width'], s['Width Inbd'], s['Length Aft'], s['Length Fwd'], s['Height'],
+						s['Cushion Height'], s['Stud Distance'], s['Armrest Width'])
+				else:
+					v = (s['Title'], s['Weight'], s['SRP X'], s['SRP Y'])
+					
+				self.sheet.insert_row(values = v, idx = idx) 
+			
+				idx+=1
+				
+			#Apply color gradients
+			for i in range(len(v)):
+				if i != 0: #skip part number column
+					self.apply_color_gradiant(i)
+
+	def apply_color_gradiant(self, col):
+
+		values = self.sheet.get_column_data(col)
+		unique_values = sorted(list(set(self.sheet.get_column_data(col)))) #unique values
+
+		colors = list(Color("#98f573").range_to(Color("#f08c78"),len(unique_values))) #light green to light red
+
+		color_dict = {}
+		for i, c in enumerate(colors):
+
+			color_dict[unique_values[i]] = c
+
+		for i, v in enumerate(values):
+			self.sheet.highlight_cells(row = i, column = col, bg = color_dict[v].hex)
+			
+	def apply_multiple_values(self, *args):
+
+		self.w=seats_tk.Edit_Seat_Window_Tk(self, self.master, 'edit multiple', None)
+		self.master.wait_window(self.w.top)	
+		
 	def get_seat_data(self):
 		
 		self.seat_data = []

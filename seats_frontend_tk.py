@@ -318,7 +318,7 @@ class Edit_Seat_Window_Tk(object):
 			
 		style = gui_styles_tk.create_entry_style()
 		#entries/comboboxes
-		if self.mode == 'new multiple':
+		if self.mode == 'new multiple' or self.mode == 'edit multiple':
 			state = 'disabled'
 		else:
 			state = 'normal'
@@ -326,7 +326,7 @@ class Edit_Seat_Window_Tk(object):
 		self.part_no_entry=Entry(self.details_frame, width=60, state=state)		
 		self.part_no_entry.grid(row=2,column=3, columnspan = 2, padx=2, pady=2,sticky = 'NSEW')
 		
-		if self.mode != 'new multiple':
+		if self.mode not in ['new multiple', 'edit multiple']:
 			self.data_checks['Part Number'] = ['title', self.part_no_entry, self.orig_part_no]
 			
 		self.description_entry=Entry(self.details_frame, width=60, state = state)		
@@ -343,7 +343,7 @@ class Edit_Seat_Window_Tk(object):
 		if self.mode != 'new multiple':
 			self.data_checks['Side'] = ['combo', self.side_combo, 'in values']
 			
-		if self.mode == 'edit':
+		if 'edit' in self.mode:
 			state = 'disabled'
 		else:
 			state = 'normal'
