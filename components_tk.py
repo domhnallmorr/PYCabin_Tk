@@ -6,6 +6,7 @@ import tkinter.messagebox
 
 import copy
 import seats_frontend_tk as seats_tk
+import windbreakers_frontend_tk as windbreakers_tk
 
 '''
 V0.02 initial issue
@@ -31,6 +32,9 @@ def new_component(self, type):
 		self.w=seats_tk.Edit_Seat_Window_Tk(self, self.master, mode, None)
 		self.master.wait_window(self.w.top)
 		
+	if type == 'Windbreaker':
+		self.w=windbreakers_tk.Edit_Windbreaker_Window_Tk(self, self.master, None, mode, None)
+		self.master.wait_window(self.w.top)
 		
 	if self.w.button == 'ok':
 		create_component(self, type, self.w, mode)
@@ -65,7 +69,22 @@ def create_component(self, type, source, update_type, insert=True):
 				insert_component(self, new_component, node)
 			else:
 				return new_component
+	
+	if type == 'Windbreaker':
+		if update_type == 'new':
+			new_component = windbreakers_tk.Windbreaker_Page_Tk(container=self.container, mainapp=self,)
+			new_component.update_component(source, update_type)
+			ac_type = new_component.backend.aircraft_type
+			if ac_type == 'A320 Family':
+				node = 'A320 Windbreakers'
+			elif ac_type == 'B737 Family':
+				node = 'B737 Windbreakers'
+			if insert:
+				insert_component(self, new_component, 'A320 Windbreakers')
+			else:
+				return new_component
 				
+
 def insert_component(self, nc, parent_node):
 	name = nc.backend.title
 	type = nc.backend.type
@@ -84,7 +103,9 @@ def insert_new_item_into_side_treeview(mainapp, parent_node, item_name, componen
 		icon = component_fe.mainapp.icons.ac_icon2
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = icon)
 	elif 'Seats' in parent_node:
-		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.seat_icon2 )
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.seat_icon2)
+	elif 'Windbreaker' in parent_node:
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.wb_icon2)
 	else:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name)	
 	return iid
@@ -102,7 +123,7 @@ def get_all_components(mainapp, type):
 	
 	if type == 'all':
 		components_dict = {'All': []}
-		types = ['Seats']
+		types = ['Seats', 'Windbreakers']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 		
@@ -110,10 +131,12 @@ def get_all_components(mainapp, type):
 	if type == 'Seats':
 		components_dict = {'All': [], 'A320 Family': [], 'A320 Family LHS': [], 'A320 Family RHS': [],
 					'B737 Family': [], 'B737 Family LHS': [], 'B737 Family RHS': []}
+	if type == 'Windbreakers':
+		components_dict = {'All': []}
 	
 	for type in types:
 		for node in mainapp.treeview_nodes[type]:
-			
+
 			for component in mainapp.main_treeview.get_children(node):
 				component = mainapp.frames[mainapp.main_treeview.item(component,'text')]
 				ac_type = component.backend.aircraft_type
@@ -181,10 +204,10 @@ def copy_component(mainapp):
 	
 	new_component = create_component(mainapp, component.backend.type, component.backend, 'new', False)
 	
-	if component.backend.type == 'Seat':
-		new_component.backend.title = f'{component.backend.part_no} ({i})'
-		new_component.backend.part_no = f'{component.backend.part_no} ({i})'
-		new_component.update_label_text()
+	#if component.backend.type == 'Seat':
+	new_component.backend.title = f'{component.backend.title} ({i})'
+	new_component.backend.part_no = f'{component.backend.title} ({i})'
+	new_component.update_label_text()
 	insert_component(mainapp, new_component, get_treeview_node(component.backend))
 	
 def get_treeview_node(backend):
@@ -196,6 +219,12 @@ def get_treeview_node(backend):
 		elif backend.aircraft_type == 'B737 Family':
 			node = '737 Seats'
 			
+	elif backend.type == 'Windbreaker':
+		
+		if backend.aircraft_type == 'A320 Family':
+			node = 'A320 Windbreakers'
+		elif backend.aircraft_type == 'B737 Family':
+			node = 'B737 Windbreakers'
 	return node
 	
 def update_treeview_iid(mainapp, component_frontend):

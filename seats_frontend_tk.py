@@ -16,12 +16,11 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 
 import treeview_functions
-import scrollable_frame
 import double_scrollbar
 import inspect
+import copy
 '''
 V0.02 Initial Issue
-
 To Do
 	check if seat used in any LOPA
 '''
@@ -239,7 +238,7 @@ class Seat_Page_Tk(tk.Frame):
 		self.cushion_height_label.config(text=f' Cushion Height (in): {self.backend.cushion_height}')
 		self.height_label.config(text=f' Total Height (in): {self.backend.height}')
 		self.stud_label.config(text=f' Stud Distance (in): {self.backend.stud_distance}')
-		self.arm_label.config(text=f' Armest Width (in): {self.backend.armrest_width}')
+		self.arm_label.config(text=f' Armrest Width (in): {self.backend.armrest_width}')
 		#
 		self.srpx_label.config(text=f' SRP X (in): {self.backend.srp_x}')
 		self.srpy_label.config(text=f' SRP Y (in): {self.backend.srp_y}')
@@ -284,7 +283,7 @@ class Edit_Seat_Window_Tk(object):
 		
 		if 'new' in self.mode: #also covers 'new - multiple'
 			self.set_default_values()
-		else:
+		elif self.mode != 'edit multiple':
 			self.set_values()
 			
 	def setup_label_frames(self):
@@ -351,20 +350,22 @@ class Edit_Seat_Window_Tk(object):
 		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320 Family', 'B737 Family'], state=state)
 		self.aircraft_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values']
-
+		
 		self.seat_type_combo= ttk.Combobox(self.details_frame, values=['Triple Economy'], state = 'readonly')
 		self.seat_type_combo.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')
-
+		self.data_checks['Seat Type'] = ['combo', self.seat_type_combo, 'in values', 'Seat Type']
+		
 		self.iat_combo= ttk.Combobox(self.details_frame, values=['Yes', 'No'], state='readonly')
 		self.iat_combo.grid(row=7,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['IAT'] = ['combo', self.iat_combo, 'in values']
+		self.data_checks['IAT'] = ['combo', self.iat_combo, 'in values', 'IAT']
 		
 		self.profile_combo= ttk.Combobox(self.details_frame, values=['Generic'], state='readonly')
 		self.profile_combo.grid(row=8,column=3,padx=2, pady=2,sticky = 'NSEW')
-
+		self.data_checks['Profile'] = ['combo', self.profile_combo, 'in values', 'Profile']
+		
 		self.manufacturer_entry=Entry(self.details_frame, width=20)		
 		self.manufacturer_entry.grid(row=9,column=3,padx=2, pady=2,sticky = 'NSEW')
-			
+		self.data_checks['Manufacturer'] = [None, self.manufacturer_entry, None, 'Manufacturer']
 		# __________ Seat Dimensions __________
 		#setup labels	
 		labels = ['Seat Width (in):', 'Seat Width Inbd (in):', 'Seat Length Aft of Front Stud (in):',
@@ -374,35 +375,35 @@ class Edit_Seat_Window_Tk(object):
 		
 		self.w_entry=Entry(self.dimen_frame, width=20, style='Custom.Entry')		
 		self.w_entry.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Seat Width'] = ['entry', self.w_entry, 'float positive']
+		self.data_checks['Seat Width'] = ['entry', self.w_entry, 'float positive', 'Width'] #last value used for gen_save_dict_function
 		
 		self.w_inbd_entry=Entry(self.dimen_frame, width=20)		
 		self.w_inbd_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Inboard Width'] = ['entry', self.w_inbd_entry, 'float positive']
+		self.data_checks['Inboard Width'] = ['entry', self.w_inbd_entry, 'float positive', 'Width Inbd']
 		
 		self.l_aft_entry=Entry(self.dimen_frame, width=20)		
 		self.l_aft_entry.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Aft Length'] = ['entry', self.l_aft_entry, 'float positive']
+		self.data_checks['Aft Length'] = ['entry', self.l_aft_entry, 'float positive', 'Length Aft']
 		
 		self.l_fwd_entry=Entry(self.dimen_frame, width=20)		
 		self.l_fwd_entry.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Forward Length'] = ['entry', self.l_fwd_entry, 'float positive']
+		self.data_checks['Forward Length'] = ['entry', self.l_fwd_entry, 'float positive', 'Length Fwd']
 		
 		self.stud_entry=Entry(self.dimen_frame, width=20)		
 		self.stud_entry.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Stud Distance'] = ['entry', self.stud_entry, 'float positive']
+		self.data_checks['Stud Distance'] = ['entry', self.stud_entry, 'float positive', 'Stud Distance']
 		
 		self.h_entry=Entry(self.dimen_frame, width=20)		
 		self.h_entry.grid(row=7,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Height'] = ['entry', self.h_entry, 'float positive']
+		self.data_checks['Height'] = ['entry', self.h_entry, 'float positive', 'Height']
 		
 		self.c_entry=Entry(self.dimen_frame, width=20)		
 		self.c_entry.grid(row=8,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Cushion Height'] = ['entry', self.c_entry, 'float positive']
+		self.data_checks['Cushion Height'] = ['entry', self.c_entry, 'float positive', 'Cushion Height']
 		
 		self.a_entry=Entry(self.dimen_frame, width=20)		
 		self.a_entry.grid(row=9,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Armrest Width'] = ['entry', self.a_entry, 'float positive']
+		self.data_checks['Armrest Width'] = ['entry', self.a_entry, 'float positive', 'Armrest Width']
 		
 		# __________ Seat Weight __________
 		#setup labels
@@ -411,7 +412,7 @@ class Edit_Seat_Window_Tk(object):
 
 		self.weight_entry=Entry(self.weight_frame, width=20)		
 		self.weight_entry.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Seat Weight'] = ['entry', self.weight_entry, 'float positive']
+		self.data_checks['Seat Weight'] = ['entry', self.weight_entry, 'float positive', 'Weight']
 		
 		# __________ Seat Reference Points__________
 		#setup labels
@@ -420,11 +421,11 @@ class Edit_Seat_Window_Tk(object):
 
 		self.srp_x_entry=Entry(self.ref_frame, width=20)		
 		self.srp_x_entry.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['SRP X'] = ['entry', self.srp_x_entry, 'float positive']
+		self.data_checks['SRP X'] = ['entry', self.srp_x_entry, 'float positive', 'SRP X']
 		
 		self.srp_y_entry=Entry(self.ref_frame, width=20)		
 		self.srp_y_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['SRP Y'] = ['entry', self.srp_y_entry, 'float positive']
+		self.data_checks['SRP Y'] = ['entry', self.srp_y_entry, 'float positive', 'SRP Y']
 		
 		
 		# ok button
@@ -437,20 +438,42 @@ class Edit_Seat_Window_Tk(object):
 
 		self.button = 'cancel'
 		
+		#Add blank option if editing multiple seat
+		if self.mode == 'edit multiple':
+			for c in [self.seat_type_combo, self.iat_combo, self.profile_combo]:
+				v = list(c.config()['values'][-1])
+				v.append(' ')
+				c.config(values=v)
+				
 	def cleanup(self, button):
 	
 		if button == 'ok':
 			
-			data_good, msg = data_input_checks_tk.check_data_input(self.data_checks, self.mainapp)
-			
+			if self.mode == 'edit multiple':
+				data_checks = {}
+				for widget in self.data_checks:
+					if self.data_checks[widget][1].get().strip() != '': #ignore blank inputs
+						data_checks[widget] = [x for x in self.data_checks[widget]]
+						
+				data_good, msg = data_input_checks_tk.check_data_input(data_checks, self.mainapp)
+			else:
+				data_good, msg = data_input_checks_tk.check_data_input(self.data_checks, self.mainapp)
+		
 			if not data_good:
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
-			
+		
 			else:
-				self.button = 'ok'
-				self.update_variables()
-				self.top.destroy()
 				
+				if self.mode != 'edit multiple':
+					self.update_variables()
+				else:
+					self.data_checks = data_checks
+					self.updated_variables = {}
+					for d in data_checks:
+						self.updated_variables[data_checks[d][-1]] = data_checks[d][1].get()
+
+				self.button = 'ok'
+				self.top.destroy()
 		else: #cancel
 			self.top.destroy()
 			
@@ -502,7 +525,7 @@ class Edit_Seat_Window_Tk(object):
 		self.cmm_title = self.parent_seat.backend.cmm_title
 		
 	def update_variables(self):
-		
+
 		if self.mode != 'new multiple':
 			self.part_no = self.part_no_entry.get().strip()
 			self.description = self.description_entry.get()
@@ -576,11 +599,14 @@ class Multiple_Seat_Window_Tk(object):
 		self.button = button
 		
 		if self.button == 'ok':
-			self.check_data_input()
 		
+
+			self.check_data_input()
+
 			if self.data_ok:
 				
 				self.top.destroy()
+					
 		else:
 			self.top.destroy()
 				

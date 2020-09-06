@@ -49,8 +49,13 @@ class Seat_Backend():
 		self.save_class = Seat_Saved_State
 		self.treeview_node = None
 
-	def gen_save_dict(self):
+	def gen_save_dict(self, comments_from_text_widget = True, comments = None):
 	
+		if comments_from_text_widget:
+			comments = self.parent_page.comment_text.get("1.0","end")
+		else:
+			comments = comments
+
 		return {'Title': self.title,
 				'Aircraft Type': self.aircraft_type,
 				'Part Number': self.part_no,
@@ -76,7 +81,7 @@ class Seat_Backend():
 				'CMM Version': self.cmm_version,
 				'CMM Date': self.cmm_date,
 				'CMM Install': self.cmm_install,
-				'Comments': self.parent_page.comment_text.get("1.0","end")
+				'Comments': comments
 				}
 
 	def update_variables(self, source):

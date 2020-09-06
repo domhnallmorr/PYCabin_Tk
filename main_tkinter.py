@@ -119,9 +119,11 @@ class MainApplication(tk.Frame):
 		self.main_treeview.bind("<Button-3>", self.popup)
 
 		self.ids_not_allowed = ['Project', 'Aircraft', 'A320 Aircraft', '737 Aircraft', 'Aircraft', 'Seats', 'A320 Seats',
-								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs']		
+								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'Windbreaker'
+									'Windbreakers']		
 		
-		self.treeview_nodes = {'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Monuments']}
+		self.treeview_nodes = {'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
+								'Windbreakers': ['A320 Windbreakers']}
 		
 		
 
@@ -157,6 +159,7 @@ class MainApplication(tk.Frame):
 		insert_menu.add_cascade(label = 'Components',menu = insert_component_menu)
 		insert_component_menu.add_command(label = 'Seat', command = lambda self=self, type='Seat': components_tk.new_component(self, type))
 		insert_component_menu.add_command(label = 'Multiple Seats', command = lambda self=self, type='Seats - Multiple': components_tk.new_component(self, type))
+		insert_component_menu.add_command(label = 'Windbreaker', command = lambda self=self, type='Windbreaker': components_tk.new_component(self, type))
 		
 		# ________ DATABASE ________
 		db_menu = tk.Menu(menu, tearoff = 0)
@@ -190,10 +193,11 @@ class MainApplication(tk.Frame):
 	def open_close_all_nodes(self, action):
 		
 		for node in self.treeview_nodes:
-			self.main_treeview.item(node, open=action)
-			
-			for node in self.treeview_nodes[node]:
+			if node in self.main_treeview.get_children():
 				self.main_treeview.item(node, open=action)
+				
+				for node in self.treeview_nodes[node]:
+					self.main_treeview.item(node, open=action)
 
 	def moveUp(self):
 		leaves = self.main_treeview.selection()

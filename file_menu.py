@@ -28,20 +28,26 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.json'
+	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.04\test.json'
 	write_save_file(mainapp)
 	
 def write_save_file(mainapp):
 
 
-	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Seats': []}
+	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Seats': [],
+					'Windbreakers': []}
 	
 	# _________________ SEATS _________________
-	seats_dict = components_tk.get_all_components(mainapp, 'seat')
+	seats_dict = components_tk.get_all_components(mainapp, 'Seats')
 	
 	for s in seats_dict['All']:
 		save_dict['Seats'].append(mainapp.frames[s].backend.gen_save_dict())
-		
+	
+	# _________________ WINDBREAKERS _________________
+	wb_dict = components_tk.get_all_components(mainapp, 'Windbreakers')
+
+	for w in wb_dict['All']:
+		save_dict['Windbreakers'].append(mainapp.frames[w].backend.gen_save_dict())
 		
 	with open(mainapp.save_file, 'w') as outfile:
 		json.dump(save_dict, outfile, indent=4)
@@ -49,7 +55,7 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.03\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.04\test.json') as f:
 		data = json.load(f)
 		
 	# ______ Project _________________
@@ -62,15 +68,23 @@ def load(event=None, mainapp=None):
 		for seat in data['Seats']:
 			seat = Load('Seat', seat)
 			components_tk.create_component(mainapp, 'Seat', seat, 'new')
-
+	
+	if 'Windbreakers' in data.keys():
+		
+		for wb in data['Windbreakers']:
+			wb = Load('Windbreaker', wb)
+			components_tk.create_component(mainapp, 'Windbreaker', wb, 'new')
+			
 	# reset undo and redo stacks
 	mainapp.states.reset(undo=True, redo=True)
 	
 	
 class Load():
 	def __init__(self, type, component_data):
+		
+		self.update_variables(type, component_data)
 
-
+	def update_variables(self, type, component_data):
 		if type == 'Seat':
 			
 			self.title = component_data["Title"]
@@ -99,3 +113,26 @@ class Load():
 			self.cmm_date = component_data["CMM Date"]
 			self.cmm_install = component_data["CMM Install"]
 			self.comments = component_data["Comments"]	
+			
+		if type == 'Windbreaker':
+			self.title = component_data["Title"]
+			self.description = component_data["Description"]
+			self.aircraft_type = component_data["Aircraft Type"]
+			self.part_no = component_data["Part Number"]
+			self.side = component_data["Side"]
+			self.thickness = component_data["Thickness"]
+			self.width = component_data["Width"]
+			self.height = component_data["Height"]
+			self.dist_from_cl = component_data["Dist From C/L"]
+			self.joggle = component_data["Joggle"]
+			self.joggle_width = component_data["Joggle Width"]
+			self.joggle_lower = component_data["Joggle Lower"]
+			self.joggle_upper = component_data["Joggle Upper"]
+			self.bassinet = component_data["Bassinet"]
+			self.cmm_title = component_data["CMM Title"]
+			self.cmm_ref = component_data["CMM Reference"]
+			self.cmm_version = component_data["CMM Version"]
+			self.cmm_date = component_data["CMM Date"]
+			self.cmm_install = component_data["CMM Install"]
+			self.cmm_remove = component_data["CMM Remove"]
+			self.comments = component_data["Comments"]			

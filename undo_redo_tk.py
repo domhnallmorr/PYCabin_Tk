@@ -46,6 +46,7 @@ class Undo_Redo():
 												'new_class': component_backend.save_class(component_backend)})
 				component_backend.parent_page.update_component(save_class, 'undo_redo')
 				
+				components_tk.show_frame(self.mainapp, component_backend.title)
 			elif action['type'] == 'deleted component':
 				
 				if 'index' in action.keys():
@@ -103,6 +104,7 @@ class Undo_Redo():
 				self.undo_stack.append({'type': 'edit', 'component': action['component'],
 												'new_class': component_backend.save_class(component_backend)})			
 				
+				components_tk.show_frame(self.mainapp, component_backend.title)
 			self.mainapp.frames[component.title].update_component(action['new_class'], 'undo_redo')
 			
 			

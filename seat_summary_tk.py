@@ -6,9 +6,12 @@ import tkinter.messagebox
 
 import gui_styles_tk as gui_styles
 from tksheet import Sheet
+import double_scrollbar
 from colour import Color
 import components_tk
 import seats_frontend_tk as seats_tk
+import seats_backend as seats_bknd
+import file_menu
 
 class Seat_Page_Summary_Tk(tk.Frame):
 
@@ -101,6 +104,17 @@ class Seat_Page_Summary_Tk(tk.Frame):
 		self.w=seats_tk.Edit_Seat_Window_Tk(self, self.master, 'edit multiple', None)
 		self.master.wait_window(self.w.top)	
 		
+		if self.w.button == 'ok':
+			updated_variables = self.w.updated_variables
+			
+			#for widget in self.w.data_checks:
+			#	print(widget)
+			self.get_seat_data()
+			self.w=Select_Seat_Window_Tk(self.mainapp, self.master, self, updated_variables)
+			self.master.wait_window(self.w.top)	
+			
+			
+		
 	def get_seat_data(self):
 		
 		self.seat_data = []
@@ -111,4 +125,83 @@ class Seat_Page_Summary_Tk(tk.Frame):
 			
 			self.seat_data.append(seat.gen_save_dict())
 			
+class Select_Seat_Window_Tk(object):
+	def __init__(self, mainapp, master, parent_page, updated_variables):
+
+		top=self.top=Toplevel(master)
+		top.grab_set()
+		self.parent_page = parent_page
+		self.mainapp = mainapp
+		self.updated_variables = updated_variables
+		double_scrollbar.setup_scrollable_frame(self, self.top, self.mainapp) #creates self.main_scroll_frame
+		
+		self.setup_label_frames()
+		self.setup_widgets()
+		
+	def setup_label_frames(self):
+		
+		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text="Select Seats:")
+		self.main_frame.grid(row=2, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
+	def setup_widgets(self):
+	
+		Button(self.main_frame,text='Select All', command= lambda option = 1: self.select(option)).grid(row=0, column = 1, sticky='NSEW')
+		Button(self.main_frame,text='Select None', command= lambda option = 0: self.select(option)).grid(row=0, column = 2, sticky='NSEW')
+		
+		self.checkboxes = {}
+		
+		row = 3
+		for seat in self.parent_page.seat_data:
+			seat = seat['Title']
+			self.checkboxes[seat] = {}
 			
+			var = tk.IntVar()
+			self.checkboxes[seat]['checkbox'] = tk.Checkbutton(self.main_frame, text = seat, relief='solid', borderwidth = 5, padx=0,pady=0,bd=0, variable= var)
+			self.checkboxes[seat]['checkbox'].grid(row=row, column = 0, sticky='NSEW')
+			self.checkboxes[seat]['var'] = var
+		
+			row += 1
+			
+		# ok button
+		self.ok_button=Button(self.main_scroll_frame.inner,text='OK', command= lambda button = 'ok': self.cleanup(button))
+		self.ok_button.grid(row=4,column=2,columnspan=2, pady=5,sticky="nsew")
+
+		# cancel button
+		self.cancel_button=Button(self.main_scroll_frame.inner,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
+		self.cancel_button.grid(row=4,column=4, columnspan=2, pady=5,sticky="nsew")
+
+		self.button = 'cancel'
+		
+	def select(self, option):
+	
+		for component in self.checkboxes:
+		
+			self.checkboxes[component]['var'].set(option)
+			
+			
+	def cleanup(self, button):
+	
+		self.button = button
+		
+		if self.button == 'ok':
+			
+			for component in self.checkboxes:
+				if self.checkboxes[component]['var'].get() == 1:
+					
+					self.update_seat(component)
+					
+		self.top.destroy()
+	def update_seat(self, component):
+		
+		seat = self.mainapp.frames[component].backend
+		seats_bknd.Seat_Backend.update_variables(self, seat)
+		
+		comments = self.mainapp.frames[component].comment_text.get("1.0","end")
+
+		variable_dict = seats_bknd.Seat_Backend.gen_save_dict(self, False, comments)
+		for v in self.updated_variables:
+			variable_dict[v] = self.updated_variables[v]
+		
+		file_menu.Load.update_variables(self, 'Seat', variable_dict)
+		
+		self.mainapp.frames[component].update_component(self, 'edit')
