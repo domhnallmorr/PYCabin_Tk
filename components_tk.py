@@ -7,6 +7,7 @@ import tkinter.messagebox
 import copy
 import seats_frontend_tk as seats_tk
 import windbreakers_frontend_tk as windbreakers_tk
+import lopa_frontend_tk as lopa_tk
 
 '''
 V0.02 initial issue
@@ -34,6 +35,10 @@ def new_component(self, type):
 		
 	if type == 'Windbreaker':
 		self.w=windbreakers_tk.Edit_Windbreaker_Window_Tk(self, self.master, None, mode, None)
+		self.master.wait_window(self.w.top)
+
+	if type == 'LOPA':
+		self.w=lopa_tk.Edit_LOPA_Window_Tk(self, self.master, None, mode, None)
 		self.master.wait_window(self.w.top)
 		
 	if self.w.button == 'ok':
@@ -143,8 +148,12 @@ def get_all_components(mainapp, type):
 				components_dict['All'].append(component.backend.title)
 				
 				# # ________________ SEATS ________________
-				#if type == 'seat':
-				
+				if type == 'Seats':
+					side = component.backend.side
+					
+					components_dict[f'{ac_type} {side}'].append(component.backend.title)
+					
+					
 	return components_dict
 	
 def component_renamed(component):

@@ -46,9 +46,9 @@ class MainApplication(tk.Frame):
 		components_tk.show_frame(self, 'Project')
 	def setup_variables(self):
 		
-		self.version = '0.04'
+		self.version = '0.05'
 		self.save_file = None
-		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.04\test.db'
+		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.05\test.db'
 		
 	def setup_main_frames(self):
 	
@@ -160,6 +160,8 @@ class MainApplication(tk.Frame):
 		insert_component_menu.add_command(label = 'Seat', command = lambda self=self, type='Seat': components_tk.new_component(self, type))
 		insert_component_menu.add_command(label = 'Multiple Seats', command = lambda self=self, type='Seats - Multiple': components_tk.new_component(self, type))
 		insert_component_menu.add_command(label = 'Windbreaker', command = lambda self=self, type='Windbreaker': components_tk.new_component(self, type))
+		
+		insert_menu.add_command(label = 'LOPA', command = lambda self=self, type='LOPA': components_tk.new_component(self, type))
 		
 		# ________ DATABASE ________
 		db_menu = tk.Menu(menu, tearoff = 0)
