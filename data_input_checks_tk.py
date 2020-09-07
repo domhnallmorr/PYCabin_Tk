@@ -165,5 +165,3 @@ def check_title_clash(user_input, original_title, mainapp, type = 'Title'):
 					title_msg = f'{user_input} Already Exists, Choose Another Title'
 					break
 	return title_good, title_msg
-
-	

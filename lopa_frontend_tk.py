@@ -11,8 +11,8 @@ import data_input_checks_tk
 
 import gui_styles_tk
 import components_tk
-import scrollable_frame
-#from Pycabin_Backend import lopa_draw
+import double_scrollbar
+import lopa_draw
 #from Pycabin_Backend import lopa_draw_redo
 
 import matplotlib
@@ -58,6 +58,9 @@ class LOPA_Page_Tk(tk.Frame):
 		tk.Frame.__init__(self, container)
 		
 		self.mainapp = mainapp
+
+		self.top_label = tk.Label(self, text=('LOPA: '),font=self.mainapp.title_font, anchor="w")
+		self.top_label.pack(fill=tk.BOTH, expand=True)
 		
 		self.backend = lopa_bk.LOPA_Backend(self, mainapp)
 		
@@ -71,48 +74,29 @@ class LOPA_Page_Tk(tk.Frame):
 		self.add_lopa_plot()
 		self.set_grid_configures()
 		
-		#self.dummy_label = gui_styles_tk.create_label(self.lopa_frame,'sdsad')
-		#self.dummy_label.grid(row = 8, column = 0,pady=2,padx=2, sticky="nsew")
-		self.dummy_canvas = tk.Canvas(self.lopa_frame, height=200, bg="blue")
-		self.dummy_canvas.grid(row=7, column=0, columnspan = 1, rowspan = 2,sticky='NSEW',padx=5, pady=5, ipadx=2, ipady=5)
-
-		self.dummy_canvas2 = tk.Canvas(self.weight_scroll_frame.frame, height=200, bg="blue")
-		self.dummy_canvas2.grid(row=10, column=0, columnspan = 1, rowspan = 2,sticky='NSEW',padx=5, pady=5, ipadx=2, ipady=5)
-		
 	def setup_scrollable_frames(self):
-		### Canvas widgets (for vertical scrollbar)
 
-		self.lopa_frame_canvas = tk.Canvas(self.seat_tab, height=self.mainapp.screen_height-80, bg="blue")
-		self.lopa_frame_canvas.configure(scrollregion=self.lopa_frame_canvas.bbox("all"))
-		self.lopa_frame_canvas.grid(row=0,column=0,stick='nsew')
-		self.seat_tab.grid_columnconfigure(0, weight=1)
-		self.seat_tab.grid_rowconfigure(0, weight=1)
-
-		self.lopa_frame = tk.Frame(self.lopa_frame_canvas)
-		self.canvas_frame = self.lopa_frame_canvas.create_window((0,0), window=self.lopa_frame, anchor='nw')
-		#self.lopa_frame.grid(row=0,column=0,stick='nsew')
-
-		vsb = tk.Scrollbar(self.seat_tab, orient="vertical", command=self.lopa_frame_canvas.yview)
-		self.lopa_frame_canvas.configure(yscrollcommand=vsb.set)
-		vsb.grid(row=0,column=1,stick='nsew')
-		self.lopa_frame.bind("<Configure>", lambda event, canvas=self.lopa_frame_canvas: self.onFrameConfigure(canvas))
-		self.lopa_frame_canvas.bind('<Configure>', self.FrameWidth)
-
+		self.main_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.main_tab, self.mainapp)
+		self.main_scroll_frame.pack(fill=tk.BOTH, expand=True)
+		
+		self.lopa_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.seat_tab, self.mainapp)
+		self.lopa_scroll_frame.pack(fill=tk.BOTH, expand=True)
 	
-		self.weight_scroll_frame = scrollable_frame.ScrollableFrame(self.weight_tab, self.mainapp)
-		'''
-		self.frame = scrollable_frame.ScrollableFrame(self.seat_tab)
-		self.frame.grid(row=0,column=0,stick='nsew')
-		self.lopa_frame = self.frame.scrollable_frame
-		self.seat_tab.grid_columnconfigure(0, weight=1)
-		self.seat_tab.grid_rowconfigure(0, weight=1)
-		#self.lopa_frame.grid_columnconfigure(4, weight=1)
-		'''
+		self.weight_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.weight_tab, self.mainapp)
+		self.weight_scroll_frame.pack(fill=tk.BOTH, expand=True)
+		# '''
+		# self.frame = scrollable_frame.ScrollableFrame(self.seat_tab)
+		# self.frame.grid(row=0,column=0,stick='nsew')
+		# self.lopa_frame = self.frame.scrollable_frame
+		# self.seat_tab.grid_columnconfigure(0, weight=1)
+		# self.seat_tab.grid_rowconfigure(0, weight=1)
+		# #self.lopa_frame.grid_columnconfigure(4, weight=1)
+		# '''
 	def set_grid_configures(self):
 	
-		self.lopa_frame.grid_columnconfigure(4, weight=1)
-		self.weight_scroll_frame.frame.grid_columnconfigure(7, weight=1)
-		
+		self.lopa_scroll_frame.inner.grid_columnconfigure(4, weight=1)
+		#self.weight_scroll_frame.frame.grid_columnconfigure(7, weight=1)
+		pass
 	def onFrameConfigure(self, canvas):
 		'''Reset the scroll region to encompass the inner frame'''
 		canvas.configure(scrollregion=canvas.bbox("all"))
@@ -134,39 +118,36 @@ class LOPA_Page_Tk(tk.Frame):
 		self.note.add(self.weight_tab, text = "Seat Weights")
 		self.note.add(self.comments_tab, text = "Comments")
 		
-		self.note.grid(row=1,column=0,sticky='NSEW')
-
+		#self.note.grid(row=1,column=0,sticky='NSEW')
+		self.note.pack(fill=tk.BOTH, expand=True)
 		# ####### COMMENTS TEXT ######################################
 		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50)
 		self.comment_text.grid(row=1, column=0, columnspan = 8, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
 	def setup_label_frames(self):
 	
-		self.main_frame = LabelFrame(self.main_tab,text="LOPA Details:")
+		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text="LOPA Details:")
 		self.main_frame.grid(row=2, column=0, columnspan = 16, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
-		self.monuments_frame = LabelFrame(self.main_tab,text="Monuments:")
+		self.monuments_frame = LabelFrame(self.main_scroll_frame.inner,text="Monuments:")
 		self.monuments_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
-		self.items_frame = LabelFrame(self.main_tab,text="Seat Item Numbers:")
+		self.items_frame = LabelFrame(self.main_scroll_frame.inner,text="Seat Item Numbers:")
 		self.items_frame.grid(row=4, column=8, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
-		self.seats_frame = LabelFrame(self.lopa_frame,text="Seats:")
+		self.seats_frame = LabelFrame(self.lopa_scroll_frame.inner,text="Seats:")
 		self.seats_frame.grid(row=3, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
-		self.preview_frame = LabelFrame(self.lopa_frame,text="LOPA Preview:")
+		self.preview_frame = LabelFrame(self.lopa_scroll_frame.inner,text="LOPA Preview:")
 		self.preview_frame.grid(row=5, column=0, columnspan = 5, rowspan = 2,sticky='NSEW',padx=5, pady=5, ipadx=2, ipady=5)
 		self.preview_frame.grid_columnconfigure(4, weight=1)
 		
-		weight_frame = self.weight_scroll_frame.frame
+		weight_frame = self.weight_scroll_frame.inner
 		self.weight_frame = LabelFrame(weight_frame,text="Seat Weights:")
 		self.weight_frame.grid(row=3, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
 	def setup_labels(self):
-	
-		self.top_label = tk.Label(self, text=('LOPA: '),font=self.mainapp.title_font)
-		self.top_label.grid(row=0,column=0,columnspan=24,stick='W')
-		
+			
 		self.dwg_no_label = gui_styles_tk.create_label(self.main_frame,'')
 		self.dwg_no_label.grid(row = 2, column = 0,columnspan=2, pady=2,padx=2, sticky="nsew")
 
@@ -321,14 +302,14 @@ class LOPA_Page_Tk(tk.Frame):
 		
 	def setup_buttons(self):
 
-		self.edit_btn = Button(self.main_tab, text = 'Edit',width = 30, command= lambda: self.edit())
+		self.edit_btn = Button(self.main_scroll_frame.inner, text = 'Edit',width = 30, command= lambda: self.edit())
 		self.edit_btn.grid(row=1, column=0, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
-		self.dxf_btn = Button(self.main_tab, text = 'Export to DXF',width = 30, command= lambda: self.export_dxf())
-		self.dxf_btn.grid(row=1, column=1, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+		# self.dxf_btn = Button(self.main_tab, text = 'Export to DXF',width = 30, command= lambda: self.export_dxf())
+		# self.dxf_btn.grid(row=1, column=1, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
-		self.ms_word_btn = Button(self.main_tab, text = 'Export to Word',width = 30, command= lambda: self.export_word())
-		self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+		# self.ms_word_btn = Button(self.main_tab, text = 'Export to Word',width = 30, command= lambda: self.export_word())
+		# self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 		
 		self.add_monument_btn = Button(self.monuments_frame, text = 'Add Monument',
 								command = self.add_monument)
@@ -338,7 +319,7 @@ class LOPA_Page_Tk(tk.Frame):
 								command = self.autogen_items)
 		self.auto_item_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
 		
-		self.expand_lopa_tree_btn = Button(self.lopa_frame, text = "Expand Trees",
+		self.expand_lopa_tree_btn = Button(self.lopa_scroll_frame.inner, text = "Expand Trees",
 							  command = lambda height=30, trees = [self.LHS_lopa_tree,self.RHS_lopa_tree]: self.expand_tree(trees,height))
 		self.expand_lopa_tree_btn.grid(row=0, column=0, columnspan=4, sticky='nsew')
 
@@ -358,8 +339,9 @@ class LOPA_Page_Tk(tk.Frame):
 			if tree['height'] < 30:
 				tree.configure(height = 30)
 			else:
-				tree.configure(height = 6)
-			
+				tree.configure(height = 10)
+		
+		self.lopa_scroll_frame._on_frame_configure()
 	def update_label_text(self):
 				
 		self.top_label.config(text=f'LOPA: {self.backend.title}')
@@ -391,22 +373,22 @@ class LOPA_Page_Tk(tk.Frame):
 		self.backend.ax2.clear()
 		self.backend.ax3.clear()
 		#lopa_draw.draw_lopa(self, self.backend.ax2, 'matplotlib', [[],[0,0],[]], True)
-		lopa_draw_redo.draw_aircraft(self.backend, self.backend.ax2, 'matplotlib', [0,0])
-		lopa_draw_redo.draw_floor(self.backend, self.backend.ax1, 'matplotlib', [0,0])
-		lopa_draw_redo.draw_floor(self.backend, self.backend.ax3, 'matplotlib', [0,0])
+		lopa_draw.draw_aircraft(self.backend, self.backend.ax2, 'matplotlib', [0,0])
+		lopa_draw.draw_floor(self.backend, self.backend.ax1, 'matplotlib', [0,0])
+		lopa_draw.draw_floor(self.backend, self.backend.ax3, 'matplotlib', [0,0])
 		#lopa_draw_redo.draw_seat_tracks(self.backend, self.backend.ax2, 'matplotlib', [0,0])
 
-		lopa_draw_redo.draw_seats_side(self.backend, self.backend.ax3, 'matplotlib', [0,0], 'LHS')
-		lopa_draw_redo.draw_seats_side(self.backend, self.backend.ax1, 'matplotlib', [0,0], 'RHS')
+		lopa_draw.draw_seats_side(self.backend, self.backend.ax3, 'matplotlib', [0,0], 'LHS')
+		lopa_draw.draw_seats_side(self.backend, self.backend.ax1, 'matplotlib', [0,0], 'RHS')
 
 		if self.backend.aircraft_type in ['A320', 'A319']:
 			y_datum = 30.12
 		elif self.backend.aircraft_type in ['B737-800']:
 			y_datum = 24.755
-		lopa_draw_redo.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum*-1], 'LHS')
-		lopa_draw_redo.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum], 'RHS')
-		lopa_draw_redo.draw_monuments_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
-		lopa_draw_redo.draw_monuments_side(self.backend, self.backend.ax3, self.backend.ax1, 'matplotlib', [0,0])
+		lopa_draw.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum*-1], 'LHS')
+		lopa_draw.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum], 'RHS')
+		lopa_draw.draw_monuments_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
+		lopa_draw.draw_monuments_side(self.backend, self.backend.ax3, self.backend.ax1, 'matplotlib', [0,0])
 		self.canvas.draw()
 	def add_lopa_plot(self):
 		
@@ -733,8 +715,8 @@ class Double_Click_Seat_Window_Tk(object):
 		lopa_bk.setup_variables(self)
 		lopa_bk.update_variables(self, self.lopa.backend)
 		
-		self.seats, self.seats_dict = components_tk.get_all_seats(mainapp)
-		
+		#self.seats, self.seats_dict = components_tk.get_all_seats(mainapp)
+		self.seats_dict = components_tk.get_all_components(mainapp, 'Seats')
 		self.setup_label_frames()
 		self.setup_widgets()
 	
@@ -747,7 +729,7 @@ class Double_Click_Seat_Window_Tk(object):
 	
 		labels = ['Row Number:', 'Seat Part Number:', 'Pitch (in):',]
 		row = 2
-		gui_styles_tk.create_multiple_labels(self.options_frame, 20, labels, row, 2, 2, 2)
+		gui_styles_tk.create_multiple_labels(self.options_frame, labels, row, 2, 20, 2, 2)
 		
 		if self.side == 'LHS':
 			if self.lopa.backend.aircraft_type in ['A320', 'A319']:

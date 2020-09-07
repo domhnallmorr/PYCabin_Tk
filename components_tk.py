@@ -70,10 +70,6 @@ def create_component(self, type, source, update_type, insert=True):
 				node = 'A320 Seats'
 			elif ac_type == 'B737 Family':
 				node = '737 Seats'
-			if insert:
-				insert_component(self, new_component, node)
-			else:
-				return new_component
 	
 	if type == 'Windbreaker':
 		if update_type == 'new':
@@ -84,17 +80,20 @@ def create_component(self, type, source, update_type, insert=True):
 				node = 'A320 Windbreakers'
 			elif ac_type == 'B737 Family':
 				node = 'B737 Windbreakers'
-			if insert:
-				insert_component(self, new_component, 'A320 Windbreakers')
-			else:
-				return new_component
 
 	if type == 'LOPA':
 		if update_type == 'new':
 			new_component = lopa_tk.LOPA_Page_Tk(container=self.container, mainapp=self,)
 			new_component.update_component(source, update_type)
 			ac_type = new_component.backend.aircraft_type
+			if ac_type in ['A320', 'A319']:
+				node = 'A320 LOPAs'
 			
+	if insert:
+		insert_component(self, new_component, node)
+	else:
+		return new_component
+
 def insert_component(self, nc, parent_node):
 	name = nc.backend.title
 	type = nc.backend.type
@@ -244,4 +243,3 @@ def get_treeview_node(backend):
 def update_treeview_iid(mainapp, component_frontend):
 
 	pass
-	

@@ -265,4 +265,3 @@ if __name__ == "__main__":
 	root.bind('<Control-z>', lambda event, MA=MA: MA.states.undo())
 	root.bind('<Control-y>', lambda event, MA=MA: MA.states.redo())
 	root.mainloop()
-		
