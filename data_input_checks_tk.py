@@ -39,6 +39,23 @@ def check_combo_input(combo_data):
 		if user_input not in values:
 			combo_good = False
 			combo_msg = 'Selection Not Available'
+	
+	elif 'int greater than' in combo_data[2]:
+		
+		if user_input.strip() == '':
+			combo_good = False
+			combo_msg = 'Must be Entered'
+		
+		if combo_good:
+			if 'equal' in combo_data[2]: #handle equal greater than or equal to
+				
+				if int(user_input) < int(combo_data[2].split()[-1]):
+					combo_good = False
+					combo_msg = f'Should be an Integer Greater than or Equal to {int(combo_data[2].split()[-1])}'
+			else:		
+				if int(user_input) <= int(combo_data[2].split()[-1]):
+					combo_good = False
+					combo_msg = f'Should be an Integer Greater than {int(combo_data[2].split()[-1])}'
 			
 	return combo_good, combo_msg
 def check_entry_input(entry_data):

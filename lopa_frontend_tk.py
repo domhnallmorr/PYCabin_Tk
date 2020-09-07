@@ -13,7 +13,7 @@ import gui_styles_tk
 import components_tk
 import scrollable_frame
 #from Pycabin_Backend import lopa_draw
-from Pycabin_Backend import lopa_draw_redo
+#from Pycabin_Backend import lopa_draw_redo
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -22,7 +22,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 import treeview_functions
 
-import ezdxf
+#import ezdxf
 
 from docx import Document
 #from ezdxf.tools.standards import linetypes  # some predefined line types
@@ -605,7 +605,7 @@ class Edit_LOPA_Window_Tk(object):
 		self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values', 'Aircraft Type']
 		
 		self.economy_entry=Entry(self.details_frame, width=20)		
-		self.economy_entry.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')		
+		#self.economy_entry.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')		
 
 		self.row13_ckbx = Checkbutton(self.details_frame, text="")
 		self.row13_ckbx.grid(row=7,column=3,padx=2, pady=2,sticky = 'NSEW')
@@ -616,13 +616,15 @@ class Edit_LOPA_Window_Tk(object):
 
 		self.lhs_rows_combo= ttk.Combobox(self.seats_frame, values=[i for i in range(31)],state=state)
 		self.lhs_rows_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
-
+		self.data_checks['Number of LHS Seats'] = ['combo', self.lhs_rows_combo, 'int greater than equal 0', 'LHS No. of Rows']
+		
 		self.lhs_seat_combo= ttk.Combobox(self.seats_frame,state=state)
 		self.lhs_seat_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['LHS Default Seat'] = ['combo', self.lhs_seat_combo, 'in values', 'LHS Seat']
 		
 		self.lhs_pitch_combo= ttk.Combobox(self.seats_frame, values=[28, 29, 30, 31, 32, 33],state=state)
 		self.lhs_pitch_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.data_checks['LHS Default Pitch'] = ['combo', self.lhs_pitch_combo, 'int greater than 27', 'LHS Pitch']
 		
 		labels = ['Number Rows RHS:', 'Default Seat RHS:', 'Default Pitch RHS (in):']
 		row = 2
@@ -630,13 +632,16 @@ class Edit_LOPA_Window_Tk(object):
 
 		self.rhs_rows_combo= ttk.Combobox(self.seats_frame, values=[i for i in range(31)],state=state)
 		self.rhs_rows_combo.grid(row=2,column=5,padx=2, pady=2,sticky = 'NSEW')
-
+		self.data_checks['Number of RHS Seats'] = ['combo', self.rhs_rows_combo, 'int greater than equal 0', 'RHS No. of Rows']
+		
 		self.rhs_seat_combo= ttk.Combobox(self.seats_frame,state=state)
 		self.rhs_seat_combo.grid(row=3,column=5,padx=2, pady=2,sticky = 'NSEW')
-
+		self.data_checks['RHS Default Seat'] = ['combo', self.rhs_seat_combo, 'in values', 'RHS Seat']
+		
 		self.rhs_pitch_combo= ttk.Combobox(self.seats_frame, values=[28, 29, 30, 31, 32, 33],state=state)
 		self.rhs_pitch_combo.grid(row=4,column=5,padx=2, pady=2,sticky = 'NSEW')
-
+		self.data_checks['RHS Default Pitch'] = ['combo', self.rhs_pitch_combo, 'int greater than 27', 'RHS Pitch']
+		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
 		self.ok_button.grid(row=8,column=3, pady=5,sticky="nsew")

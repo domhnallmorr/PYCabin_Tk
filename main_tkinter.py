@@ -105,6 +105,11 @@ class MainApplication(tk.Frame):
 		item = self.main_treeview.insert("",'end','Monuments',text='Monuments',image = fi)
 		item = self.main_treeview.insert("Monuments",'end','A320 Monuments',text='A320 Family',image = abi)
 		item = self.main_treeview.insert("A320 Monuments",'end','A320 Windbreakers',text='Windbreakers',)		
+
+		# ________ LOPA ________
+		item = self.main_treeview.insert("",'end','LOPAs',text='LOPAs',image = fi)
+		item = self.main_treeview.insert("LOPAs",'end','A320 LOPAs',text=' A320 Family',image = abi)
+		
 		#self.rootpane.add(self.main_treeview)
 		
 		self.main_treeview.bind('<<TreeviewSelect>>',lambda event, : self.ProcessOnSingleClick_Main_Tree(event))

@@ -88,8 +88,13 @@ def create_component(self, type, source, update_type, insert=True):
 				insert_component(self, new_component, 'A320 Windbreakers')
 			else:
 				return new_component
-				
 
+	if type == 'LOPA':
+		if update_type == 'new':
+			new_component = lopa_tk.LOPA_Page_Tk(container=self.container, mainapp=self,)
+			new_component.update_component(source, update_type)
+			ac_type = new_component.backend.aircraft_type
+			
 def insert_component(self, nc, parent_node):
 	name = nc.backend.title
 	type = nc.backend.type
@@ -150,8 +155,8 @@ def get_all_components(mainapp, type):
 				# # ________________ SEATS ________________
 				if type == 'Seats':
 					side = component.backend.side
-					
-					components_dict[f'{ac_type} {side}'].append(component.backend.title)
+					if f'{ac_type} {side}' in components_dict.keys():
+						components_dict[f'{ac_type} {side}'].append(component.backend.title)
 					
 					
 	return components_dict
