@@ -115,6 +115,8 @@ def insert_new_item_into_side_treeview(mainapp, parent_node, item_name, componen
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.seat_icon2)
 	elif 'Windbreaker' in parent_node:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.wb_icon2)
+	elif 'LOPA' in parent_node:
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.lopa_icon2)
 	else:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name)	
 	return iid
@@ -141,7 +143,7 @@ def get_all_components(mainapp, type):
 		components_dict = {'All': [], 'A320 Family': [], 'A320 Family LHS': [], 'A320 Family RHS': [],
 					'B737 Family': [], 'B737 Family LHS': [], 'B737 Family RHS': []}
 	if type == 'Windbreakers':
-		components_dict = {'All': []}
+		components_dict = {'All': [], 'A320 Family LHS': [], 'A320 Family RHS': []}
 	
 	for type in types:
 		for node in mainapp.treeview_nodes[type]:
@@ -152,7 +154,7 @@ def get_all_components(mainapp, type):
 				components_dict['All'].append(component.backend.title)
 				
 				# # ________________ SEATS ________________
-				if type == 'Seats':
+				if type == 'Seats' or type == 'Windbreakers':
 					side = component.backend.side
 					if f'{ac_type} {side}' in components_dict.keys():
 						components_dict[f'{ac_type} {side}'].append(component.backend.title)

@@ -83,21 +83,20 @@ def draw_lopa(self, canvas, canvas_type, datum, draw_top_down):
 			side_datum = [row[3], 115]
 		seats_draw.economy_seat_generic_side_view(seat, canvas, canvas_type, side_datum)
 
-	# if canvas_type == 'matplotlib':	
-		# # ______ MONUMENTS _____________
-		# for m in self.backend.monuments:
+	if canvas_type == 'matplotlib':	
+		# # ______ Windbreakers _____________
+		for w in self.backend.windbreakers:
 
-			# if 'Windbreaker' in m[2]:
-				# wb = self.mainapp.frames[m[1]]
-				# station = float(m[3])
-				# canvas = self.backend.ax2
-				# side = wb.backend.side
-				# if side == 'LHS':
-					# f = -1
-				# else:
-					# f = 1
-				# datum = [station, float(wb.backend.dist_from_cl)*f]
-				# windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, datum, wb.backend)
+			wb = self.mainapp.frames[w[1]]
+			station = float(w[2])
+			canvas = self.backend.ax2
+			side = wb.backend.side
+			if side == 'LHS':
+				f = -1
+			else:
+				f = 1
+			datum = [station, float(wb.backend.dist_from_cl)*f]
+			windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, datum, wb.backend)
 		
 			# if 'Lav' in m[2]:
 				# lav = self.mainapp.frames[m[1]]
@@ -245,6 +244,21 @@ def draw_monuments_top_down(self, canvas, canvas_type, datum,):
 		elif 'Lav' in m[2]:
 			lav_draw.draw_lav_top_down(c, canvas, canvas_type, m_datum)
 
+def draw_windbreakers_top_down(self, canvas, canvas_type, datum,):
+
+	for wb in self.windbreakers:
+		
+		c = self.mainapp.frames[wb[0]].backend
+		
+		x = float(wb[1])
+		if c.side == 'LHS':
+			y = float(c.dist_from_cl)*-1
+		else:
+			y = float(c.dist_from_cl)
+		m_datum = [x,y]
+
+		windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, m_datum, c)
+			
 def draw_monuments_side(self, canvas_lhs, canvas_rhs, canvas_type, datum):
 	canvases = {'LHS': canvas_lhs, 'RHS': canvas_rhs}
 	for m in self.monuments:

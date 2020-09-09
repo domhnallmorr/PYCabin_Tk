@@ -78,6 +78,11 @@ def setup_icons(mainapp):
 	data = 'iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAANUlEQVRoge3PIRIAIAwDwZT//xksns5UsKsiLwkAAAAAH6lr77GKN5Uka7qiiyMAAAAAMOgA2b4BCBnD0qgAAAAASUVORK5CYII='
 	mainapp.wb_icon2 = ImageTk.PhotoImage(decode_base64_image(size, data))
 	
+	data  = 'iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAABmJLR0QA/wD/AP+gvaeTAAABV0lEQVRoge2YQU7DMBBFHwh1RyTYs+YqVKwQ9E7cgx2qxHnYJg07kOACZVEvCnLsjGOXxvwnVarimVf/tpE8ASGEEEIIcXi2A68v4AW4DvReAWtXO+Qp7TcT29iH+2DfZt4Tgub2Zw+8BZ49fesMYXP4iwT+9PSl/I1L+L2cRAKP4bcj6dst4PdmO522l/mhwLWjwLWjwLWjwLWTGrgDHoDGs9YAd8Br6qYO4PcydEZtgcsR/Reu1np+zuU3MyS6NzhWAU9pv5kh0bnB0QQ8pf1mxopugQ27+25p8JT2mxkr6vbWWoOntN9Lyjwcm0+nzse5/JqHQYHr5yywFrq/LeTyZPH/u19YgWtHz6VrR4GN9J5rbxOdRf1TAz+NvHas/h+EJpoeeAQWnr6FW+sjjtJ+IUSFWCaN2JOHY68HdPAIstl7382w3szSiVvgZob1QgghhPhjvgFtjGbBhG0xXgAAAABJRU5ErkJggg=='
+	mainapp.lopa_icon2 = ImageTk.PhotoImage(decode_base64_image(size, data))
+
+	data='iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAABmJLR0QA/wD/AP+gvaeTAAAArElEQVRYhe3YQQqDMBSE4VFyI6HgvtB1T+EVeoReoadwLXQvCL1S60qbZpMnk5Kg862CvMXvAwkICKdaDpf7+MkZEhpubQUAzn94PZ/y1AT657Se64wdJgpkKZCVNLBranRN2nc+1gb/QYEsBbIUyCo+0MVHsPl2sM4/Xu/ozD42aHlT4Ls567xF8RtUIEuBLAWyFMgy3SRWKW+QRfEbVCBLgayfr9j/syl7MQO9UxYjWgxKhAAAAABJRU5ErkJggg=='
+	mainapp.add_icon2 = ImageTk.PhotoImage(decode_base64_image(size, data))
 	
 def decode_base64_image(size, data):
 

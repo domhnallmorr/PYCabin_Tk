@@ -18,6 +18,7 @@ def setup_variables(w):
 	w.seat_layout = {'LHS': [], 'RHS': []}
 	#w.monuments = []
 	w.lavs = []
+	w.windbreakers = []
 	w.galleys = []
 	
 def update_variables(w, source):
@@ -30,6 +31,7 @@ def update_variables(w, source):
 	w.no_rhs_seats = source.no_rhs_seats
 	w.seat_layout = copy.deepcopy(source.seat_layout)
 	#w.monuments = copy.deepcopy(source.monuments)
+	w.windbreakers = copy.deepcopy(source.windbreakers)
 	w.lavs = copy.deepcopy(source.lavs)
 	w.galleys = copy.deepcopy(source.galleys)
 	
@@ -219,6 +221,3 @@ class LOPA_Saved_State():
 	
 		setup_variables(self)
 		update_variables(self, aircraft)
-
-	
-	

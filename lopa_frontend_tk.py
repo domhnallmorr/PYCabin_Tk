@@ -211,11 +211,11 @@ class LOPA_Page_Tk(tk.Frame):
 		self.galley_tree.column("B",minwidth=0,width=150, stretch='NO')
 		self.galley_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
 
-		self.wb_tree = ttk.Treeview(self.wb_frame, selectmode="extended",columns=("A","B"),height = 2)
+		self.wb_tree = ttk.Treeview(self.wb_frame, selectmode="extended",columns=("A"),height = 2)
 		self.wb_tree.heading("#0", text="Windbreaker")
-		self.wb_tree.column("#0",minwidth=0,width=100, stretch='NO')
+		self.wb_tree.column("#0",minwidth=0,width=200, stretch='NO')
 		self.wb_tree.heading("A", text="Station (in)")	  
-		self.wb_tree.column("A",minwidth=0,width=200, stretch='NO') 
+		self.wb_tree.column("A",minwidth=0,width=150, stretch='NO') 
 		self.wb_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
 		
 		self.item_tree = ttk.Treeview(self.items_frame, selectmode="extended",columns=("A","B",'C'),height = 10)
@@ -337,7 +337,7 @@ class LOPA_Page_Tk(tk.Frame):
 		
 	def setup_buttons(self):
 
-		self.edit_btn = Button(self.main_scroll_frame.inner, text = 'Edit',width = 30, command= lambda: self.edit())
+		self.edit_btn = Button(self.main_scroll_frame.inner, text = 'Edit', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.edit())
 		self.edit_btn.grid(row=1, column=0, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
 		# self.dxf_btn = Button(self.main_tab, text = 'Export to DXF',width = 30, command= lambda: self.export_dxf())
@@ -346,9 +346,9 @@ class LOPA_Page_Tk(tk.Frame):
 		# self.ms_word_btn = Button(self.main_tab, text = 'Export to Word',width = 30, command= lambda: self.export_word())
 		# self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 		
-		# self.add_monument_btn = Button(self.lav_frame, text = 'Add Monument',
-								# command = self.add_monument)
-		# self.add_monument_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
+		self.add_wb_btn = Button(self.wb_frame, text = 'Add', image = self.mainapp.add_icon2, compound = LEFT,
+								command =  lambda type='Windbreaker': self.add_monument(type))
+		self.add_wb_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
 
 		self.auto_item_btn = Button(self.items_frame, text = 'Autogen',
 								command = self.autogen_items)
@@ -358,8 +358,8 @@ class LOPA_Page_Tk(tk.Frame):
 							  command = lambda height=30, trees = [self.LHS_lopa_tree,self.RHS_lopa_tree]: self.expand_tree(trees,height))
 		self.expand_lopa_tree_btn.grid(row=0, column=0, columnspan=4, sticky='nsew')
 
-	def add_monument(self):
-		self.w=Add_Monument_Window(self, self.mainapp, self.master)
+	def add_monument(self, type):
+		self.w=Add_Monument_Window(self, self.mainapp, self.master, type)
 		self.master.wait_window(self.w.top)	
 		
 		if self.w.button == 'ok':
@@ -376,7 +376,6 @@ class LOPA_Page_Tk(tk.Frame):
 			else:
 				tree.configure(height = 10)
 		
-		self.lopa_scroll_frame._on_frame_configure()
 	def update_label_text(self):
 				
 		self.top_label.config(text=f'LOPA: {self.backend.title}')
@@ -392,6 +391,7 @@ class LOPA_Page_Tk(tk.Frame):
 		#treeview_functions.write_data_to_treeview(self.monument_tree, 'replace', self.backend.monuments)
 		treeview_functions.write_data_to_treeview(self.lav_tree, 'replace', self.backend.lavs)
 		treeview_functions.write_data_to_treeview(self.galley_tree, 'replace', self.backend.galleys)
+		treeview_functions.write_data_to_treeview(self.wb_tree, 'replace', self.backend.windbreakers)
 
 	def update_component(self, window, type):
 		
@@ -424,7 +424,7 @@ class LOPA_Page_Tk(tk.Frame):
 			y_datum = 24.755
 		lopa_draw.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum*-1], 'LHS')
 		lopa_draw.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum], 'RHS')
-		#lopa_draw.draw_monuments_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
+		lopa_draw.draw_windbreakers_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
 		#lopa_draw.draw_monuments_side(self.backend, self.backend.ax3, self.backend.ax1, 'matplotlib', [0,0])
 		self.canvas.draw()
 	def add_lopa_plot(self):
@@ -563,7 +563,7 @@ class Edit_LOPA_Window_Tk(object):
 		self.orig_part_no = None
 		
 		if mode == 'edit':
-			self.orig_part_no = parent_seat.backend.title
+			self.orig_part_no = parent_lopa.backend.title
 			
 		lopa_bk.setup_variables(self)
 		if self.mode == 'edit':
@@ -580,14 +580,15 @@ class Edit_LOPA_Window_Tk(object):
 		if self.mode == 'edit':
 			self.set_default_values()
 		
-		self.title_entry.insert(0, 'A320 LOPA')
-		self.aircraft_combo.set('A320')
-		self.lhs_pitch_combo.set(28)
-		self.rhs_pitch_combo.set(28)
-		self.lhs_rows_combo.set(30)
-		self.rhs_rows_combo.set(30)
-		self.lhs_seat_combo.set('A320 Seat 1')
-		self.rhs_seat_combo.set('A320 Seat 2')
+		if self.mode == 'new':
+			self.title_entry.insert(0, 'A320 LOPA')
+			self.aircraft_combo.set('A320')
+			self.lhs_pitch_combo.set(28)
+			self.rhs_pitch_combo.set(28)
+			self.lhs_rows_combo.set(30)
+			self.rhs_rows_combo.set(30)
+			self.lhs_seat_combo.set('A320 Seat 1')
+			self.rhs_seat_combo.set('A320 Seat 2')
 	def setup_label_frames(self):
 		self.details_frame = LabelFrame(self.top,text="LOPA Details:")
 		self.details_frame.grid(row=2, column=0, columnspan = 8, rowspan = 4,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
@@ -628,7 +629,10 @@ class Edit_LOPA_Window_Tk(object):
 		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320', 'A319', 'B737-800'],state=state)
 		self.aircraft_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.aircraft_combo.bind("<<ComboboxSelected>>", self.aircraft_selected)
-		self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values', 'Aircraft Type']
+		if self.mode == 'edit':
+			self.aircraft_combo.set(self.parent_lopa.backend.aircraft_type)
+		else:
+			self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values', 'Aircraft Type']
 		
 		self.economy_entry=Entry(self.details_frame, width=20)		
 		#self.economy_entry.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')		
@@ -642,15 +646,18 @@ class Edit_LOPA_Window_Tk(object):
 
 		self.lhs_rows_combo= ttk.Combobox(self.seats_frame, values=[i for i in range(31)],state=state)
 		self.lhs_rows_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Number of LHS Seats'] = ['combo', self.lhs_rows_combo, 'int greater than equal 0', 'LHS No. of Rows']
+		if self.mode != 'edit':
+			self.data_checks['Number of LHS Seats'] = ['combo', self.lhs_rows_combo, 'int greater than equal 0', 'LHS No. of Rows']
 		
 		self.lhs_seat_combo= ttk.Combobox(self.seats_frame,state=state)
 		self.lhs_seat_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['LHS Default Seat'] = ['combo', self.lhs_seat_combo, 'in values', 'LHS Seat']
+		if self.mode != 'edit':
+			self.data_checks['LHS Default Seat'] = ['combo', self.lhs_seat_combo, 'in values', 'LHS Seat']
 		
 		self.lhs_pitch_combo= ttk.Combobox(self.seats_frame, values=[28, 29, 30, 31, 32, 33],state=state)
 		self.lhs_pitch_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['LHS Default Pitch'] = ['combo', self.lhs_pitch_combo, 'int greater than 27', 'LHS Pitch']
+		if self.mode != 'edit':
+			self.data_checks['LHS Default Pitch'] = ['combo', self.lhs_pitch_combo, 'int greater than 27', 'LHS Pitch']
 		
 		labels = ['Number Rows RHS:', 'Default Seat RHS:', 'Default Pitch RHS (in):']
 		row = 2
@@ -658,15 +665,18 @@ class Edit_LOPA_Window_Tk(object):
 
 		self.rhs_rows_combo= ttk.Combobox(self.seats_frame, values=[i for i in range(31)],state=state)
 		self.rhs_rows_combo.grid(row=2,column=5,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['Number of RHS Seats'] = ['combo', self.rhs_rows_combo, 'int greater than equal 0', 'RHS No. of Rows']
+		if self.mode != 'edit':
+			self.data_checks['Number of RHS Seats'] = ['combo', self.rhs_rows_combo, 'int greater than equal 0', 'RHS No. of Rows']
 		
 		self.rhs_seat_combo= ttk.Combobox(self.seats_frame,state=state)
 		self.rhs_seat_combo.grid(row=3,column=5,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['RHS Default Seat'] = ['combo', self.rhs_seat_combo, 'in values', 'RHS Seat']
+		if self.mode != 'edit':
+			self.data_checks['RHS Default Seat'] = ['combo', self.rhs_seat_combo, 'in values', 'RHS Seat']
 		
 		self.rhs_pitch_combo= ttk.Combobox(self.seats_frame, values=[28, 29, 30, 31, 32, 33],state=state)
 		self.rhs_pitch_combo.grid(row=4,column=5,padx=2, pady=2,sticky = 'NSEW')
-		self.data_checks['RHS Default Pitch'] = ['combo', self.rhs_pitch_combo, 'int greater than 27', 'RHS Pitch']
+		if self.mode != 'edit':
+			self.data_checks['RHS Default Pitch'] = ['combo', self.rhs_pitch_combo, 'int greater than 27', 'RHS Pitch']
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
@@ -733,6 +743,7 @@ class Edit_LOPA_Window_Tk(object):
 				
 				
 				self.title = self.title_entry.get()
+				self.description = self.description_entry.get()
 				self.aircraft_type = self.aircraft_combo.get()
 				self.no_lhs_seats = self.lhs_rows_combo.get()
 				self.no_rhs_seats = self.rhs_rows_combo.get()				
@@ -831,22 +842,25 @@ class Double_Click_Seat_Window_Tk(object):
 			self.top.destroy()
 			
 class Add_Monument_Window():
-	def __init__(self, lopa, mainapp, master,):
+	def __init__(self, lopa, mainapp, master,type):
 	
 		top=self.top=Toplevel(master)
 		top.grab_set()
 		
 		self.mainapp = mainapp
 		self.lopa = lopa
-
+		self.type = type
+		
 		lopa_bk.setup_variables(self)
 		lopa_bk.update_variables(self, self.lopa.backend)
 		
-		self.wbs = components_tk.get_all_windbreakers(mainapp)
-		self.wbs = components_tk.gen_wb_dict(mainapp, self.wbs)
+		if type == 'Windbreaker':
+
+			self.monuments = components_tk.get_all_components(mainapp, 'Windbreakers')
+
 		
-		self.lavs =components_tk.get_all_lavs(mainapp)
-		self.lavs = components_tk.gen_lav_dict(mainapp, self.lavs)
+		# self.lavs =components_tk.get_all_lavs(mainapp)
+		# self.lavs = components_tk.gen_lav_dict(mainapp, self.lavs)
 		
 		self.setup_label_frames()
 		self.setup_widgets()
@@ -858,19 +872,19 @@ class Add_Monument_Window():
 		
 	def setup_widgets(self):
 
-		labels = ['Monument Type:', 'Monument:', 'Station (in):',]
+		labels = [f'{self.type}:', 'Station (in):',]
 		row = 2
-		gui_styles_tk.create_multiple_labels(self.options_frame, 20, labels, row, 2, 2, 2)
+		gui_styles_tk.create_multiple_labels(self.options_frame, labels, row, 2, 20, 2, 2)
 		
-		self.type_combo= ttk.Combobox(self.options_frame, values=['Windbreakers', 'Lavs'])
-		self.type_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.type_combo.bind("<<ComboboxSelected>>", self.type_selected)
+		# self.type_combo= ttk.Combobox(self.options_frame, values=['Windbreakers', 'Lavs'])
+		# self.type_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
+		# self.type_combo.bind("<<ComboboxSelected>>", self.type_selected)
 
-		self.monument_combo= ttk.Combobox(self.options_frame, values=[])
-		self.monument_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.monument_combo= ttk.Combobox(self.options_frame, values=self.monuments['All'])
+		self.monument_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 
 		self.station_entry=Entry(self.options_frame, width=20)		
-		self.station_entry.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')	
+		self.station_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
@@ -900,13 +914,11 @@ class Add_Monument_Window():
 		
 		if self.button == 'ok':
 			#self.check_data()
-			type = self.type_combo.get()
 			monument =self.monument_combo.get()
 			station =self.station_entry.get()
 			
-			index = len(self.lopa.monument_tree.get_children())+1
-			data = [index, monument, type, station]
-			self.monuments.append(data)
+			data = [monument, station]
+			self.windbreakers.append(data)
 			
 			self.top.destroy()
 		

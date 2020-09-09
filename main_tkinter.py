@@ -58,7 +58,7 @@ class MainApplication(tk.Frame):
 		self.parent.grid_columnconfigure(3, weight=1)
 		self.frame = Frame(self.parent)
 		
-		self.sidebar_frame = tk.Frame(bg='white')
+		self.sidebar_frame = tk.Frame()
 		self.sidebar_frame.grid_rowconfigure(1, weight=1)
 		self.sidebar_frame.grid_columnconfigure(19, weight=1)
 		self.rootpane.add(self.sidebar_frame)
