@@ -16,7 +16,9 @@ def setup_variables(w):
 	w.no_lhs_seats = None
 	w.no_rhs_seats = None
 	w.seat_layout = {'LHS': [], 'RHS': []}
-	w.monuments = []
+	#w.monuments = []
+	w.lavs = []
+	w.galleys = []
 	
 def update_variables(w, source):
 	w.title = source.title
@@ -27,11 +29,28 @@ def update_variables(w, source):
 	w.no_lhs_seats = source.no_lhs_seats
 	w.no_rhs_seats = source.no_rhs_seats
 	w.seat_layout = copy.deepcopy(source.seat_layout)
-	w.monuments = copy.deepcopy(source.monuments)
+	#w.monuments = copy.deepcopy(source.monuments)
+	w.lavs = copy.deepcopy(source.lavs)
+	w.galleys = copy.deepcopy(source.galleys)
 	
 	if w.aircraft_type == 'A320' or w.aircraft_type == 'A319':
 		w.treeview_node = 'A320 LOPAs'
-		
+
+def set_default_monumnets(aircraft):
+
+	default_lavs = {'A320': 
+						[['Lav A', 'Yes', 300, 'Yes', 'No'],
+						['Lav D', 'Yes', 1207, 'Yes', 'No'],
+						['Lav E', 'Yes', 1207, 'Yes', 'No']],
+					}
+	
+	default_galleys = {'A320':
+							[['Galley 1', 'Yes', 300],
+							['Galley 5', 'Yes', 300]]
+						}
+	return default_lavs[aircraft], default_galleys[aircraft]
+	
+	
 def process_boeing_station(aircraft_type,station):
 	station = float(station)
 	print(station)

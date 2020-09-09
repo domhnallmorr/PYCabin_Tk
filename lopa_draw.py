@@ -1,11 +1,11 @@
 import numpy as np
-from Pycabin_Backend import seats_draw
-from Pycabin_Backend import windbreaker_draw
-from Pycabin_Backend import lav_draw
-from Pycabin_Backend import aircraft_models
-from Pycabin_Backend import LOPA_backend as lopa_bk
+import seats_draw
+import windbreaker_draw
+# from Pycabin_Backend import lav_draw
+import aircraft_models
+import LOPA_backend as lopa_bk
 
-from Pycabin_Frontend_Tkinter import lopa_tk
+import lopa_frontend_tk
 import ezdxf
 
 def draw_lopa(self, canvas, canvas_type, datum, draw_top_down):
@@ -83,34 +83,34 @@ def draw_lopa(self, canvas, canvas_type, datum, draw_top_down):
 			side_datum = [row[3], 115]
 		seats_draw.economy_seat_generic_side_view(seat, canvas, canvas_type, side_datum)
 
-	if canvas_type == 'matplotlib':	
-		# ______ MONUMENTS _____________
-		for m in self.backend.monuments:
+	# if canvas_type == 'matplotlib':	
+		# # ______ MONUMENTS _____________
+		# for m in self.backend.monuments:
 
-			if 'Windbreaker' in m[2]:
-				wb = self.mainapp.frames[m[1]]
-				station = float(m[3])
-				canvas = self.backend.ax2
-				side = wb.backend.side
-				if side == 'LHS':
-					f = -1
-				else:
-					f = 1
-				datum = [station, float(wb.backend.dist_from_cl)*f]
-				windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, datum, wb.backend)
+			# if 'Windbreaker' in m[2]:
+				# wb = self.mainapp.frames[m[1]]
+				# station = float(m[3])
+				# canvas = self.backend.ax2
+				# side = wb.backend.side
+				# if side == 'LHS':
+					# f = -1
+				# else:
+					# f = 1
+				# datum = [station, float(wb.backend.dist_from_cl)*f]
+				# windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, datum, wb.backend)
 		
-			if 'Lav' in m[2]:
-				lav = self.mainapp.frames[m[1]]
-				station = float(m[3])
-				canvas = self.backend.ax2
-				side = lav.backend.side
-				if side == 'LHS':
-					f = -1
-				else:
-					f = 1
-				datum = [station, float(lav.backend.dist_from_cl)*f]
-				#windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, datum, lav.backend)
-				lav_draw.draw_lav_top_down(lav.backend, canvas, canvas_type, datum)
+			# if 'Lav' in m[2]:
+				# lav = self.mainapp.frames[m[1]]
+				# station = float(m[3])
+				# canvas = self.backend.ax2
+				# side = lav.backend.side
+				# if side == 'LHS':
+					# f = -1
+				# else:
+					# f = 1
+				# datum = [station, float(lav.backend.dist_from_cl)*f]
+				# #windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, datum, lav.backend)
+				# lav_draw.draw_lav_top_down(lav.backend, canvas, canvas_type, datum)
 		self.canvas.draw()
 def draw_aircraft(self, canvas, canvas_type, datum):
 

@@ -129,11 +129,17 @@ class LOPA_Page_Tk(tk.Frame):
 		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text="LOPA Details:")
 		self.main_frame.grid(row=2, column=0, columnspan = 16, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
-		self.monuments_frame = LabelFrame(self.main_scroll_frame.inner,text="Monuments:")
-		self.monuments_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.lav_frame = LabelFrame(self.main_scroll_frame.inner,text="Lavs:")
+		self.lav_frame.grid(row=4, column=0, columnspan = 8, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
+		self.galley_frame = LabelFrame(self.main_scroll_frame.inner,text="Galleys:")
+		self.galley_frame.grid(row=5, column=0, columnspan = 8, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
+		self.wb_frame = LabelFrame(self.main_scroll_frame.inner,text="Windbreakers:")
+		self.wb_frame.grid(row=6, column=0, columnspan = 8, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		
 		self.items_frame = LabelFrame(self.main_scroll_frame.inner,text="Seat Item Numbers:")
-		self.items_frame.grid(row=4, column=8, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.items_frame.grid(row=4, column=8, columnspan = 8, rowspan = 3,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
 		self.seats_frame = LabelFrame(self.lopa_scroll_frame.inner,text="Seats:")
 		self.seats_frame.grid(row=3, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
@@ -170,19 +176,48 @@ class LOPA_Page_Tk(tk.Frame):
 		
 	def setup_treeviews(self):
 	
-		self.monument_tree = ttk.Treeview(self.monuments_frame, selectmode="extended",columns=("A","B",'C'),height = 10)
-		#self.monument_tree.grid(row=1,column=0, columnspan= 6,sticky="nsew")
-		self.monument_tree.heading("#0", text="#")
-		self.monument_tree.column("#0",minwidth=0,width=60, stretch='NO')
-		self.monument_tree.heading("A", text="Monument")	  
-		self.monument_tree.column("A",minwidth=0,width=200, stretch='NO') 
-		self.monument_tree.heading("B", text="Type")	  
-		self.monument_tree.column("B",minwidth=0,width=150, stretch='NO')
-		self.monument_tree.heading("C", text="Station (in)")	  
-		self.monument_tree.column("C",minwidth=0,width=130, stretch='NO')	
+		# self.monument_tree = ttk.Treeview(self.lav_frame, selectmode="extended",columns=("A","B",'C'),height = 10)
+		# #self.monument_tree.grid(row=1,column=0, columnspan= 6,sticky="nsew")
+		# self.monument_tree.heading("#0", text="#")
+		# self.monument_tree.column("#0",minwidth=0,width=60, stretch='NO')
+		# self.monument_tree.heading("A", text="Monument")	  
+		# self.monument_tree.column("A",minwidth=0,width=200, stretch='NO') 
+		# self.monument_tree.heading("B", text="Type")	  
+		# self.monument_tree.column("B",minwidth=0,width=150, stretch='NO')
+		# self.monument_tree.heading("C", text="Station (in)")	  
+		# self.monument_tree.column("C",minwidth=0,width=130, stretch='NO')	
 
-		self.monument_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
+		# self.monument_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
 
+		self.lav_tree = ttk.Treeview(self.lav_frame, selectmode="extended",columns=("A","B","C", "D"),height = 3)
+		self.lav_tree.heading("#0", text="Lav")
+		self.lav_tree.column("#0",minwidth=0,width=80, stretch='NO')
+		self.lav_tree.heading("A", text="Installed")	  
+		self.lav_tree.column("A",minwidth=0,width=100, stretch='NO') 
+		self.lav_tree.heading("B", text="Station (in)")	  
+		self.lav_tree.column("B",minwidth=0,width=130, stretch='NO')
+		self.lav_tree.heading("C", text="CAS Installed")	  
+		self.lav_tree.column("C",minwidth=0,width=130, stretch='NO')		
+		self.lav_tree.heading("D", text="Doghouse Installed")	  
+		self.lav_tree.column("D",minwidth=0,width=150, stretch='NO')
+		self.lav_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
+
+		self.galley_tree = ttk.Treeview(self.galley_frame, selectmode="extended",columns=("A","B"),height = 2)
+		self.galley_tree.heading("#0", text="Galley")
+		self.galley_tree.column("#0",minwidth=0,width=100, stretch='NO')
+		self.galley_tree.heading("A", text="Installed")	  
+		self.galley_tree.column("A",minwidth=0,width=200, stretch='NO') 
+		self.galley_tree.heading("B", text="Station (in)")	  
+		self.galley_tree.column("B",minwidth=0,width=150, stretch='NO')
+		self.galley_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
+
+		self.wb_tree = ttk.Treeview(self.wb_frame, selectmode="extended",columns=("A","B"),height = 2)
+		self.wb_tree.heading("#0", text="Windbreaker")
+		self.wb_tree.column("#0",minwidth=0,width=100, stretch='NO')
+		self.wb_tree.heading("A", text="Station (in)")	  
+		self.wb_tree.column("A",minwidth=0,width=200, stretch='NO') 
+		self.wb_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
+		
 		self.item_tree = ttk.Treeview(self.items_frame, selectmode="extended",columns=("A","B",'C'),height = 10)
 		#self.monument_tree.grid(row=1,column=0, columnspan= 6,sticky="nsew")
 		self.item_tree.heading("#0", text="#")
@@ -311,9 +346,9 @@ class LOPA_Page_Tk(tk.Frame):
 		# self.ms_word_btn = Button(self.main_tab, text = 'Export to Word',width = 30, command= lambda: self.export_word())
 		# self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 		
-		self.add_monument_btn = Button(self.monuments_frame, text = 'Add Monument',
-								command = self.add_monument)
-		self.add_monument_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
+		# self.add_monument_btn = Button(self.lav_frame, text = 'Add Monument',
+								# command = self.add_monument)
+		# self.add_monument_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
 
 		self.auto_item_btn = Button(self.items_frame, text = 'Autogen',
 								command = self.autogen_items)
@@ -353,8 +388,10 @@ class LOPA_Page_Tk(tk.Frame):
 		self.no_rhs_label.config(text=f' Number of RHS Rows: {self.backend.no_rhs_seats}')
 
 	def update_monuments_tree(self):
-	
-		treeview_functions.write_data_to_treeview(self.monument_tree, 'replace', self.backend.monuments)
+		
+		#treeview_functions.write_data_to_treeview(self.monument_tree, 'replace', self.backend.monuments)
+		treeview_functions.write_data_to_treeview(self.lav_tree, 'replace', self.backend.lavs)
+		treeview_functions.write_data_to_treeview(self.galley_tree, 'replace', self.backend.galleys)
 
 	def update_component(self, window, type):
 		
@@ -387,8 +424,8 @@ class LOPA_Page_Tk(tk.Frame):
 			y_datum = 24.755
 		lopa_draw.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum*-1], 'LHS')
 		lopa_draw.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum], 'RHS')
-		lopa_draw.draw_monuments_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
-		lopa_draw.draw_monuments_side(self.backend, self.backend.ax3, self.backend.ax1, 'matplotlib', [0,0])
+		#lopa_draw.draw_monuments_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
+		#lopa_draw.draw_monuments_side(self.backend, self.backend.ax3, self.backend.ax1, 'matplotlib', [0,0])
 		self.canvas.draw()
 	def add_lopa_plot(self):
 		
@@ -542,8 +579,15 @@ class Edit_LOPA_Window_Tk(object):
 
 		if self.mode == 'edit':
 			self.set_default_values()
-			
-
+		
+		self.title_entry.insert(0, 'A320 LOPA')
+		self.aircraft_combo.set('A320')
+		self.lhs_pitch_combo.set(28)
+		self.rhs_pitch_combo.set(28)
+		self.lhs_rows_combo.set(30)
+		self.rhs_rows_combo.set(30)
+		self.lhs_seat_combo.set('A320 Seat 1')
+		self.rhs_seat_combo.set('A320 Seat 2')
 	def setup_label_frames(self):
 		self.details_frame = LabelFrame(self.top,text="LOPA Details:")
 		self.details_frame.grid(row=2, column=0, columnspan = 8, rowspan = 4,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
@@ -686,14 +730,18 @@ class Edit_LOPA_Window_Tk(object):
 							pitch = int(self.rhs_pitch_combo.get())
 						station += pitch
 						self.seat_layout['RHS'].append([i+1, self.rhs_seat_combo.get(), pitch, station])
-						
+				
+				
 				self.title = self.title_entry.get()
 				self.aircraft_type = self.aircraft_combo.get()
 				self.no_lhs_seats = self.lhs_rows_combo.get()
 				self.no_rhs_seats = self.rhs_rows_combo.get()				
 				self.drawing_no = self.drawing_entry.get()
 				self.drawing_rev = self.revision_combo.get()
-
+				
+				if self.mode == 'new':
+					self.lavs, self.galleys = lopa_bk.set_default_monumnets(self.aircraft_type)
+				
 				self.top.destroy()
 			
 			else:
