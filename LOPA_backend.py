@@ -143,8 +143,13 @@ class LOPA_Backend():
 		self.save_class = LOPA_Saved_State
 		self.mainapp = self.parent_page.mainapp
 		
-	def gen_save_dict(self):
-	
+	def gen_save_dict(self, comments_from_text_widget = True, comments = None):
+
+		if comments_from_text_widget:
+			comments = self.parent_page.comment_text.get("1.0","end")
+		else:
+			comments = comments
+			
 		return {'Title': self.title,
 				'Description': self.description,
 				'Drawing Number': self.drawing_no,
@@ -153,7 +158,11 @@ class LOPA_Backend():
 				'No LHS Seats': self.no_lhs_seats,
 				'No RHS Seats': self.no_rhs_seats,
 				'Seat Layout': self.seat_layout,
-				'Monuments': self.monuments}
+				'Lavs': self.lavs,
+				'Galleys': self.galleys,
+				'Windbreakers': self.windbreakers,
+				'Comments': comments
+				}
 
 	def recalculate_stations(self):
 		

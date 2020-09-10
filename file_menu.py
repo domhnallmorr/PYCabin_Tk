@@ -28,14 +28,15 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.05\test.json'
+	#mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.05\test.json'
+	mainapp.save_file = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json'
 	write_save_file(mainapp)
 	
 def write_save_file(mainapp):
 
 
 	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Seats': [],
-					'Windbreakers': []}
+					'Windbreakers': [], 'LOPAs': []}
 	
 	# _________________ SEATS _________________
 	seats_dict = components_tk.get_all_components(mainapp, 'Seats')
@@ -48,6 +49,12 @@ def write_save_file(mainapp):
 
 	for w in wb_dict['All']:
 		save_dict['Windbreakers'].append(mainapp.frames[w].backend.gen_save_dict())
+
+	# _________________ LOPAS _________________
+	lopa_dict = components_tk.get_all_components(mainapp, 'LOPAs')
+
+	for l in lopa_dict['All']:
+		save_dict['LOPAs'].append(mainapp.frames[l].backend.gen_save_dict())
 		
 	with open(mainapp.save_file, 'w') as outfile:
 		json.dump(save_dict, outfile, indent=4)
@@ -55,7 +62,8 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.05\test.json') as f:
+	#with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.05\test.json') as f:
+	with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
 	# ______ Project _________________
@@ -74,6 +82,13 @@ def load(event=None, mainapp=None):
 		for wb in data['Windbreakers']:
 			wb = Load('Windbreaker', wb)
 			components_tk.create_component(mainapp, 'Windbreaker', wb, 'new')
+
+	if 'LOPAs' in data.keys():
+		
+		for l in data['LOPAs']:
+			l = Load('LOPA', l)
+			components_tk.create_component(mainapp, 'LOPA', l, 'new')
+
 			
 	# reset undo and redo stacks
 	mainapp.states.reset(undo=True, redo=True)
@@ -135,4 +150,18 @@ class Load():
 			self.cmm_date = component_data["CMM Date"]
 			self.cmm_install = component_data["CMM Install"]
 			self.cmm_remove = component_data["CMM Remove"]
-			self.comments = component_data["Comments"]			
+			self.comments = component_data["Comments"]		
+			
+		if type == 'LOPA':
+			self.title = component_data["Title"]
+			self.description = component_data["Description"]
+			self.aircraft_type = component_data["Aircraft Type"]			
+			self.drawing_no = component_data["Drawing Number"]
+			self.drawing_rev = component_data["Drawing Rev"]
+			self.no_lhs_seats = component_data["No LHS Seats"]
+			self.no_rhs_seats = component_data["No RHS Seats"]
+			self.seat_layout = component_data["Seat Layout"]
+			self.lavs = component_data["Lavs"]
+			self.galleys = component_data["Galleys"]
+			self.windbreakers = component_data["Windbreakers"]
+			self.comments = component_data["Comments"]

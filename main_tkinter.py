@@ -129,7 +129,8 @@ class MainApplication(tk.Frame):
 									'Windbreakers']		
 		
 		self.treeview_nodes = {'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
-								'Windbreakers': ['A320 Windbreakers']}
+								'Windbreakers': ['A320 Windbreakers'],
+								'LOPAs': ['A320 LOPAs']}
 		
 		
 

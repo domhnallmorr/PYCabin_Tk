@@ -144,7 +144,10 @@ def get_all_components(mainapp, type):
 					'B737 Family': [], 'B737 Family LHS': [], 'B737 Family RHS': []}
 	if type == 'Windbreakers':
 		components_dict = {'All': [], 'A320 Family LHS': [], 'A320 Family RHS': []}
-	
+
+	if type == 'LOPAs':
+		components_dict = {'All': [], 'A320': [], 'A319': []}
+		
 	for type in types:
 		for node in mainapp.treeview_nodes[type]:
 
@@ -158,8 +161,11 @@ def get_all_components(mainapp, type):
 					side = component.backend.side
 					if f'{ac_type} {side}' in components_dict.keys():
 						components_dict[f'{ac_type} {side}'].append(component.backend.title)
-					
-					
+				
+				if type == 'LOPAs':
+					if f'{ac_type}' in components_dict.keys():
+						components_dict[f'{ac_type}'].append(component.backend.title)
+						
 	return components_dict
 	
 def component_renamed(component):
