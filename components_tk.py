@@ -134,7 +134,7 @@ def get_all_components(mainapp, type):
 	
 	if type == 'all':
 		components_dict = {'All': []}
-		types = ['Seats', 'Windbreakers']
+		types = ['Seats', 'Windbreakers', 'LOPAs']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 		
@@ -185,11 +185,14 @@ def delete_component(mainapp):
 	if msg:
 		delete_ok = True
 		
-		# if component.backend.type == 'Seat':
-			# seat_used = seats_tk.check_seat_used(component)
-			# if seat_used:
-				# delete_ok = False
-				# message = 'Cannot delete seat\n Ensure it is not installed in any existing LOPAs'
+		if component.backend.type in ['Seat', 'Windbreaker']:
+		
+			functions = {'Seat': seats_tk.check_seat_used, 'Windbreaker': windbreakers_tk.check_windbreaker_used}
+			
+			used, lopas = functions[component.backend.type](mainapp, component.backend)
+			if used:
+				delete_ok = False
+				message = f'Cannot Delete {component.backend.type}\n Ensure it is not Installed in any existing LOPAs'
 				
 		if delete_ok:
 			index = mainapp.main_treeview.index(component.treeview_iid)
@@ -197,11 +200,12 @@ def delete_component(mainapp):
 			mainapp.states.undo_stack.append({'type': 'deleted component', 'component': component.backend,
 												'new_class': component.backend.save_class(component.backend), 'index': index})
 			
+			show_frame(mainapp, 'Project')
 			 
 		else:
 			tkinter.messagebox.showerror(master=mainapp, title='Error', message=message)
 	
-	show_frame(mainapp, 'Project')
+	
 	
 def delete_item_from_main_treeview(mainapp, component_name, component_backend, show_project = True):
 	
@@ -246,6 +250,10 @@ def get_treeview_node(backend):
 			node = 'A320 Windbreakers'
 		elif backend.aircraft_type == 'B737 Family':
 			node = 'B737 Windbreakers'
+			
+	elif backend.type == 'LOPA':
+		if backend.aircraft_type in ['A320', 'A319']:
+			node = 'A320 LOPAs'
 	return node
 	
 def update_treeview_iid(mainapp, component_frontend):

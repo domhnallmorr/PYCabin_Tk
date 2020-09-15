@@ -47,7 +47,7 @@ def set_default_monumnets(aircraft):
 					}
 	
 	default_galleys = {'A320':
-							[['Galley 1', 'Yes', 300],
+							[['Galley 1', 'Yes', 278.6],
 							['Galley 5', 'Yes', 300]]
 						}
 	return default_lavs[aircraft], default_galleys[aircraft]
@@ -55,7 +55,7 @@ def set_default_monumnets(aircraft):
 	
 def process_boeing_station(aircraft_type,station):
 	station = float(station)
-	print(station)
+	
 	if aircraft_type == 'B737-800':
 		if station < 522:
 			tree_station = str(station)
@@ -212,7 +212,7 @@ class LOPA_Backend():
 		self.ax2 = self.lopa_figure.add_subplot(111, aspect='equal', adjustable='box')
 		self.ax3 = self.lopa_figure.add_subplot(313, aspect='equal', adjustable='box')
 		
-		self.lopa_figure.subplots_adjust(left=0.05, bottom=None, right=0.99, top=None, wspace=None, hspace=None)
+		self.lopa_figure.subplots_adjust(left=0.05, bottom=0.02, right=0.99, top=0.98, wspace=None, hspace=None)
 		#self.ax1.title.set_text('Top-Down View')
 		#self.ax2.title.set_text('Side Profile')
 	
@@ -226,7 +226,7 @@ class LOPA_Backend():
 				count += 1
 		
 class LOPA_Saved_State():
-	def __init__(self, aircraft):
+	def __init__(self, lopa):
 	
 		setup_variables(self)
-		update_variables(self, aircraft)
+		update_variables(self, lopa)

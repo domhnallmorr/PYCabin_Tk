@@ -144,7 +144,14 @@ class Seat_Backend():
 		if type != 'undo_redo':
 			self.mainapp.states.component_updated(type, self, self.save_class)
 		self.update_variables(source)
+
+	def calc_seat_weight(self, life_vest_weight, literature_weight):
+	
+		if self.seat_type == 'Triple Economy':
+			no_pax = 3
+			
 		
+		return float(self.weight_lbs) + no_pax*(float(life_vest_weight) + float(literature_weight))		
 		
 	def setup_seat_plot(self):
 	

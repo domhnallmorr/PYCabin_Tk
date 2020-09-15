@@ -72,6 +72,7 @@ class LOPA_Page_Tk(tk.Frame):
 		self.setup_treeviews()
 		self.setup_buttons()
 		self.add_lopa_plot()
+		self.add_overwing_plot()
 		self.set_grid_configures()
 		
 	def setup_scrollable_frames(self):
@@ -84,6 +85,9 @@ class LOPA_Page_Tk(tk.Frame):
 	
 		self.weight_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.weight_tab, self.mainapp)
 		self.weight_scroll_frame.pack(fill=tk.BOTH, expand=True)
+		
+		self.overwing_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.overwing_tab, self.mainapp)
+		self.overwing_scroll_frame.pack(fill=tk.BOTH, expand=True)
 		# '''
 		# self.frame = scrollable_frame.ScrollableFrame(self.seat_tab)
 		# self.frame.grid(row=0,column=0,stick='nsew')
@@ -111,11 +115,13 @@ class LOPA_Page_Tk(tk.Frame):
 		self.main_tab = Frame(self.note)
 		self.seat_tab = Frame(self.note)
 		self.weight_tab = Frame(self.note)
+		self.overwing_tab = Frame(self.note)
 		self.comments_tab = Frame(self.note)
 		
 		self.note.add(self.main_tab, text = "Main")
 		self.note.add(self.seat_tab, text = "Seat Layout")
 		self.note.add(self.weight_tab, text = "Seat Weights")
+		self.note.add(self.overwing_tab, text = "Over Wing Exit")
 		self.note.add(self.comments_tab, text = "Comments")
 		
 		#self.note.grid(row=1,column=0,sticky='NSEW')
@@ -151,6 +157,9 @@ class LOPA_Page_Tk(tk.Frame):
 		weight_frame = self.weight_scroll_frame.inner
 		self.weight_frame = LabelFrame(weight_frame,text="Seat Weights:")
 		self.weight_frame.grid(row=3, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
+		self.overwing_frame = LabelFrame(self.overwing_scroll_frame.inner, text='Overwing Exit Plot')
+		self.overwing_frame.grid(row =2, column=0, sticky='NW')
 		
 	def setup_labels(self):
 			
@@ -201,7 +210,8 @@ class LOPA_Page_Tk(tk.Frame):
 		self.lav_tree.heading("D", text="Doghouse Installed")	  
 		self.lav_tree.column("D",minwidth=0,width=150, stretch='NO')
 		self.lav_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
-
+		self.lav_tree.bind("<Double-1>", lambda event, type='Lav', mode='edit': self.add_monument(event, type, mode))
+		
 		self.galley_tree = ttk.Treeview(self.galley_frame, selectmode="extended",columns=("A","B"),height = 2)
 		self.galley_tree.heading("#0", text="Galley")
 		self.galley_tree.column("#0",minwidth=0,width=100, stretch='NO')
@@ -217,6 +227,7 @@ class LOPA_Page_Tk(tk.Frame):
 		self.wb_tree.heading("A", text="Station (in)")	  
 		self.wb_tree.column("A",minwidth=0,width=150, stretch='NO') 
 		self.wb_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
+		self.wb_tree.bind("<Double-1>", lambda event, type='Windbreaker', mode='edit': self.add_monument(event, type, mode))
 		
 		self.item_tree = ttk.Treeview(self.items_frame, selectmode="extended",columns=("A","B",'C'),height = 10)
 		#self.monument_tree.grid(row=1,column=0, columnspan= 6,sticky="nsew")
@@ -347,9 +358,13 @@ class LOPA_Page_Tk(tk.Frame):
 		# self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 		
 		self.add_wb_btn = Button(self.wb_frame, text = 'Add', image = self.mainapp.add_icon2, compound = LEFT,
-								command =  lambda type='Windbreaker': self.add_monument(type))
+								command =  lambda event=None, type='Windbreaker', mode='new': self.add_monument(event, type, mode))
 		self.add_wb_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
 
+		self.del_wb_btn = Button(self.wb_frame, text = 'Delete', image = self.mainapp.del_icon2, compound = LEFT,
+								command =  lambda type='Windbreaker': self.del_windbreaker())
+		self.del_wb_btn.grid(row = 1, column = 2, columnspan = 2, sticky = 'NSEW')
+		
 		self.auto_item_btn = Button(self.items_frame, text = 'Autogen',
 								command = self.autogen_items)
 		self.auto_item_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
@@ -358,8 +373,12 @@ class LOPA_Page_Tk(tk.Frame):
 							  command = lambda height=30, trees = [self.LHS_lopa_tree,self.RHS_lopa_tree]: self.expand_tree(trees,height))
 		self.expand_lopa_tree_btn.grid(row=0, column=0, columnspan=4, sticky='nsew')
 
-	def add_monument(self, type):
-		self.w=Add_Monument_Window(self, self.mainapp, self.master, type)
+		self.overwing_plot_btn = Button(self.overwing_frame, text = "Update Plot",
+									command= self.update_overwing_plot)
+		self.overwing_plot_btn.grid(row=2, column=0, sticky='nsew')
+		
+	def add_monument(self, event, type, mode):
+		self.w=Add_Monument_Window(self, self.mainapp, self.master, type, mode)
 		self.master.wait_window(self.w.top)	
 		
 		if self.w.button == 'ok':
@@ -367,7 +386,20 @@ class LOPA_Page_Tk(tk.Frame):
 			#treeview_functions.write_data_to_treeview(self.monument_tree, 'append', [data])
 			
 			self.update_component(self.w, 'edit')
+
+	def del_windbreaker(self):
 		
+		#create temp class for update_component method
+		
+		tmp_class = lopa_bk.LOPA_Saved_State(self.backend)
+		
+		selected_items = self.wb_tree.selection()        
+		for selected_item in selected_items:          
+			self.wb_tree.delete(selected_item)
+	  
+		tmp_class.windbreakers = treeview_functions.get_all_treeview_items(self.wb_tree)
+		
+		self.update_component(tmp_class, 'edit')
 	def expand_tree(self,trees,height):
 		#print(tree.configure(height))
 		for tree in trees:
@@ -406,6 +438,9 @@ class LOPA_Page_Tk(tk.Frame):
 		treeview_functions.write_data_to_treeview(self.LHS_lopa_tree, 'replace', self.backend.seat_layout['LHS'])
 		treeview_functions.write_data_to_treeview(self.RHS_lopa_tree, 'replace', self.backend.seat_layout['RHS'])
 		
+		self.update_lopa_plot()
+		
+	def update_lopa_plot(self):
 		self.backend.ax1.clear()
 		self.backend.ax2.clear()
 		self.backend.ax3.clear()
@@ -425,8 +460,25 @@ class LOPA_Page_Tk(tk.Frame):
 		lopa_draw.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum*-1], 'LHS')
 		lopa_draw.draw_seats_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,y_datum], 'RHS')
 		lopa_draw.draw_windbreakers_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
-		#lopa_draw.draw_monuments_side(self.backend, self.backend.ax3, self.backend.ax1, 'matplotlib', [0,0])
+		lopa_draw.draw_windbreakers_side(self.backend, [self.backend.ax1, self.backend.ax3], 'matplotlib', [0,0])
+		
+		lopa_draw.draw_lavs_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
+		lopa_draw.draw_lavs_side(self.backend, [self.backend.ax1, self.backend.ax3], 'matplotlib', [0,0])
+		
+		lopa_draw.draw_galleys_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
+		lopa_draw.draw_galleys_side(self.backend, [self.backend.ax1, self.backend.ax3], 'matplotlib', [0,0])
 		self.canvas.draw()
+
+	def add_overwing_plot(self):
+	
+		self.overwing_figure = Figure(figsize=(5,5), dpi=100)
+		self.overwing_ax1 = self.overwing_figure.add_subplot(111, aspect='equal', adjustable='box')
+
+		self.overwing_canvas = FigureCanvasTkAgg(self.overwing_figure, self.overwing_frame)
+		self.overwing_canvas.draw()
+		#canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+		self.overwing_canvas.get_tk_widget().grid(row = 3, column = 0, columnspan=8, pady=2,sticky="nsew")
+		
 	def add_lopa_plot(self):
 		
 		self.canvas = FigureCanvasTkAgg(self.backend.lopa_figure, self.preview_frame)
@@ -439,6 +491,26 @@ class LOPA_Page_Tk(tk.Frame):
 		toolbar = NavigationToolbar2Tk(self.canvas, toolbarFrame)
 		toolbar.update()	
 		toolbarFrame.grid(row = 2, column = 0, columnspan=5, pady=2,sticky="nsew")
+	
+	def update_overwing_plot(self):
+		
+		self.overwing_ax1.clear()
+		
+		s = 668.15
+		w = 24.3
+		
+		x = [s-(w/2), s-(w/2), s+(w/2), s+(w/2), s-(w/2)]
+		y = [64, 106.15, 106.15, 64, 64]
+		
+		self.overwing_ax1.plot(x, y)
+		
+		s = 701.5
+		x = [s-(w/2), s-(w/2), s+(w/2), s+(w/2), s-(w/2)]
+		
+		self.overwing_ax1.plot(x, y)
+		
+		#find near seats
+		self.overwing_canvas.draw()
 		
 	def seat_double_click(self, event, side):
 		if side == 'LHS':
@@ -500,6 +572,7 @@ class LOPA_Page_Tk(tk.Frame):
 			ipc_data.append([d[2], d[1], desc, fromto, d[3]])	
 		
 		return ipc_data
+
 	def update_weight_table(self):
 		data_ok = True
 		try:
@@ -842,50 +915,115 @@ class Double_Click_Seat_Window_Tk(object):
 			self.top.destroy()
 			
 class Add_Monument_Window():
-	def __init__(self, lopa, mainapp, master,type):
+	def __init__(self, lopa, mainapp, master,monument_type, mode):
 	
 		top=self.top=Toplevel(master)
 		top.grab_set()
 		
 		self.mainapp = mainapp
+
 		self.lopa = lopa
-		self.type = type
-		
+		self.monument_type = monument_type
+		self.mode = mode
+
 		lopa_bk.setup_variables(self)
 		lopa_bk.update_variables(self, self.lopa.backend)
 		
-		if type == 'Windbreaker':
+		if self.monument_type == 'Windbreaker':
 
 			self.monuments = components_tk.get_all_components(mainapp, 'Windbreakers')
-
 		
+		elif self.monument_type == 'Lav' or self.monument_type == 'Galley':
+			self.monuments = {'All': []}
+
 		# self.lavs =components_tk.get_all_lavs(mainapp)
 		# self.lavs = components_tk.gen_lav_dict(mainapp, self.lavs)
 		
 		self.setup_label_frames()
 		self.setup_widgets()
 		
+		if mode == 'edit':
+			if self.monument_type == 'Windbreaker':
+				self.selected_item = self.lopa.wb_tree.selection()[0]     
+				          
+				current_part = self.lopa.wb_tree.item(self.selected_item, 'text')
+				station = self.lopa.wb_tree.item(self.selected_item, 'values')[0]
+				self.monument_combo.set(current_part)
+				self.station_entry.insert(0, station)
+				
+				self.tree_index = 0
+				for item in self.lopa.wb_tree.get_children():
+					if item == self.selected_item:
+						break
+					self.tree_index += 1
+			
+			elif self.monument_type == 'Lav':
+				self.selected_item = self.lopa.lav_tree.selection()[0] 
+				
+				current_part = self.lopa.lav_tree.item(self.selected_item, 'text')
+				installed = self.lopa.lav_tree.item(self.selected_item, 'values')[0]
+				station = self.lopa.lav_tree.item(self.selected_item, 'values')[1]
+				cas_installed = self.lopa.lav_tree.item(self.selected_item, 'values')[2]
+				doghouse_installed = self.lopa.lav_tree.item(self.selected_item, 'values')[3]
+				
+				self.monument_combo.set(current_part)
+				self.monument_combo.config(state='disabled')
+				self.installed_combo.set(installed)
+				self.station_entry.insert(0, station)
+				self.station_entry.config(state='readonly')
+				self.cas_combo.set(cas_installed)
+				self.doghouse_combo.set(doghouse_installed)
+				
+				
+				self.tree_index = 0
+				for item in self.lopa.lav_tree.get_children():
+					if item == self.selected_item:
+						break
+					self.tree_index += 1
+					
 	def setup_label_frames(self):
 	
 		self.options_frame = LabelFrame(self.top,text="Options:")
 		self.options_frame.grid(row=2, column=0, columnspan = 4, rowspan = 4,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
 		
 	def setup_widgets(self):
-
-		labels = [f'{self.type}:', 'Station (in):',]
+	
+		if self.monument_type == 'Windbreaker':
+			labels = [f'{self.monument_type}:', 'Station (in):',]
+		elif self.monument_type == 'Lav':
+			labels = [f'{self.monument_type}:', 'Installed', 'Station (in):', 'CAS Installed', 'Doghouse Installed']
+			
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.options_frame, labels, row, 2, 20, 2, 2)
 		
+		row = 2
 		# self.type_combo= ttk.Combobox(self.options_frame, values=['Windbreakers', 'Lavs'])
 		# self.type_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 		# self.type_combo.bind("<<ComboboxSelected>>", self.type_selected)
-
-		self.monument_combo= ttk.Combobox(self.options_frame, values=self.monuments['All'])
-		self.monument_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
-
-		self.station_entry=Entry(self.options_frame, width=20)		
-		self.station_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 		
+		self.monument_combo= ttk.Combobox(self.options_frame, values=self.monuments['All'])
+		self.monument_combo.grid(row=row,column=3,padx=2, pady=2,sticky = 'NSEW')
+		row += 1
+		
+		if self.monument_type == 'Lav':
+			self.installed_combo = ttk.Combobox(self.options_frame, values=['Yes', 'No'], state='readonly')
+			self.installed_combo.grid(row=row,column=3,padx=2, pady=2,sticky = 'NSEW')
+			row += 1
+			
+		self.station_entry=Entry(self.options_frame, width=20)		
+		self.station_entry.grid(row=row,column=3,padx=2, pady=2,sticky = 'NSEW')
+		row += 1
+		
+		if self.monument_type == 'Lav':
+			self.cas_combo = ttk.Combobox(self.options_frame, values=['Yes', 'No'], state='readonly')
+			self.cas_combo.grid(row=row,column=3,padx=2, pady=2,sticky = 'NSEW')
+			row += 1
+
+			self.doghouse_combo = ttk.Combobox(self.options_frame, values=['Yes', 'No'], state='readonly')
+			self.doghouse_combo.grid(row=row,column=3,padx=2, pady=2,sticky = 'NSEW')
+			row += 1
+			
+			
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
 		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
@@ -896,17 +1034,17 @@ class Add_Monument_Window():
 
 		self.button = 'cancel'
 
-	def type_selected(self, event):
-		type = self.type_combo.get()
-		if type == 'Windbreakers':
-			if self.lopa.backend.aircraft_type in ['A320', 'A319']:
-				self.monument_combo['values'] = self.wbs['A320 LHS'] + self.wbs['A320 RHS']
-				self.monument_combo.set('')
+	# def type_selected(self, event):
+		# type = self.type_combo.get()
+		# if type == 'Windbreakers':
+			# if self.lopa.backend.aircraft_type in ['A320', 'A319']:
+				# self.monument_combo['values'] = self.wbs['A320 LHS'] + self.wbs['A320 RHS']
+				# self.monument_combo.set('')
 
-		if type == 'Lavs':
-			if self.lopa.backend.aircraft_type in ['A320', 'A319']:
-				self.monument_combo['values'] = self.lavs['A320 LHS'] + self.lavs['A320 RHS']
-				self.monument_combo.set('')
+		# if type == 'Lavs':
+			# if self.lopa.backend.aircraft_type in ['A320', 'A319']:
+				# self.monument_combo['values'] = self.lavs['A320 LHS'] + self.lavs['A320 RHS']
+				# self.monument_combo.set('')
 				
 	def cleanup(self,button):
 	
@@ -917,10 +1055,26 @@ class Add_Monument_Window():
 			monument =self.monument_combo.get()
 			station =self.station_entry.get()
 			
-			data = [monument, station]
-			self.windbreakers.append(data)
+
+			if self.monument_type == 'Windbreaker':
+				data = [monument, station]
+				
+				if self.mode == 'new':
+					self.windbreakers.append(data)
+				elif self.mode == 'edit':
+					
+					self.windbreakers[self.tree_index] = data
 			
+			if self.monument_type == 'Lav':
+				installed = self.installed_combo.get()
+				cas_installed = self.cas_combo.get()
+				doghouse_installed = self.doghouse_combo.get()
+				
+				data = [monument, installed, station, cas_installed, doghouse_installed]
+				
+				if self.mode == 'edit':
+					self.lavs[self.tree_index] = data
 			self.top.destroy()
-		
+			
 		else:
 			self.top.destroy()

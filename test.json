@@ -6,7 +6,7 @@
         "Client": "4",
         "Current Operator": "5",
         "Go To Operator": "6",
-        "Comments": " Schw\u00e4bisch \n\n<b>\u0633\u064f\u0648\u06e1\u0631\u064e\u0629\u064f \u0627\u0644\u0641\u064e\u0627\u062a\u0650\u062d\u064e\u0629\n\n\n\n\n\n"
+        "Comments": " Schw\u00e4bisch \n\n<b>\u0633\u064f\u0648\u06e1\u0631\u064e\u0629\u064f \u0627\u0644\u0641\u064e\u0627\u062a\u0650\u062d\u064e\u0629\n\n\n\n\n\n\n"
     },
     "Seats": [
         {
@@ -89,6 +89,29 @@
             "CMM Install": "",
             "CMM Remove": "",
             "Comments": "\n"
+        },
+        {
+            "Title": "A320 WB RHS",
+            "Aircraft Type": "A320 Family",
+            "Part Number": "",
+            "Description": "Windbreaker",
+            "Side": "RHS",
+            "Thickness": "1.18",
+            "Width": "56.53",
+            "Height": "59.72",
+            "Dist From C/L": "11.496",
+            "Joggle": "No",
+            "Joggle Width": "3.0",
+            "Joggle Lower": "20.0",
+            "Joggle Upper": "30.0",
+            "Bassinet": "No",
+            "CMM Title": "blah",
+            "CMM Reference": "",
+            "CMM Version": "",
+            "CMM Date": "",
+            "CMM Install": "",
+            "CMM Remove": "",
+            "Comments": "\n"
         }
     ],
     "LOPAs": [
@@ -96,7 +119,7 @@
             "Title": "A320 LOPA",
             "Description": "",
             "Drawing Number": "",
-            "Drawing Rev": "",
+            "Drawing Rev": "0",
             "Aircraft Type": "A320",
             "No LHS Seats": "30",
             "No RHS Seats": "30",
@@ -501,8 +524,13 @@
                     300
                 ]
             ],
-            "Windbreakers": [],
-            "Comments": "Test\n"
+            "Windbreakers": [
+                [
+                    "A320 WB LHS",
+                    "320"
+                ]
+            ],
+            "Comments": "\n"
         }
     ]
 }

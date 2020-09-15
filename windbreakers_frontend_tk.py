@@ -17,6 +17,21 @@ from matplotlib.figure import Figure
 
 import double_scrollbar
 
+def check_windbreaker_used(mainapp, wb_backend):
+	
+	wb_used = False
+	lopas = []
+	lopa_dict = components_tk.get_all_components(mainapp, 'LOPAs')
+	
+	for l in lopa_dict['All']:
+		for w in mainapp.frames[l].backend.windbreakers:
+			if wb_backend.title == w[0]:
+				wb_used = True
+				lopas.append(l)
+				break
+	
+	return wb_used, lopas
+	
 class Windbreaker_Page_Tk(tk.Frame):
 
 	def __init__(self, container, mainapp):
@@ -208,7 +223,13 @@ class Windbreaker_Page_Tk(tk.Frame):
 		draw_side = True
 		side_datum = [0,0]
 		self.backend.draw_wb(canvas, canvas_type, draw_top_down, top_down_datum, draw_side, side_datum)
-		
+
+		# redraw LOPAs if required
+		wb_used, lopas = check_windbreaker_used(self.mainapp, self.backend)
+		if wb_used:
+			for l in lopas:
+				self.mainapp.frames[l].update_lopa_plot()
+				
 	def edit(self):
 		orig_treeview_node = self.backend.treeview_node
 		self.w=Edit_Windbreaker_Window_Tk(self.mainapp, self.master, None, 'edit', self)
@@ -252,7 +273,10 @@ class Edit_Windbreaker_Window_Tk(object):
 		
 		if mode == 'edit':
 			self.orig_part_no = parent_wb.backend.title
-		
+			self.wb_used, lopas = check_windbreaker_used(mainapp, self.parent_wb.backend)
+		else:
+			self.wb_used = False
+			
 		self.data_checks = {}
 		
 		self.setup_label_frames()
@@ -300,6 +324,8 @@ class Edit_Windbreaker_Window_Tk(object):
 		self.side_combo= ttk.Combobox(self.details_frame, values=['LHS', 'RHS'])
 		self.side_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['Side'] = ['combo', self.side_combo, 'in values']
+		if self.wb_used:
+			self.side_combo.config(state='disabled')
 		
 		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320 Family'], state=state)
 		self.aircraft_combo.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')
@@ -473,7 +499,7 @@ class Edit_CMM_Window_Tk(object):
 		self.mainapp = mainapp
 		self.mode = mode
 		self.parent_seat = parent_seat
-
+			
 		#label frame
 		self.setup_label_frames()
 		self.setup_widgets()

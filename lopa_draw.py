@@ -1,7 +1,8 @@
 import numpy as np
 import seats_draw
 import windbreaker_draw
-# from Pycabin_Backend import lav_draw
+import lav_draw
+import galley_draw
 import aircraft_models
 import LOPA_backend as lopa_bk
 
@@ -9,7 +10,7 @@ import lopa_frontend_tk
 import ezdxf
 
 def draw_lopa(self, canvas, canvas_type, datum, draw_top_down):
-	print(self.backend.aircraft_type)
+	
 	print('------------------------------------')
 	if canvas_type == 'matplotlib':
 		#self.backend.ax1.clear()
@@ -193,7 +194,7 @@ def draw_floor(self, canvas, canvas_type, datum):
 def draw_seats_top_down(self, canvas, canvas_type, datum, side):
 
 	for row in self.seat_layout[side]:
-		print(row)
+		
 		#if self.aircraft_type in ['A320', 'A319']:
 		#	y_datum = datum[1]
 		#get the seat
@@ -258,6 +259,54 @@ def draw_windbreakers_top_down(self, canvas, canvas_type, datum,):
 		m_datum = [x,y]
 
 		windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, m_datum, c)
+
+def draw_windbreakers_side(self, canvas, canvas_type, datum):
+
+	for wb in self.windbreakers:
+		
+		c = self.mainapp.frames[wb[0]].backend
+		x = float(wb[1])
+		if c.side == 'LHS':
+			side_canvas = canvas[1]
+		else:
+
+			side_canvas = canvas[0]
+		m_datum = [x,0]
+
+		windbreaker_draw.windbreaker_side_view(side_canvas, canvas_type, m_datum, c)
+		
+		
+def draw_lavs_top_down(lopa_bk, canvas, canvas_type, datum,):
+
+	for lav in lopa_bk.lavs:
+		
+		if lav[1] == 'Yes':
+
+			lav_draw.draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, datum)
+
+def draw_lavs_side(lopa_bk, canvas, canvas_type, datum,):
+
+	for lav in lopa_bk.lavs:
+		
+		if lav[1] == 'Yes':
+
+			lav_draw.draw_lav_side(lopa_bk, lav, canvas, canvas_type, datum)
+
+def draw_galleys_top_down(lopa_bk, canvas, canvas_type, datum,):
+
+	for galley in lopa_bk.galleys:
+	
+		if galley[1] == 'Yes':
+			
+			galley_draw.draw_galley_top_down(lopa_bk, galley, canvas, canvas_type, datum)
+
+def draw_galleys_side(lopa_bk, canvas, canvas_type, datum,):
+
+	for galley in lopa_bk.galleys:
+		
+		if galley[1] == 'Yes':
+
+			galley_draw.draw_galley_side(lopa_bk, galley, canvas, canvas_type, datum)
 			
 def draw_monuments_side(self, canvas_lhs, canvas_rhs, canvas_type, datum):
 	canvases = {'LHS': canvas_lhs, 'RHS': canvas_rhs}

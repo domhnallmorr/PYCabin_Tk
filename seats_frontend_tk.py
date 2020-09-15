@@ -24,6 +24,22 @@ V0.02 Initial Issue
 To Do
 	check if seat used in any LOPA
 '''
+
+def check_seat_used(mainapp, seat_backend):
+	
+	seat_used = False
+	lopas = []
+	lopa_dict = components_tk.get_all_components(mainapp, 'LOPAs')
+	
+	for l in lopa_dict['All']:
+		for row in mainapp.frames[l].backend.seat_layout[seat_backend.side]:
+			if seat_backend.title == row[1]:
+				seat_used = True
+				lopas.append(l)
+				break
+				
+	return seat_used, lopas
+	
 class Seat_Page_Tk(tk.Frame):
 
 	def __init__(self, container, mainapp):
@@ -213,7 +229,12 @@ class Seat_Page_Tk(tk.Frame):
 		if self.treeview_iid:
 			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.part_no)
 			components_tk.component_renamed(self)
-			
+		
+		# redraw LOPAs if required
+		seat_used, lopas = check_seat_used(self.mainapp, self.backend)
+		if seat_used:
+			for l in lopas:
+				self.mainapp.frames[l].update_lopa_plot()
 		#update lopas if part number has changed
 		# if orig_part_no != self.backend.part_no:
 			# self.update_lopa_tables(orig_part_no)
@@ -273,8 +294,10 @@ class Edit_Seat_Window_Tk(object):
 		
 		if mode == 'edit':
 			self.orig_part_no = parent_seat.backend.title
+			self.seat_used, lopas = check_seat_used(mainapp, parent_seat.backend)
+		else:
+			self.seat_used = True
 			
-		self.seat_used = False
 		self.data_checks = {}
 		
 		self.setup_label_frames()
@@ -341,7 +364,8 @@ class Edit_Seat_Window_Tk(object):
 		self.side_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
 		if self.mode != 'new multiple':
 			self.data_checks['Side'] = ['combo', self.side_combo, 'in values']
-			
+		
+		
 		if 'edit' in self.mode:
 			state = 'disabled'
 		else:
