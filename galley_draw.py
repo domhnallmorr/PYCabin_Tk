@@ -54,9 +54,13 @@ def draw_galley_side(lopa_bk, galley, canvas, canvas_type, side_datum):
 			
 			if canvas_type == 'matplotlib':
 				canvas[0].plot(x, y, color = galley_color)	
-	
+				canvas[0].text(s - (b/2), 40, 'G1', ha='center', va='bottom')
+				
 		if galley[0] == 'Galley 5':
 		
 			if canvas_type == 'matplotlib':
 				canvas[0].plot([1280, 1280, 1320, 1320], [0, 82, 67, 0], color = galley_color)			
-				canvas[1].plot([1280, 1280, 1320, 1320], [0, 82, 67, 0], color = galley_color)			
+				canvas[1].plot([1280, 1280, 1320, 1320], [0, 82, 67, 0], color = galley_color)
+				
+				canvas[0].text(1300, 40, 'G5', ha='center', va='bottom')
+				canvas[1].text(1300, 40, 'G5', ha='center', va='bottom')

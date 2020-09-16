@@ -655,7 +655,7 @@ class Edit_LOPA_Window_Tk(object):
 		
 		if self.mode == 'new':
 			self.title_entry.insert(0, 'A320 LOPA')
-			self.aircraft_combo.set('A320')
+			#self.aircraft_combo.set('A320')
 			self.lhs_pitch_combo.set(28)
 			self.rhs_pitch_combo.set(28)
 			self.lhs_rows_combo.set(30)
@@ -678,7 +678,7 @@ class Edit_LOPA_Window_Tk(object):
 			state = 'disabled'
 		else:
 			state = 'normal'
-		labels = ['Title:', 'Description:', 'Drawing Number:', 'Revision', 'Aircraft:', 'No. Economy Seats:', 'Row 13 Included:']
+		labels = ['Title:', 'Description:', 'Drawing Number:', 'Revision', 'Aircraft:', 'Row 13 Included:']
 		row = 1
 		gui_styles_tk.create_multiple_labels(self.details_frame, labels, row, 2, 20, 2, 2)
 
@@ -699,11 +699,12 @@ class Edit_LOPA_Window_Tk(object):
 
 		#if self.mode != 'edit':
 			
-		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320', 'A319', 'B737-800'],state=state)
+		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320', 'A319', 'B737-800'],state='readonly')
 		self.aircraft_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.aircraft_combo.bind("<<ComboboxSelected>>", self.aircraft_selected)
 		if self.mode == 'edit':
 			self.aircraft_combo.set(self.parent_lopa.backend.aircraft_type)
+			self.aircraft_combo.config(state='disabled')
 		else:
 			self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values', 'Aircraft Type']
 		
@@ -720,7 +721,7 @@ class Edit_LOPA_Window_Tk(object):
 		self.lhs_rows_combo= ttk.Combobox(self.seats_frame, values=[i for i in range(31)],state=state)
 		self.lhs_rows_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 		if self.mode != 'edit':
-			self.data_checks['Number of LHS Seats'] = ['combo', self.lhs_rows_combo, 'int greater than equal 0', 'LHS No. of Rows']
+			self.data_checks['Number of LHS Seats'] = ['combo', self.lhs_rows_combo,  'in values', 'LHS No. of Rows']
 		
 		self.lhs_seat_combo= ttk.Combobox(self.seats_frame,state=state)
 		self.lhs_seat_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
@@ -739,7 +740,7 @@ class Edit_LOPA_Window_Tk(object):
 		self.rhs_rows_combo= ttk.Combobox(self.seats_frame, values=[i for i in range(31)],state=state)
 		self.rhs_rows_combo.grid(row=2,column=5,padx=2, pady=2,sticky = 'NSEW')
 		if self.mode != 'edit':
-			self.data_checks['Number of RHS Seats'] = ['combo', self.rhs_rows_combo, 'int greater than equal 0', 'RHS No. of Rows']
+			self.data_checks['Number of RHS Seats'] = ['combo', self.rhs_rows_combo, 'in values', 'RHS No. of Rows']
 		
 		self.rhs_seat_combo= ttk.Combobox(self.seats_frame,state=state)
 		self.rhs_seat_combo.grid(row=3,column=5,padx=2, pady=2,sticky = 'NSEW')
@@ -779,9 +780,22 @@ class Edit_LOPA_Window_Tk(object):
 		if self.aircraft_combo.get() in ['A320', 'A319']:
 			self.lhs_seat_combo['values'] = [self.mainapp.frames[s].backend.title for s in self.seats_dict['A320 Family LHS']]
 			self.rhs_seat_combo['values'] = [self.mainapp.frames[s].backend.title for s in self.seats_dict['A320 Family RHS']]
+			
+			if self.aircraft_combo.get() == 'A320':
+				self.lhs_rows_combo['values'] = [i for i in range(31)]
+				self.rhs_rows_combo['values'] = [i for i in range(31)]
+			elif self.aircraft_combo.get()== 'A319':
+				self.lhs_rows_combo['values'] = [i for i in range(26)]
+				self.rhs_rows_combo['values'] = [i for i in range(26)]
+			
 		elif self.aircraft_combo.get() in ['B737-800']:
 			self.lhs_seat_combo['values'] = [self.mainapp.frames[s].backend.title for s in self.seats_dict['B737 Family LHS']]
 			self.rhs_seat_combo['values'] = [self.mainapp.frames[s].backend.title for s in self.seats_dict['B737 Family RHS']]	
+			
+			if self.aircraft_combo.get() == 'B737-800':
+				self.lhs_rows_combo['values'] = [i for i in range(33)]
+				self.rhs_rows_combo['values'] = [i for i in range(33)]
+				
 	def cleanup(self,button):
 	
 		if button == 'ok':
@@ -925,7 +939,9 @@ class Add_Monument_Window():
 		self.lopa = lopa
 		self.monument_type = monument_type
 		self.mode = mode
-
+		
+		self.data_checks = {}
+		
 		lopa_bk.setup_variables(self)
 		lopa_bk.update_variables(self, self.lopa.backend)
 		
@@ -974,6 +990,9 @@ class Add_Monument_Window():
 				self.cas_combo.set(cas_installed)
 				self.doghouse_combo.set(doghouse_installed)
 				
+				if current_part == 'Lav A':
+					self.doghouse_combo.config(state='disabled')
+				
 				
 				self.tree_index = 0
 				for item in self.lopa.lav_tree.get_children():
@@ -1001,8 +1020,9 @@ class Add_Monument_Window():
 		# self.type_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 		# self.type_combo.bind("<<ComboboxSelected>>", self.type_selected)
 		
-		self.monument_combo= ttk.Combobox(self.options_frame, values=self.monuments['All'])
+		self.monument_combo= ttk.Combobox(self.options_frame, values=self.monuments['All'], state='readonly')
 		self.monument_combo.grid(row=row,column=3,padx=2, pady=2,sticky = 'NSEW')
+
 		row += 1
 		
 		if self.monument_type == 'Lav':
@@ -1012,6 +1032,7 @@ class Add_Monument_Window():
 			
 		self.station_entry=Entry(self.options_frame, width=20)		
 		self.station_entry.grid(row=row,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.data_checks['Station'] = ['entry', self.station_entry, 'float positive', 'Station']
 		row += 1
 		
 		if self.monument_type == 'Lav':
@@ -1052,29 +1073,35 @@ class Add_Monument_Window():
 		
 		if self.button == 'ok':
 			#self.check_data()
-			monument =self.monument_combo.get()
-			station =self.station_entry.get()
+			data_good, msg = data_input_checks_tk.check_data_input(self.data_checks, self.mainapp)
 			
+			if data_good:
+				monument =self.monument_combo.get()
+				station =self.station_entry.get()
+				
 
-			if self.monument_type == 'Windbreaker':
-				data = [monument, station]
-				
-				if self.mode == 'new':
-					self.windbreakers.append(data)
-				elif self.mode == 'edit':
+				if self.monument_type == 'Windbreaker':
+					data = [monument, station]
 					
-					self.windbreakers[self.tree_index] = data
-			
-			if self.monument_type == 'Lav':
-				installed = self.installed_combo.get()
-				cas_installed = self.cas_combo.get()
-				doghouse_installed = self.doghouse_combo.get()
+					if self.mode == 'new':
+						self.windbreakers.append(data)
+					elif self.mode == 'edit':
+						
+						self.windbreakers[self.tree_index] = data
 				
-				data = [monument, installed, station, cas_installed, doghouse_installed]
+				if self.monument_type == 'Lav':
+					installed = self.installed_combo.get()
+					cas_installed = self.cas_combo.get()
+					doghouse_installed = self.doghouse_combo.get()
+					
+					data = [monument, installed, station, cas_installed, doghouse_installed]
+					
+					if self.mode == 'edit':
+						self.lavs[self.tree_index] = data
+				self.top.destroy()
 				
-				if self.mode == 'edit':
-					self.lavs[self.tree_index] = data
-			self.top.destroy()
+			else:
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 			
 		else:
 			self.top.destroy()
