@@ -45,9 +45,9 @@ class MainApplication(tk.Frame):
 		components_tk.show_frame(self, 'Project')
 	def setup_variables(self):
 		
-		self.version = '0.05'
+		self.version = '0.07'
 		self.save_file = None
-		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.05\test.db'
+		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.07\test.db'
 		
 	def setup_main_frames(self):
 	
@@ -127,7 +127,7 @@ class MainApplication(tk.Frame):
 								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'Windbreaker'
 									'Windbreakers']		
 		
-		self.treeview_nodes = {'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
+		self.treeview_nodes = {'Aircraft': ['A320 Aircraft', '737 Aircraft'], 'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
 								'Windbreakers': ['A320 Windbreakers'],
 								'LOPAs': ['A320 LOPAs']}
 		
@@ -157,9 +157,10 @@ class MainApplication(tk.Frame):
 		insert_menu = tk.Menu(menu, tearoff = 0)
 		menu.add_cascade(label='Insert',menu=insert_menu)
 
-		#insert_menu.add_command(label = 'Aircraft', command = lambda self=self, type='Aircraft': components_tk.new_component(self, type))
+		insert_menu.add_command(label = 'Aircraft', command = lambda self=self, type='Aircraft': components_tk.new_component(self, type))
 		#insert_menu.add_command(label = 'Seats - Multiple', command = lambda self=self, type='Seats - Multiple': components_tk.new_component(self, type))
 		
+
 		#
 		insert_component_menu = tk.Menu(menu, tearoff = 0)
 		insert_menu.add_cascade(label = 'Components',menu = insert_component_menu)

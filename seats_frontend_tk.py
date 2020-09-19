@@ -17,6 +17,8 @@ from matplotlib.figure import Figure
 
 import treeview_functions
 import double_scrollbar
+import comment_box
+
 import inspect
 import copy
 '''
@@ -76,7 +78,7 @@ class Seat_Page_Tk(tk.Frame):
 		#self.note.grid(row=1,column=0,sticky='NSEW')
 		self.note.pack(fill=tk.BOTH, expand=True)
 		# ####### COMMENTS TEXT ######################################
-		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50)
+		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50, state='disabled')
 		self.comment_text.grid(row=1, column=0, columnspan = 8, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
 	def setup_scrollable_frame(self):
@@ -203,6 +205,10 @@ class Seat_Page_Tk(tk.Frame):
 		
 		#self.edit_cmm=Button(self.cmm_frame,text='Edit', command= self.edit_cmm)
 		#self.edit_cmm.grid(row=1,column=2, pady=5,sticky="nsew")
+
+		self.edit_comment_button=Button(self.comments_tab,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
+										command= lambda self=self :comment_box.edit_comments(self))
+		self.edit_comment_button.grid(row=0,column=0, pady=5,sticky="nsew", ipadx=2, ipady=2)
 		
 	def set_grid_configures(self):
 	

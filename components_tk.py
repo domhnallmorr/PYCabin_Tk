@@ -8,13 +8,17 @@ import copy
 import seats_frontend_tk as seats_tk
 import windbreakers_frontend_tk as windbreakers_tk
 import lopa_frontend_tk as lopa_tk
-
+import aircraft_frontend_tk as aircraft_tk
 '''
 V0.02 initial issue
 '''
 def new_component(self, type):
 	mode = 'new'
 	
+	if type == 'Aircraft':
+		self.w=aircraft_tk.Edit_Aircraft_Window_Tk(self, self.master, mode, None)
+		self.master.wait_window(self.w.top)
+		
 	if type == 'Seats - Multiple':
 		self.w=seats_tk.Multiple_Seat_Window_Tk(self, self.master)
 		self.master.wait_window(self.w.top)	
@@ -47,6 +51,14 @@ def new_component(self, type):
 
 def create_component(self, type, source, update_type, insert=True):
 	
+	if type == 'Aircraft':
+		if update_type == 'new':
+			new_component = aircraft_tk.Aircraft_Page_Tk(container=self.container, mainapp=self,)
+			new_component.update_component(source, update_type)			
+			
+			if new_component.backend.aircraft_type in ['A320', 'A319']:
+				node = 'A320 Aircraft'
+				
 	if type == 'Seats - Multiple':
 		if update_type == 'new multiple':
 			for d in source.data:
@@ -109,8 +121,7 @@ def insert_new_item_into_side_treeview(mainapp, parent_node, item_name, componen
 
 	
 	if 'Aircraft' in parent_node:
-		icon = component_fe.mainapp.icons.ac_icon2
-		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = icon)
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.ac_icon2)
 	elif 'Seats' in parent_node:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.seat_icon2)
 	elif 'Windbreaker' in parent_node:
@@ -134,10 +145,12 @@ def get_all_components(mainapp, type):
 	
 	if type == 'all':
 		components_dict = {'All': []}
-		types = ['Seats', 'Windbreakers', 'LOPAs']
+		types = ['Aircraft', 'Seats', 'Windbreakers', 'LOPAs']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
-		
+	
+	if type == 'Aircraft':
+		components_dict = {'All': [], 'A320': []}
 	
 	if type == 'Seats':
 		components_dict = {'All': [], 'A320 Family': [], 'A320 Family LHS': [], 'A320 Family RHS': [],
@@ -155,6 +168,10 @@ def get_all_components(mainapp, type):
 				component = mainapp.frames[mainapp.main_treeview.item(component,'text')]
 				ac_type = component.backend.aircraft_type
 				components_dict['All'].append(component.backend.title)
+				
+				if type == 'Aircraft':
+					if component.backend.aircraft_type in components_dict.keys():
+						components_dict[component.backend.aircraft_type].append(component.backend.title)
 				
 				# # ________________ SEATS ________________
 				if type == 'Seats' or type == 'Windbreakers':
@@ -231,12 +248,23 @@ def copy_component(mainapp):
 	
 	#if component.backend.type == 'Seat':
 	new_component.backend.title = f'{component.backend.title} ({i})'
-	new_component.backend.part_no = f'{component.backend.title} ({i})'
+	
+	if component.backend.type == 'Aircraft':
+		new_component.backend.msn = f'{component.backend.title} ({i})'
+	if component.backend.type == 'Seat':
+		new_component.backend.part_no = f'{component.backend.title} ({i})'
 	new_component.update_label_text()
 	insert_component(mainapp, new_component, get_treeview_node(component.backend))
 	
 def get_treeview_node(backend):
-
+	
+	if backend.type == 'Aircraft':
+		
+		if backend.aircraft_type in ['A320', 'A319']:
+			node = 'A320 Aircraft'
+		elif backend.aircraft_type in ['B737-800']:
+			node = '737 Aircraft'
+			
 	if backend.type == 'Seat':
 	
 		if backend.aircraft_type == 'A320 Family':

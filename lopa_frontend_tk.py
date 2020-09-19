@@ -21,6 +21,7 @@ matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import treeview_functions
+import comment_box
 
 #import ezdxf
 
@@ -127,7 +128,7 @@ class LOPA_Page_Tk(tk.Frame):
 		#self.note.grid(row=1,column=0,sticky='NSEW')
 		self.note.pack(fill=tk.BOTH, expand=True)
 		# ####### COMMENTS TEXT ######################################
-		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50)
+		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50, state='disabled')
 		self.comment_text.grid(row=1, column=0, columnspan = 8, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
 	def setup_label_frames(self):
@@ -376,6 +377,10 @@ class LOPA_Page_Tk(tk.Frame):
 		self.overwing_plot_btn = Button(self.overwing_frame, text = "Update Plot",
 									command= self.update_overwing_plot)
 		self.overwing_plot_btn.grid(row=2, column=0, sticky='nsew')
+
+		self.edit_comment_button=Button(self.comments_tab,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
+										command= lambda self=self :comment_box.edit_comments(self))
+		self.edit_comment_button.grid(row=0,column=0, pady=5,sticky="nsew", ipadx=2, ipady=2)
 		
 	def add_monument(self, event, type, mode):
 		self.w=Add_Monument_Window(self, self.mainapp, self.master, type, mode)

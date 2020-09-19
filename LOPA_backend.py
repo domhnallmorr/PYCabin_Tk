@@ -41,7 +41,7 @@ def update_variables(w, source):
 def set_default_monumnets(aircraft):
 
 	default_lavs = {'A320': 
-						[['Lav A', 'Yes', 300, 'Yes', 'No'],
+						[['Lav A', 'Yes', 278.6, 'Yes', 'No'],
 						['Lav D', 'Yes', 1207, 'Yes', 'No'],
 						['Lav E', 'Yes', 1207, 'Yes', 'No']],
 					}

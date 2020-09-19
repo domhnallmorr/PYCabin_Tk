@@ -2,6 +2,7 @@ import json
 import tkinter.messagebox
 
 import components_tk
+import comment_box
 
 def new_project(event=None, mainapp=None):
 
@@ -28,15 +29,20 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.05\test.json'
+	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.07\test.json'
 	#mainapp.save_file = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json'
 	write_save_file(mainapp)
 	
 def write_save_file(mainapp):
 
 
-	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Seats': [],
+	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Aircraft': [], 'Seats': [],
 					'Windbreakers': [], 'LOPAs': []}
+	
+	# _________________ AIRCRAFT _________________
+	ac_dict = components_tk.get_all_components(mainapp, 'Aircraft')
+	for a in ac_dict['All']:
+		save_dict['Aircraft'].append(mainapp.frames[a].backend.gen_save_dict())	
 	
 	# _________________ SEATS _________________
 	seats_dict = components_tk.get_all_components(mainapp, 'Seats')
@@ -62,7 +68,7 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.05\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.07\test.json') as f:
 	#with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
@@ -70,25 +76,34 @@ def load(event=None, mainapp=None):
 	if 'Project' in data.keys():
 	
 		mainapp.frames['Project'].load_project_data(data['Project'])
-		
+	
+	if 'Aircraft' in data.keys():
+	
+		for ac in data['Aircraft']:
+			ac = Load('Aircraft', ac)
+			components_tk.create_component(mainapp, 'Aircraft', ac, 'new')
+			comment_box.insert_comments_text(mainapp.frames[ac.title].comment_text, ac.comments) 
+			
 	if 'Seats' in data.keys():
 	
 		for seat in data['Seats']:
 			seat = Load('Seat', seat)
 			components_tk.create_component(mainapp, 'Seat', seat, 'new')
-	
+			comment_box.insert_comments_text(mainapp.frames[seat.title].comment_text, seat.comments)
+			
 	if 'Windbreakers' in data.keys():
 		
 		for wb in data['Windbreakers']:
 			wb = Load('Windbreaker', wb)
 			components_tk.create_component(mainapp, 'Windbreaker', wb, 'new')
-
+			comment_box.insert_comments_text(mainapp.frames[wb.title].comment_text, wb.comments)
+			
 	if 'LOPAs' in data.keys():
 		
 		for l in data['LOPAs']:
 			l = Load('LOPA', l)
 			components_tk.create_component(mainapp, 'LOPA', l, 'new')
-
+			comment_box.insert_comments_text(mainapp.frames[l.title].comment_text, l.comments)
 			
 	# reset undo and redo stacks
 	mainapp.states.reset(undo=True, redo=True)
@@ -100,6 +115,18 @@ class Load():
 		self.update_variables(type, component_data)
 
 	def update_variables(self, type, component_data):
+	
+		if type == 'Aircraft':
+		
+			self.title = component_data["Title"]
+			self.msn = component_data["MSN"]
+			self.aircraft_type = component_data["Aircraft Type"]
+			self.current_operator = component_data["Current Operator"]
+			self.go_to_operator = component_data["Go To Operator"]
+			self.seats_uninstl_task = component_data["Seat Removal Task"]
+			self.seats_instl_task = component_data["Seat Installation Task"]
+			self.comments = component_data["Comments"]	
+			
 		if type == 'Seat':
 			
 			self.title = component_data["Title"]

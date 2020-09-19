@@ -1,3 +1,8 @@
+
+import tkinter as tk
+from tkinter import *
+from tkinter import ttk
+from tkinter.ttk import *
 import components_tk
 
 class Undo_Redo():
@@ -18,12 +23,13 @@ class Undo_Redo():
 			
 	def undo(self, event=None):
 	
-
 		if len(self.undo_stack) > 0:
 			action = self.undo_stack[-1]
 			
 			component_backend = action['component']
-			old_title = component_backend.title
+			
+			if action['type'] != 'comment':
+				old_title = component_backend.title
 
 			if action['type'] == 'new':
 				#delete created component
@@ -35,8 +41,7 @@ class Undo_Redo():
 				
 				self.redo_stack.insert(0, {'type': 'deleted component', 'component': action['component'],
 												'new_class': component_backend.save_class(component_backend), 'index': index})
-				
-				
+					
 			elif action['type'] == 'edit':
 				
 				name = action['component'].title
@@ -58,7 +63,21 @@ class Undo_Redo():
 				components_tk.show_frame(self.mainapp, component_backend.title)
 				
 				self.redo_stack.append({'type': 'new', 'component': component_backend,
-														'new_class': component_backend.save_class(component_backend)})				
+														'new_class': component_backend.save_class(component_backend)})		
+
+			elif action['type'] == 'comment':
+				#component_backend is actually the frontend for comment undo/redo (sorry :( )
+				
+				current_text = component_backend.comment_text.get("1.0","end")
+				component_backend.comment_text.config(state='normal')
+				component_backend.comment_text.delete('1.0', END)
+				component_backend.comment_text.insert('1.0', action['new_class'])
+				component_backend.comment_text.config(state='disabled')
+			
+				components_tk.show_frame(self.mainapp, component_backend.backend.title)
+				component_backend.note.select(len(component_backend.note.tabs())-1) #select comments tab (makes obvious what is undone)
+				self.redo_stack.append({'type': 'comment', 'component': component_backend,
+														'new_class': current_text})
 			self.undo_stack.pop(-1)
 
 	def redo(self):
@@ -68,7 +87,9 @@ class Undo_Redo():
 			action = self.redo_stack[0]
 			
 			component = action['component']
-			old_title = component.title
+			
+			if action['type'] != 'comment':
+				old_title = component.title
 			
 			if action['type'] == 'deleted component':
 				
@@ -105,7 +126,23 @@ class Undo_Redo():
 												'new_class': component_backend.save_class(component_backend)})			
 				
 				components_tk.show_frame(self.mainapp, component_backend.title)
-			self.mainapp.frames[component.title].update_component(action['new_class'], 'undo_redo')
+				
+			if action['type'] == 'comment':
+				#component_backend is actually the frontend for comment undo/redo (sorry :( )
+				component_backend = action['component']
+				current_text = component_backend.comment_text.get("1.0","end")
+				component_backend.comment_text.config(state='normal')
+				component_backend.comment_text.delete('1.0', END)
+				component_backend.comment_text.insert('1.0', action['new_class'])
+				component_backend.comment_text.config(state='disabled')
+				
+				components_tk.show_frame(self.mainapp, component_backend.backend.title)
+				component_backend.note.select(len(component_backend.note.tabs())-1)
+				self.undo_stack.append({'type': 'comment', 'component': component_backend,
+														'new_class': current_text})
+			
+			if action['type'] != 'comment':
+				self.mainapp.frames[component.title].update_component(action['new_class'], 'undo_redo')
 			
 			
 			self.redo_stack.pop(0)
@@ -113,7 +150,11 @@ class Undo_Redo():
 		
 	def component_updated(self, update_type, component, save_class):
 		
-		self.undo_stack.append({'type': update_type, 'component': component,
-														'new_class': save_class(component)})
+		if update_type != 'comment':
+			self.undo_stack.append({'type': update_type, 'component': component,
+															'new_class': save_class(component)})
+		else:
+			self.undo_stack.append({'type': update_type, 'component': component,
+															'new_class': save_class})			
 														
 		self.reset(undo=False, redo=True)
