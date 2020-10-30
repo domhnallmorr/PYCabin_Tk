@@ -30,6 +30,9 @@ class Aircraft_Page_Tk(tk.Frame):
 		tk.Frame.__init__(self, container)
 		
 		self.mainapp = mainapp
+
+		self.top_label = tk.Label(self, text=('Aircraft: '),font=self.mainapp.title_font, anchor="w")
+		self.top_label.pack(fill=tk.BOTH, expand=True)
 		
 		self.backend = ac_bk.Aircraft_Backend(self, mainapp)
 		
@@ -39,6 +42,7 @@ class Aircraft_Page_Tk(tk.Frame):
 		self.setup_label_frames()
 		self.setup_labels()
 		self.setup_buttons()
+		
 	def setup_notebook(self):
 		self.note = ttk.Notebook(self)
 		self.main_tab = Frame(self.note)
@@ -48,8 +52,8 @@ class Aircraft_Page_Tk(tk.Frame):
 		self.note.add(self.main_tab, text = "Main")
 		self.note.add(self.amm_tab, text = "AMM Tasks")
 		self.note.add(self.comments_tab, text = "Comments")
-		
-		self.note.grid(row=1,column=0,sticky='NSEW')
+		self.note.pack(fill=tk.BOTH, expand=True)
+		#self.note.grid(row=1,column=0,sticky='NSEW')
 
 		# ####### COMMENTS TEXT ######################################
 		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50, state='disabled')
@@ -64,8 +68,8 @@ class Aircraft_Page_Tk(tk.Frame):
 		
 	def setup_labels(self):	
 	
-		self.top_label = tk.Label(self, text=('Aircraft: '),font=self.mainapp.title_font)
-		self.top_label.grid(row=0,column=0,columnspan=24,stick='W')
+		#self.top_label = tk.Label(self, text=('Aircraft: '),font=self.mainapp.title_font)
+		#self.top_label.grid(row=0,column=0,columnspan=24,stick='W')
 		
 		self.ac_label = gui_styles_tk.create_label(self.main_frame,'')
 		self.ac_label.grid(row=2, column=2, columnspan=3, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)

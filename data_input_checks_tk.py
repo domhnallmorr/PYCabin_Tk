@@ -119,7 +119,14 @@ def check_title_input(entry_data, mainapp):
 			
 			title_good = False
 			title_msg = 'is Reserved, Choose Another'
-
+	
+	# Illegal characters
+	if title_good:
+		
+		for c in [',', ':']:
+			if c in user_input:
+				title_good = False
+				title_msg = 'Title must not contain any of the following characters:\n      ,:'
 	if title_good:
 		if user_input != entry_data[2]: # entry_data[2] is the original title, before user editted it
 			# Check Component Does not exits already

@@ -377,7 +377,8 @@ class Edit_Seat_Window_Tk(object):
 		else:
 			state = 'normal'
 		
-		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320 Family', 'B737 Family'], state=state)
+		#self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320 Family', 'B737 Family'], state=state)
+		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320 Family'], state=state)
 		self.aircraft_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values', 'Aircraft Type']
 		

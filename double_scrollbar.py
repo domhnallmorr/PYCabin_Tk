@@ -67,8 +67,7 @@ class Double_ScrollableFrame:
 	def _on_frame_configure(self, event=None):
 
 		x1, y1, x2, y2 = self.canvas.bbox("all")
-		print(y2)
-		print(y1)
+		
 		height = self.canvas.winfo_height()
 		width = self.canvas.winfo_width()
 		self.canvas.config(scrollregion = (0,0, max(x2, width), max(y2, height)))

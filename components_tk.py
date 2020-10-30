@@ -9,6 +9,7 @@ import seats_frontend_tk as seats_tk
 import windbreakers_frontend_tk as windbreakers_tk
 import lopa_frontend_tk as lopa_tk
 import aircraft_frontend_tk as aircraft_tk
+import changes_frontend_tk as change_tk
 '''
 V0.02 initial issue
 '''
@@ -43,6 +44,10 @@ def new_component(self, type):
 
 	if type == 'LOPA':
 		self.w=lopa_tk.Edit_LOPA_Window_Tk(self, self.master, None, mode, None)
+		self.master.wait_window(self.w.top)
+	
+	if type == 'Change':
+		self.w=change_tk.Edit_Change_Window_Tk(self, self.master, mode, None)
 		self.master.wait_window(self.w.top)
 		
 	if self.w.button == 'ok':
@@ -100,6 +105,13 @@ def create_component(self, type, source, update_type, insert=True):
 			ac_type = new_component.backend.aircraft_type
 			if ac_type in ['A320', 'A319']:
 				node = 'A320 LOPAs'
+	
+	if type == 'Change':
+
+		if update_type == 'new':
+			new_component = change_tk.Change_Page_Tk(container=self.container, mainapp=self,)
+			new_component.update_component(source, update_type)
+			node = 'Changes'
 			
 	if insert:
 		insert_component(self, new_component, node)
@@ -145,12 +157,13 @@ def get_all_components(mainapp, type):
 	
 	if type == 'all':
 		components_dict = {'All': []}
-		types = ['Aircraft', 'Seats', 'Windbreakers', 'LOPAs']
+		#types = ['Aircraft', 'Seats', 'Windbreakers', 'LOPAs']
+		types = ['Seats', 'Windbreakers', 'LOPAs']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 	
 	if type == 'Aircraft':
-		components_dict = {'All': [], 'A320': []}
+		components_dict = {'All': [], 'A320': [], 'A319': [], 'B737-800': []}
 	
 	if type == 'Seats':
 		components_dict = {'All': [], 'A320 Family': [], 'A320 Family LHS': [], 'A320 Family RHS': [],
@@ -160,13 +173,18 @@ def get_all_components(mainapp, type):
 
 	if type == 'LOPAs':
 		components_dict = {'All': [], 'A320': [], 'A319': []}
+
+	if type == 'Changes':
+		components_dict = {'All': []}
 		
 	for type in types:
 		for node in mainapp.treeview_nodes[type]:
 
 			for component in mainapp.main_treeview.get_children(node):
 				component = mainapp.frames[mainapp.main_treeview.item(component,'text')]
-				ac_type = component.backend.aircraft_type
+				
+				if type != 'Changes':
+					ac_type = component.backend.aircraft_type
 				components_dict['All'].append(component.backend.title)
 				
 				if type == 'Aircraft':

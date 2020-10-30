@@ -29,7 +29,7 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.07\test.json'
+	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.json'
 	#mainapp.save_file = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json'
 	write_save_file(mainapp)
 	
@@ -37,12 +37,12 @@ def write_save_file(mainapp):
 
 
 	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Aircraft': [], 'Seats': [],
-					'Windbreakers': [], 'LOPAs': []}
+					'Windbreakers': [], 'LOPAs': [], 'Changes': []}
 	
 	# _________________ AIRCRAFT _________________
-	ac_dict = components_tk.get_all_components(mainapp, 'Aircraft')
-	for a in ac_dict['All']:
-		save_dict['Aircraft'].append(mainapp.frames[a].backend.gen_save_dict())	
+	# ac_dict = components_tk.get_all_components(mainapp, 'Aircraft')
+	# for a in ac_dict['All']:
+		# save_dict['Aircraft'].append(mainapp.frames[a].backend.gen_save_dict())	
 	
 	# _________________ SEATS _________________
 	seats_dict = components_tk.get_all_components(mainapp, 'Seats')
@@ -61,6 +61,12 @@ def write_save_file(mainapp):
 
 	for l in lopa_dict['All']:
 		save_dict['LOPAs'].append(mainapp.frames[l].backend.gen_save_dict())
+
+	# _________________ Changes _________________
+	# change_dict = components_tk.get_all_components(mainapp, 'Changes')
+
+	# for c in change_dict['All']:
+		# save_dict['Changes'].append(mainapp.frames[c].backend.gen_save_dict())
 		
 	with open(mainapp.save_file, 'w') as outfile:
 		json.dump(save_dict, outfile, indent=4)
@@ -68,7 +74,7 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.07\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.json') as f:
 	#with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
@@ -104,7 +110,13 @@ def load(event=None, mainapp=None):
 			l = Load('LOPA', l)
 			components_tk.create_component(mainapp, 'LOPA', l, 'new')
 			comment_box.insert_comments_text(mainapp.frames[l.title].comment_text, l.comments)
-			
+
+	if 'Changes' in data.keys():
+		
+		for l in data['Changes']:
+			l = Load('Change', l)
+			components_tk.create_component(mainapp, 'Change', l, 'new')
+			comment_box.insert_comments_text(mainapp.frames[l.title].comment_text, l.comments)			
 	# reset undo and redo stacks
 	mainapp.states.reset(undo=True, redo=True)
 	
@@ -192,3 +204,13 @@ class Load():
 			self.galleys = component_data["Galleys"]
 			self.windbreakers = component_data["Windbreakers"]
 			self.comments = component_data["Comments"]
+			
+		if type == 'Change':
+			self.title = component_data["Title"]
+			self.sb_title = component_data["SB Title"]
+			self.sb_number = component_data["SB Number"]
+			self.output_dir = component_data["Output Dir"]
+			self.mods = component_data["Mods"]
+			self.comments = component_data["Comments"]
+			
+			

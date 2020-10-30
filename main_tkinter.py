@@ -45,9 +45,9 @@ class MainApplication(tk.Frame):
 		components_tk.show_frame(self, 'Project')
 	def setup_variables(self):
 		
-		self.version = '0.07'
+		self.version = '0.08'
 		self.save_file = None
-		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.07\test.db'
+		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		
 	def setup_main_frames(self):
 	
@@ -92,14 +92,14 @@ class MainApplication(tk.Frame):
 		item = self.main_treeview.insert("",'end','Project',text='Project',image = fi)
 		
 		# ________ Aircraft ________
-		item = self.main_treeview.insert("",'end','Aircraft',text='Aircraft',image = fi)
-		item = self.main_treeview.insert("Aircraft",'end','A320 Aircraft',text=' A320 Family',image = abi)
-		item = self.main_treeview.insert("Aircraft",'end','737 Aircraft',text=' B737 Family',image = bi)
+		# item = self.main_treeview.insert("",'end','Aircraft',text='Aircraft',image = fi)
+		# item = self.main_treeview.insert("Aircraft",'end','A320 Aircraft',text=' A320 Family',image = abi)
+		# item = self.main_treeview.insert("Aircraft",'end','737 Aircraft',text=' B737 Family',image = bi)
 
 		# ________ Seats ________
 		item = self.main_treeview.insert("",'end','Seats',text='Seats',image = fi)
 		item = self.main_treeview.insert("Seats",'end','A320 Seats',text=' A320 Family',image = abi)
-		item = self.main_treeview.insert("Seats",'end','737 Seats',text=' 737 Family',image = bi)
+		# item = self.main_treeview.insert("Seats",'end','737 Seats',text=' 737 Family',image = bi)
 
 		# ________ Monuments ________
 		item = self.main_treeview.insert("",'end','Monuments',text='Monuments',image = fi)
@@ -109,6 +109,10 @@ class MainApplication(tk.Frame):
 		# ________ LOPA ________
 		item = self.main_treeview.insert("",'end','LOPAs',text='LOPAs',image = fi)
 		item = self.main_treeview.insert("LOPAs",'end','A320 LOPAs',text=' A320 Family',image = abi)
+
+		# ________ Changes ________
+		# item = self.main_treeview.insert("",'end','Changes',text='Changes',image = fi)
+
 		
 		#self.rootpane.add(self.main_treeview)
 		
@@ -127,11 +131,14 @@ class MainApplication(tk.Frame):
 								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'Windbreaker'
 									'Windbreakers']		
 		
-		self.treeview_nodes = {'Aircraft': ['A320 Aircraft', '737 Aircraft'], 'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
+		# self.treeview_nodes = {'Aircraft': ['A320 Aircraft', '737 Aircraft'], 'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
+								# 'Windbreakers': ['A320 Windbreakers'],
+								# 'LOPAs': ['A320 LOPAs'], 'Changes': ['Changes']}
+
+		self.treeview_nodes = {'Aircraft': ['A320 Aircraft'], 'Seats': ['A320 Seats'], 'Monuments': ['A320 Windbreakers'],
 								'Windbreakers': ['A320 Windbreakers'],
-								'LOPAs': ['A320 LOPAs']}
-		
-		
+								'LOPAs': ['A320 LOPAs'], 'Changes': ['Changes']}
+								
 
 	def setup_menu(self):
 		menu = tk.Menu(self.master)
@@ -157,7 +164,7 @@ class MainApplication(tk.Frame):
 		insert_menu = tk.Menu(menu, tearoff = 0)
 		menu.add_cascade(label='Insert',menu=insert_menu)
 
-		insert_menu.add_command(label = 'Aircraft', command = lambda self=self, type='Aircraft': components_tk.new_component(self, type))
+		# insert_menu.add_command(label = 'Aircraft', command = lambda self=self, type='Aircraft': components_tk.new_component(self, type))
 		#insert_menu.add_command(label = 'Seats - Multiple', command = lambda self=self, type='Seats - Multiple': components_tk.new_component(self, type))
 		
 
@@ -169,6 +176,8 @@ class MainApplication(tk.Frame):
 		insert_component_menu.add_command(label = 'Windbreaker', command = lambda self=self, type='Windbreaker': components_tk.new_component(self, type))
 		
 		insert_menu.add_command(label = 'LOPA', command = lambda self=self, type='LOPA': components_tk.new_component(self, type))
+
+		# insert_menu.add_command(label = 'Change', command = lambda self=self, type='Change': components_tk.new_component(self, type))
 		
 		# ________ DATABASE ________
 		db_menu = tk.Menu(menu, tearoff = 0)

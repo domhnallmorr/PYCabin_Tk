@@ -94,6 +94,7 @@ def convert_station_to_float(station):
 	
 	return station
 
+
 def process_seat_stations_for_drawing(layout):
 
 	'''
@@ -101,38 +102,66 @@ def process_seat_stations_for_drawing(layout):
 	'''
 	stations = {'LHS': [], 'RHS': []}
 	pitches = {'LHS': [], 'RHS': []}
-	for index, row in enumerate(layout['LHS']):
-		if index == 1:
-			pitch = row[2]
-			
-		if index == 0:
-			stations['LHS'].append(row[3])
-			
-			count = 1
-
-			
-		elif index > 1:
-			if row[2] != layout['LHS'][index-1][2]:
+	
+	for side in ['LHS', 'RHS']:
+		for index, row in enumerate(layout[side]):
+			if index == 1:
+				pitch = row[2]
 				
-				#if index-2 >0: #so we don't select first row
-					
-				avg = (layout['LHS'][index-1][3] + stations['LHS'][-1])/2
-				stations['LHS'].append(layout['LHS'][index-1][3])
-				
-				pitches['LHS'].append([avg, f'{count}x{pitch}"', float(layout['LHS'][index-1][3]), float(stations['LHS'][-1])])
+			if index == 0:
+				stations[side].append(row[3])
 				
 				count = 1
-				pitch = row[2]
+				
+			elif index > 1:
+				if row[2] != layout[side][index-1][2]:
 					
-			else:
-				count += 1
-		#add final station
-	avg = (layout['LHS'][index][3] + stations['LHS'][-1])/2
-	stations['LHS'].append(layout['LHS'][index][3])
-	
-	pitches['LHS'].append([avg, f'{count}x{pitch}"', float(layout['LHS'][index-1][3]), float(stations['LHS'][-1])])		
+					#if index-2 >0: #so we don't select first row
+						
+					avg = (layout[side][index-1][3] + stations[side][-1])/2
+					stations[side].append(layout[side][index-1][3])
+					
+					pitches[side].append([avg, f'{count}x{pitch}"',float(stations[side][-2]), float(stations[side][-1])])
+					
+					count = 1
+					pitch = row[2]
+						
+				else:
+					count += 1
+					
+		
+			#add final station
+		
+		reverse_layout = list(reversed(layout[side]))
+		for index, row in enumerate(reverse_layout):
+			
+			found_pitch_change = False
+			
+			pitch = reverse_layout[index][2]
+			station = reverse_layout[index][3]
+			if index == 0:
+				count = 1
+				last_pitch = pitch
+				last_station = station
+				
+			elif pitch != last_pitch:	
+				
+				found_pitch_change = True
+				
+				break
+			count += 1
+			
+		avg = (station +last_station)/2
+		stations[side].append(station)
+		
+		pitches[side].append([avg, f'{count}x{last_pitch}"', float(station), float(last_station)])	
 
+	
+		
 	return stations, pitches
+	
+	
+
 class LOPA_Backend():
 
 	def __init__(self, parent_page, controller):
@@ -195,7 +224,38 @@ class LOPA_Backend():
 			# if 'B737' in self.aircraft_type:
 				# station = process_boeing_station(self.aircraft_type, station)
 			# row[3] = station
-			
+
+	def find_overwing_seats(self):
+		
+		ow_rows = {'LHS': [], 'RHS': []}
+
+		
+		for station in [668.15, 701.5]:
+			for side in ['LHS', 'RHS']:
+				gaps = []
+				abs_gaps = []
+				
+				
+				for row in self.seat_layout[side]:
+
+					gaps.append(station - float(row[3]))
+					abs_gaps.append(abs(station - float(row[3])))
+					
+				abs_min_gap = min(abs_gaps)
+
+				idx = abs_gaps.index(abs_min_gap)
+				
+				if idx not in ow_rows[side]:
+					ow_rows[side].append(idx)
+				if idx >0:
+					if idx-1 not in ow_rows[side]:
+						ow_rows[side].append(idx-1)
+				if idx < len(self.seat_layout[side])-1:
+					if idx+1 not in ow_rows[side]:
+						ow_rows[side].append(idx+1)
+				ow_rows[side] = sorted(ow_rows[side])
+		return ow_rows
+		
 	def update_component(self, source, type):
 		#pass current joint through to state class (for undo redo)
 		if type != 'undo_redo':
@@ -225,6 +285,25 @@ class LOPA_Backend():
 				
 				count += 1
 		
+		
+	def gen_parts_table(self):
+	
+		parts = [] #[qty, part_no, description]
+		
+		for side in ['LHS', 'RHS']:
+			for row in self.seat_layout[side]:
+				seat = row[1]
+				seat_found = False
+				
+				for part in parts:
+					if part[1] == seat:
+						seat_found = True
+						part[0] += 1
+				
+				if not seat_found:
+					parts.append([1, seat, self.mainapp.frames[seat].backend.description])
+		
+		return parts
 class LOPA_Saved_State():
 	def __init__(self, lopa):
 	

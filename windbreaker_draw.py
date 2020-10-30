@@ -16,8 +16,14 @@ def windbreaker_top_down_view(canvas, canvas_type, datum, wb):
 		x_coords = [x, x, x-thickness, x-thickness, x] 
 		y_coords = [y, y-width, y-width, y, y] 
 		
-		canvas.plot(x_coords,y_coords, color = wb_color)
-
+		if canvas_type == 'matplotlib':
+			canvas.plot(x_coords,y_coords, color = wb_color)
+		elif canvas_type == 'dxf':
+			points = []
+			for index, v in enumerate(x_coords):
+				points.append((v, y_coords[index]))
+			canvas.add_lwpolyline(points)
+			
 	if wb.side == 'RHS':
 		x = datum[0]
 		y = datum[1]
@@ -25,8 +31,14 @@ def windbreaker_top_down_view(canvas, canvas_type, datum, wb):
 		x_coords = [x, x, x-thickness, x-thickness, x] 
 		y_coords = [y, y+width, y+width, y, y] 
 		
-		canvas.plot(x_coords,y_coords, color = wb_color)
-
+		if canvas_type == 'matplotlib':
+			canvas.plot(x_coords,y_coords, color = wb_color)
+		elif canvas_type == 'dxf':
+			points = []
+			for index, v in enumerate(x_coords):
+				points.append((v, y_coords[index]))
+			canvas.add_lwpolyline(points)
+			
 def windbreaker_side_view(canvas, canvas_type, datum, wb):
 	
 	wb_color = 'orange'
@@ -41,8 +53,14 @@ def windbreaker_side_view(canvas, canvas_type, datum, wb):
 		x_coords = [x, x, x-thickness, x-thickness, x] 
 		y_coords = [y, y+height, y+height, y, y]
 		
-		canvas.plot(x_coords,y_coords, color = wb_color)
-		
+		if canvas_type == 'matplotlib':
+			canvas.plot(x_coords,y_coords, color = wb_color)
+		elif canvas_type == 'dxf':
+			points = []
+			for index, v in enumerate(x_coords):
+				points.append((v, y_coords[index]))
+			canvas.add_lwpolyline(points)
+			
 	elif wb.joggle == 'Yes':
 		
 		joggle_width = float(wb.joggle_width)
@@ -56,5 +74,13 @@ def windbreaker_side_view(canvas, canvas_type, datum, wb):
 					
 		y_coords = [y, joggle_lower, joggle_upper, height, height, joggle_upper,
 					joggle_lower, y, y]
-					
-		canvas.plot(x_coords,y_coords, color = wb_color)
+		
+		if canvas_type == 'matplotlib':
+			canvas.plot(x_coords,y_coords, color = wb_color)
+		elif canvas_type == 'dxf':
+			points = []
+			for index, v in enumerate(x_coords):
+				points.append((v, y_coords[index]))
+			canvas.add_lwpolyline(points)
+		
+		

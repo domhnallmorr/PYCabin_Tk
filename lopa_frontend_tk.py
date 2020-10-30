@@ -13,6 +13,8 @@ import gui_styles_tk
 import components_tk
 import double_scrollbar
 import lopa_draw
+import seats_draw
+import docx_functions
 #from Pycabin_Backend import lopa_draw_redo
 
 import matplotlib
@@ -26,6 +28,7 @@ import comment_box
 #import ezdxf
 
 from docx import Document
+from docx.enum.text import WD_BREAK
 #from ezdxf.tools.standards import linetypes  # some predefined line types
 
 def check_lopa_used(self):
@@ -100,6 +103,9 @@ class LOPA_Page_Tk(tk.Frame):
 	def set_grid_configures(self):
 	
 		self.lopa_scroll_frame.inner.grid_columnconfigure(4, weight=1)
+		self.overwing_scroll_frame.inner.grid_columnconfigure(0, weight=1)
+		self.overwing_frame.grid_columnconfigure(7, weight=1)
+		self.overwing_frame.grid_rowconfigure(3, weight=1)
 		#self.weight_scroll_frame.frame.grid_columnconfigure(7, weight=1)
 		pass
 	def onFrameConfigure(self, canvas):
@@ -122,7 +128,7 @@ class LOPA_Page_Tk(tk.Frame):
 		self.note.add(self.main_tab, text = "Main")
 		self.note.add(self.seat_tab, text = "Seat Layout")
 		self.note.add(self.weight_tab, text = "Seat Weights")
-		self.note.add(self.overwing_tab, text = "Over Wing Exit")
+		self.note.add(self.overwing_tab, text = "Over Wing Exits")
 		self.note.add(self.comments_tab, text = "Comments")
 		
 		#self.note.grid(row=1,column=0,sticky='NSEW')
@@ -160,7 +166,8 @@ class LOPA_Page_Tk(tk.Frame):
 		self.weight_frame.grid(row=3, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
 		self.overwing_frame = LabelFrame(self.overwing_scroll_frame.inner, text='Overwing Exit Plot')
-		self.overwing_frame.grid(row =2, column=0, sticky='NW')
+		self.overwing_frame.pack(fill=tk.BOTH, expand=True)
+		#self.overwing_frame.grid(row =2, column=0, sticky='NW')
 		
 	def setup_labels(self):
 			
@@ -355,8 +362,11 @@ class LOPA_Page_Tk(tk.Frame):
 		# self.dxf_btn = Button(self.main_tab, text = 'Export to DXF',width = 30, command= lambda: self.export_dxf())
 		# self.dxf_btn.grid(row=1, column=1, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
-		# self.ms_word_btn = Button(self.main_tab, text = 'Export to Word',width = 30, command= lambda: self.export_word())
-		# self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+		self.ms_word_btn = Button(self.main_scroll_frame.inner, text = 'Export to Word', image = self.mainapp.word_icon2, compound = LEFT, width = 30, command= lambda: self.export_word())
+		self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+		
+		self.dxf_btn = Button(self.main_scroll_frame.inner, text = 'Export to DXF', image = self.mainapp.cad_icon2, compound = LEFT, width = 30, command= lambda: self.export_dxf())
+		self.dxf_btn.grid(row=1, column=3, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 		
 		self.add_wb_btn = Button(self.wb_frame, text = 'Add', image = self.mainapp.add_icon2, compound = LEFT,
 								command =  lambda event=None, type='Windbreaker', mode='new': self.add_monument(event, type, mode))
@@ -366,9 +376,9 @@ class LOPA_Page_Tk(tk.Frame):
 								command =  lambda type='Windbreaker': self.del_windbreaker())
 		self.del_wb_btn.grid(row = 1, column = 2, columnspan = 2, sticky = 'NSEW')
 		
-		self.auto_item_btn = Button(self.items_frame, text = 'Autogen',
-								command = self.autogen_items)
-		self.auto_item_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
+		self.edit_item_btn = Button(self.items_frame, text = 'Edit',
+								command = self.edit_seat_item_nos)
+		self.edit_item_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
 		
 		self.expand_lopa_tree_btn = Button(self.lopa_scroll_frame.inner, text = "Expand Trees",
 							  command = lambda height=30, trees = [self.LHS_lopa_tree,self.RHS_lopa_tree]: self.expand_tree(trees,height))
@@ -376,8 +386,11 @@ class LOPA_Page_Tk(tk.Frame):
 
 		self.overwing_plot_btn = Button(self.overwing_frame, text = "Update Plot",
 									command= self.update_overwing_plot)
-		self.overwing_plot_btn.grid(row=2, column=0, sticky='nsew')
+		self.overwing_plot_btn.grid(row=2, column=0, sticky='nsew', padx=2)
 
+		self.overwing_combo = ttk.Combobox(self.overwing_frame, values=['LHS', 'RHS'], state='readonly')
+		self.overwing_combo.grid(row=2, column=1, sticky='nsew', padx=2)
+		
 		self.edit_comment_button=Button(self.comments_tab,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
 										command= lambda self=self :comment_box.edit_comments(self))
 		self.edit_comment_button.grid(row=0,column=0, pady=5,sticky="nsew", ipadx=2, ipady=2)
@@ -471,13 +484,14 @@ class LOPA_Page_Tk(tk.Frame):
 		lopa_draw.draw_lavs_side(self.backend, [self.backend.ax1, self.backend.ax3], 'matplotlib', [0,0])
 		
 		lopa_draw.draw_galleys_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
-		lopa_draw.draw_galleys_side(self.backend, [self.backend.ax1, self.backend.ax3], 'matplotlib', [0,0])
+		lopa_draw.draw_galleys_side(self.backend, [self.backend.ax1, self.backend.ax3], 'matplotlib', [0,0,0,0])
 		self.canvas.draw()
 
 	def add_overwing_plot(self):
 	
 		self.overwing_figure = Figure(figsize=(5,5), dpi=100)
-		self.overwing_ax1 = self.overwing_figure.add_subplot(111, aspect='equal', adjustable='box')
+		self.overwing_ax1 = self.overwing_figure.add_subplot(111, aspect='equal', adjustable='box') #RHS
+		#self.overwing_ax2 = self.overwing_figure.add_subplot(212, aspect='equal', adjustable='box') #LHS
 
 		self.overwing_canvas = FigureCanvasTkAgg(self.overwing_figure, self.overwing_frame)
 		self.overwing_canvas.draw()
@@ -498,24 +512,71 @@ class LOPA_Page_Tk(tk.Frame):
 		toolbarFrame.grid(row = 2, column = 0, columnspan=5, pady=2,sticky="nsew")
 	
 	def update_overwing_plot(self):
+		side = self.overwing_combo.get()
 		
-		self.overwing_ax1.clear()
-		
-		s = 668.15
-		w = 24.3
-		
-		x = [s-(w/2), s-(w/2), s+(w/2), s+(w/2), s-(w/2)]
-		y = [64, 106.15, 106.15, 64, 64]
-		
-		self.overwing_ax1.plot(x, y)
-		
-		s = 701.5
-		x = [s-(w/2), s-(w/2), s+(w/2), s+(w/2), s-(w/2)]
-		
-		self.overwing_ax1.plot(x, y)
-		
-		#find near seats
-		self.overwing_canvas.draw()
+		if side in ['LHS', 'RHS']:
+			for canvas in [self.overwing_ax1]:
+				canvas.clear()
+				
+				s = 668.15
+				w = 24.3
+				
+				x = [s-(w/2), s-(w/2), s+(w/2), s+(w/2), s-(w/2)]
+				y = [14.1, 14.1+41.16, 14.1+41.16, 14.1, 14.1]
+				
+				canvas.fill(x, y, color='grey', alpha=0.6)# linestyle='dashed')
+				
+				canvas.plot([s, s], [14.1+41.16, 14.1+41.16+5], color='black', linestyle='dashed')
+				canvas.text(s, 14.1+41.16+6, 'STA 668.15', ha='center')
+				
+				s = 701.5
+				x = [s-(w/2), s-(w/2), s+(w/2), s+(w/2), s-(w/2)]
+				
+				canvas.fill(x, y, color='grey', alpha=0.6)
+
+				canvas.plot([s, s], [14.1+41.16, 14.1+41.16+5], color='black', linestyle='dashed')
+				canvas.text(s, 14.1+41.16+6, 'STA 701.5', ha='center')
+				
+			#find nearest seats
+			ow_rows = self.backend.find_overwing_seats() #gives indexs in backend.seat_layout of nearest seats to OW exits
+			print(ow_rows)
+			sides = {'LHS': self.overwing_ax1, 'RHS': self.overwing_ax1}
+			
+			#draw seats (and get stations to annotatate
+			
+
+			annotate_stations = {'Rear': [], 'Front': [], 'Top': []}
+			for i, indx in enumerate(ow_rows[side]):
+				seat = self.mainapp.frames[self.backend.seat_layout[side][indx][1]].backend
+				canvas = sides[side]
+				canvas_type = 'matplotlib'
+				station = self.backend.seat_layout[side][indx][3]
+				side_datum = [station, 0]
+				seats_draw.economy_seat_generic_side_view(seat, canvas, canvas_type, side_datum)
+				
+				print(station)
+				print(seat.length_fwd)
+				annotate_stations['Front'].append(station - float(seat.length_fwd))
+				annotate_stations['Rear'].append(station + float(seat.length_aft))
+				annotate_stations['Top'].append(float(seat.height))
+					
+			#add annotations
+			for i, r in enumerate(annotate_stations['Rear']):
+				if r != annotate_stations['Rear'][-1]:
+					f = annotate_stations['Front'][i+1]
+					t = max([annotate_stations['Top'][i+1], annotate_stations['Top'][i]])
+					
+					if f-r >=3:
+						canvas.annotate(s='', xy=(r,t+1), xytext=(f,t+1), arrowprops=dict(arrowstyle='<->'))
+					else:
+						canvas.annotate(s='', xy=(r,t+1), xytext=(r-5,t+1), arrowprops=dict(arrowstyle='->'))
+						canvas.annotate(s='', xy=(f+5,t+1), xytext=(f,t+1), arrowprops=dict(arrowstyle='<-'))
+					canvas.text(r + ((f-r)/2), t+2, f'{str(round(f-r, 1))}"', ha='center')
+			
+			#add floor
+			x1,x2,y1,y2 = canvas.axis()
+			canvas.plot([x1, x2],[0, 0], color='black')
+			self.overwing_canvas.draw()
 		
 	def seat_double_click(self, event, side):
 		if side == 'LHS':
@@ -557,17 +618,21 @@ class LOPA_Page_Tk(tk.Frame):
 			self.update_component(self.w, 'edit')
 			
 	def export_dxf(self):
-		lopa_draw_redo.gen_dxf(self)
+		lopa_draw.gen_dxf(self)
 		
 	def export_word(self):
-	
-		document = Document()
+
+		mode = 'edit'
 		
-		ipc_data = self.gen_ipc_data('FROMTO')
+		self.w=Export_Word_Window(self.mainapp, self.master, mode, self)
+		self.master.wait_window(self.w.top)	
+		# document = Document()
 		
-		ipc_gen.gen_ipc_table(document, ipc_data)
+		# ipc_data = self.gen_ipc_data('FROMTO')
 		
-		document.save(r'C:\Python37\Lib\site-packages\Pycabin_Backend\ipc.docx')
+		# ipc_gen.gen_ipc_table(document, ipc_data)
+		
+		# document.save(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\ipc.docx')
 
 	def gen_ipc_data(self, fromto):
 		data = treeview_functions.get_all_treeview_items(self.item_tree)
@@ -628,7 +693,17 @@ class LOPA_Page_Tk(tk.Frame):
 			tree_list[-1].insert(0, index+1)#
 			
 		treeview_functions.write_data_to_treeview(self.item_tree, 'replace', tree_list)	
-			
+	
+	def edit_seat_item_nos(self):
+		
+		mode = 'edit'
+		
+		self.w=Edit_Item_Window(self.mainapp, self.master, mode, self)
+		self.master.wait_window(self.w.top)	
+		
+		if self.w.button == 'ok':
+			treeview_functions.write_data_to_treeview(self.item_tree, 'replace',self.w.data) 
+		
 class Edit_LOPA_Window_Tk(object):
 	def __init__(self, mainapp, master, ac, mode, parent_lopa):
 		#self.drawing_dictionary = drawing_dictionary
@@ -704,7 +779,8 @@ class Edit_LOPA_Window_Tk(object):
 
 		#if self.mode != 'edit':
 			
-		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320', 'A319', 'B737-800'],state='readonly')
+		#self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320', 'A319', 'B737-800'],state='readonly')
+		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320'],state='readonly')
 		self.aircraft_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.aircraft_combo.bind("<<ComboboxSelected>>", self.aircraft_selected)
 		if self.mode == 'edit':
@@ -1109,4 +1185,220 @@ class Add_Monument_Window():
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 			
 		else:
+			self.top.destroy()
+			
+class Edit_Item_Window(object):
+	def __init__(self, mainapp, master, mode, parent_lopa):
+		#self.drawing_dictionary = drawing_dictionary
+		top=self.top=Toplevel(master)
+		top.grab_set()
+		self.mainapp = mainapp
+		self.mode = mode
+		self.parent_lopa = parent_lopa
+
+		self.setup_label_frames()
+		
+		self.seats = {'LHS': {}, 'RHS': {}}
+		
+		current_items = treeview_functions.get_all_treeview_items(self.parent_lopa.item_tree)
+		for side in self.seats:
+			for row in self.parent_lopa.backend.seat_layout[side]:
+				if row[1] not in self.seats[side]:
+					self.seats[side][row[1]] = Entry(self.items_frame)
+					
+					#insert current number in tree
+					for c in current_items:
+						if c[1] == row[1]:
+							self.seats[side][row[1]].insert(0, c[2])
+
+		self.setup_widgets()		
+		
+		self.button = 'cancel'
+	def setup_label_frames(self):
+	
+		self.auto_frame = LabelFrame(self.top,text="Autogen Options:")
+		self.auto_frame.grid(row=2, column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
+		self.items_frame = LabelFrame(self.top,text="Item Numbers:")
+		self.items_frame.grid(row=3,column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
+		
+
+	def setup_widgets(self):
+	
+		# ____ AUTOGEN OPTIONS ____
+		
+		Button(self.auto_frame, text = 'Autogen Numbers', command=self.autogen).grid(row=0, column = 1, sticky='NSEW')
+		# starting number
+		Label(self.auto_frame, text = 'Starting Number:').grid(row=1, column = 1, sticky='NSEW')
+		self.start_entry = Entry(self.auto_frame)
+		self.start_entry.grid(row=1, column = 2, padx=1, pady=1, sticky='NSEW')
+		
+		# format
+		Label(self.auto_frame, text = 'Format:').grid(row=2, column = 1, sticky='NSEW')
+		self.format_combo = ttk.Combobox(self.auto_frame, values=['1, 2, 3, etc', '01, 02, 03, etc'], state='readonly')
+		self.format_combo.grid(row=2, column = 2, padx=1, pady=1, sticky='NSEW')
+		
+		# ____ SEATS ____
+		
+		column = 1
+		for side in self.seats:
+			row = 2
+			for seat in self.seats[side]:
+				Label(self.items_frame, text = seat).grid(row=row, column=column, sticky='NSEW')
+				self.seats[side][seat].grid(row=row, column=column+1, sticky='NSEW', padx = 2)
+				row +=1
+			column += 2
+
+		# ok button
+		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
+		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+
+		# cancel button
+		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
+		self.b.grid(row=8,column=2, pady=5,sticky="nsew")			
+			
+	def cleanup(self, button):
+	
+		self.button = button
+		
+		if self.button == 'ok':
+			
+			count = 1
+			self.data = []
+			for side in self.seats:
+				for seat in self.seats[side]:
+					#get qty of installed seats
+					qty = 0
+					for row in self.parent_lopa.backend.seat_layout[side]:
+						if row[1] == seat:
+							qty += 1
+					self.data.append([count, seat, self.seats[side][seat].get(), qty])
+					count += 1
+					
+			self.top.destroy()
+			
+		else:
+			
+			self.top.destroy()
+	
+	def autogen(self):
+	
+		start_no = 1
+		
+		try:
+			start_no = int(self.start_entry.get())
+		except:
+			pass
+			
+		lhs_no = start_no
+		for seat in self.seats['LHS']:
+			self.seats['LHS'][seat].delete(0, 'end')
+			if self.format_combo.get() == '01, 02, 03, etc'and lhs_no < 10:
+				text = f'0{lhs_no}'
+			else:
+				text = lhs_no
+				
+			self.seats['LHS'][seat].insert(0, text)
+			
+			lhs_no += 2
+			
+		rhs_no = start_no+1
+		for seat in self.seats['RHS']:
+			self.seats['RHS'][seat].delete(0, 'end')
+			if self.format_combo.get() == '01, 02, 03, etc'and rhs_no < 10:
+				text = f'0{rhs_no}'
+			else:
+				text = rhs_no
+				
+			self.seats['RHS'][seat].insert(0, text)
+			
+			rhs_no += 2
+
+class Export_Word_Window(object):
+	def __init__(self, mainapp, master, mode, parent_lopa):
+		#self.drawing_dictionary = drawing_dictionary
+		top=self.top=Toplevel(master)
+		top.grab_set()
+		self.mainapp = mainapp
+		self.mode = mode
+		self.parent_lopa = parent_lopa
+
+		self.setup_label_frames()		
+		self.setup_widgets()
+		
+		self.button = 'cancel'
+	def setup_label_frames(self):
+	
+		self.main_frame = LabelFrame(self.top, text='Options:')
+		self.main_frame.grid(row=2, column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		
+	def setup_widgets(self):
+	
+		Label(self.main_frame, text='Output File:').grid(row=1, column = 1, ipadx=1, ipady=1, padx=2, pady=2, sticky='NW')
+		
+		self.file_entry = Entry(self.main_frame, width = 80)
+		self.file_entry.grid(row=1, column = 2, ipadx=1, ipady=1, padx=2, pady=2, sticky='NW')
+		
+		self.file_entry.insert(0, r'C:/Users/domhn/Documents/Python/Pycabin_Tkinter/V0.08/test.docx')
+		Button(self.main_frame, text='Browse', command=self.browse).grid(row=1, column = 3, ipadx=1, ipady=1, padx=2, pady=2, sticky='NW')
+
+		# ok button
+		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
+		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+
+		# cancel button
+		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
+		self.b.grid(row=8,column=2, pady=5,sticky="nsew")	
+		
+	def browse(self):
+		
+		filename = filedialog.asksaveasfilename()
+		
+		self.file_entry.delete(0, 'end')
+		self.file_entry.insert(0, filename)
+		
+	def cleanup(self, button):
+	
+		self.button = button
+		
+		if self.button == 'ok':
+			
+			self.filename = self.file_entry.get()
+			#Checks
+			msg = None
+			# is extension .docx
+			if self.filename[-5:] != '.docx':
+				msg = 'Extension must be .docx'
+				
+			# 
+			if msg:	
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
+			else:
+				self.document = Document()
+				parts = self.parent_lopa.backend.gen_parts_table()
+				#SB table
+				docx_functions.write_table(self.document, ['Qty', 'Part Number', 'Description'],parts)
+				
+				p = self.document.add_paragraph()
+				run = p.add_run()
+				run.add_break(WD_BREAK.PAGE)
+		
+				# IPC Table
+				ipc_table = []
+				item_nos = treeview_functions.get_all_treeview_items(self.parent_lopa.item_tree)
+				for p in parts:
+					item_number = ''
+					for i in item_nos:
+						if p[1] == i[1]:
+							item_number = i[2]
+							
+					ipc_table.append([item_number, p[1], p[2], '', p[0]])
+				
+				docx_functions.write_table(self.document, ['ITEM NO.', 'PART NUMBER', 'DESCRIPTION', 'FROMTO', 'QTY'],ipc_table)
+				
+				self.document.save(self.filename)
+				self.top.destroy()
+			
+		else:
+			
 			self.top.destroy()

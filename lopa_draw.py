@@ -179,7 +179,7 @@ def draw_floor(self, canvas, canvas_type, datum):
 	if self.aircraft_type == 'A320' or self.aircraft_type == 'A319':
 		
 		x = [105.4137,1322.52+offset]
-		y = [-160, -160]
+		y = [datum[1], datum[1]]
 	
 	if self.aircraft_type == 'B737-800':
 		x = [130.0+offset, 1124.65 +232+offset]
@@ -268,10 +268,20 @@ def draw_windbreakers_side(self, canvas, canvas_type, datum):
 		x = float(wb[1])
 		if c.side == 'LHS':
 			side_canvas = canvas[1]
+			
+			if canvas_type == 'dxf':
+				y = datum[3]
+			else:
+				y = 0
 		else:
-
 			side_canvas = canvas[0]
-		m_datum = [x,0]
+
+			if canvas_type == 'dxf':
+				y = datum[1]
+			else:
+				y = 0
+				
+		m_datum = [x,y]
 
 		windbreaker_draw.windbreaker_side_view(side_canvas, canvas_type, m_datum, c)
 		
@@ -284,13 +294,21 @@ def draw_lavs_top_down(lopa_bk, canvas, canvas_type, datum,):
 
 			lav_draw.draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, datum)
 
-def draw_lavs_side(lopa_bk, canvas, canvas_type, datum,):
+def draw_lavs_side(lopa_bk, canvas, canvas_type, datum):
 
 	for lav in lopa_bk.lavs:
 		
 		if lav[1] == 'Yes':
-
-			lav_draw.draw_lav_side(lopa_bk, lav, canvas, canvas_type, datum)
+			
+			if canvas_type == 'dxf':
+				if lopa_bk.aircraft_type in ['A320', 'A319']:
+					if lav[0] in ['Lav A', 'Lav D']: 
+						m_datum = [0, datum[3]]
+					else:
+						m_datum = [0, datum[1]]
+			else:
+				m_datum = [0,0]
+			lav_draw.draw_lav_side(lopa_bk, lav, canvas, canvas_type, m_datum)
 
 def draw_galleys_top_down(lopa_bk, canvas, canvas_type, datum,):
 
@@ -349,23 +367,44 @@ def gen_dxf(self):
 	
 	add_seats_to_dxf(self, dxf, modelspace, True, True)
 	
+	# Add floor
+	draw_floor(self.backend, modelspace, 'dxf', [0,-180-0.12])
+	draw_floor(self.backend, modelspace, 'dxf', [0,130+0.12])
+	
+	# Monuments
+	draw_windbreakers_top_down(self.backend, modelspace, 'dxf', [0,0])
+	draw_windbreakers_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
+	
+	draw_lavs_top_down(self.backend, modelspace, 'dxf', [0,0])
+	draw_lavs_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
+
+	draw_galleys_top_down(self.backend, modelspace, 'dxf', [0,0])
+	draw_galleys_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
+		
 	# Insert Stations for seats
 	stations, pitches = lopa_bk.process_seat_stations_for_drawing(self.backend.seat_layout)
-	for side in ['LHS', 'RHS']:
+	
+	if pitches['RHS'] != pitches['LHS']:
+		sides = ['LHS', 'RHS']
+	else:
+		sides = ['LHS']
+		
+	for side in sides:
 
 		if side == 'LHS':
-			y = -160
+			y = -210
 		else:
-			y = 90
+			y = 100
 		for s in stations[side]:
 			modelspace.add_text(s, dxfattribs={'rotation': 90, 'height': 5.35}).set_pos((float(s), y),align='CENTER')
 			
 		for p in pitches[side]:
-			dim = modelspace.add_linear_dim(base=(p[3], y+10), p1=(p[2], y), p2=(p[3], y),)
+
+			dim = modelspace.add_linear_dim(base=(p[3], y+10), p1=(p[2], y), p2=(p[3], y), text=p[1])
 					 #override={'dimtxt': p[1],})
 			dim.render()
 			#modelspace.add_text(p[1], dxfattribs={'height': 5.35}).set_pos((p[0], y),align='CENTER')
-	dxf.saveas(r'C:\Python37\Lib\site-packages\Pycabin_Frontend_Tkinter\lopa.dxf')
+	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\lopa.dxf')
 	
 def add_seats_to_dxf(self, dxf, modelspace, draw_top, draw_side):
 
@@ -388,5 +427,5 @@ def add_seats_to_dxf(self, dxf, modelspace, draw_top, draw_side):
 				if draw_side:
 					seats_draw.economy_seat_generic_side_view(seat, seat_blocks[row[1]], 'dxf', [0,y])
 			
-			y = lopa_tk.get_seat_y_datum(station, self.backend.aircraft_type, side)
+			y = lopa_frontend_tk.get_seat_y_datum(station, self.backend.aircraft_type, side)
 			modelspace.add_blockref(row[1], (station, y))

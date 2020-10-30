@@ -47,13 +47,25 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 			
 			if canvas_type == 'matplotlib':
 				canvas.plot(x, y, color = lav_color)
+
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas.add_lwpolyline(points)
 				
 			x = [s-b+7, s-b+7]
 			y = [-cl-w, -cl]
-		
+				
 			if canvas_type == 'matplotlib':
 				canvas.plot(x, y, color = lav_color)
 				canvas.text(s - (b/2), -cl-w/2, 'La', ha='center', va='bottom')
+				
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas.add_lwpolyline(points)
 			# if canvas_type == 'matplotlib':
 				# canvas.plot(x, y, color = lav_color)
 
@@ -70,19 +82,36 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 			
 			if canvas_type == 'matplotlib':
 				canvas.plot(x, y, color = lav_color)
+			
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas.add_lwpolyline(points)
 				
 			x = [1207, 1207 + 36.81]
 			y = [-19.68-40, -19.68-40]
 		
 			if canvas_type == 'matplotlib':
 				canvas.plot(x, y, color = lav_color)
-		
+			
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas.add_lwpolyline(points)
+				
 			x = [1207+7, 1207+7]
 			y = [-19.68-40, -19.68]
 
 			if canvas_type == 'matplotlib':
 				canvas.plot(x, y, color = lav_color)
 				canvas.text(s + (b/2), cl-w/2, 'Ld', ha='center', va='center')
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas.add_lwpolyline(points)
 				
 			if lav[4] == 'Yes': #draw doghouse
 							
@@ -101,12 +130,24 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 			
 			if canvas_type == 'matplotlib':
 				canvas.plot(x, y, color = lav_color)
+
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas.add_lwpolyline(points)
 				
 			x = [1207, 1207 + 36.81]
 			y = [19.68+40, +19.68+40]
 		
 			if canvas_type == 'matplotlib':
 				canvas.plot(x, y, color = lav_color)
+
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas.add_lwpolyline(points)
 		
 			x = [1207+7, 1207+7]
 			y = [+19.68+40, +19.68]
@@ -114,12 +155,25 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 			if canvas_type == 'matplotlib':
 				canvas.plot(x, y, color = lav_color)
 				canvas.text(s + (b/2), cl+w/2, 'Le', ha='center', va='center')
+
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas.add_lwpolyline(points)
 				
 			if lav[4] == 'Yes': #draw doghouse
-							
-				rect = patches.Rectangle((s-8,cl + 5),8,45,linewidth=1,edgecolor='grey',facecolor='grey')
-				canvas.add_patch(rect)
 				
+				if canvas_type == 'matplotlib':
+					rect = patches.Rectangle((s-8,cl + 5),8,45,linewidth=1,edgecolor='grey',facecolor='grey')
+					canvas.add_patch(rect)
+				elif canvas_type == 'dxf':
+					x = [s, s, s-8, s-8, s]
+					y = [cl+5+45, cl+5, cl+5, cl+5+45, cl+5+45]
+					points = []
+					for index, v in enumerate(x):
+						points.append((v, y[index]))
+					canvas.add_lwpolyline(points)					
 def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 
 	lav_color = 'green'
@@ -142,17 +196,25 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 	if lopa_bk.aircraft_type in ['A320', 'A319']:
 	
 		offset = 0	
-
+		y_datum = side_datum[1]
+		
 		if lav[0] == 'Lav A':
 			s=278.6
 			b = 36.6
 			
+			
 			x = [278.6, 278.6, 278.6-36.6, 278.6-36.6]
-			y = [0, 82.12, 82.12, 0]
+			y = [0+y_datum, 82.12+y_datum, 82.12+y_datum, 0+y_datum]
 			
 			if canvas_type == 'matplotlib':
 				canvas[1].plot(x, y, color = lav_color)	
 				canvas[1].text(s - (b/2), 40, 'La', ha='center', va='bottom')
+			
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas[1].add_lwpolyline(points)
 				
 		if lav[0] == 'Lav E':
 			
@@ -160,12 +222,17 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 			b= 36.6
 			
 			x = [1207, 1207, 1207+36.81, 1207+36.81]
-			y = [0, 84.6, 84.6, 0]
+			y = [0+y_datum, 84.6+y_datum, 84.6+y_datum, 0+y_datum]
 			
 			if canvas_type == 'matplotlib':
 				canvas[1].plot(x, y, color = lav_color)	
 				canvas[1].text(s + (b/2), 40, 'Le', ha='center', va='bottom')
 			
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas[1].add_lwpolyline(points)
 				
 		if lav[0] == 'Lav D':
 			
@@ -173,16 +240,31 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 			b = 36.81
 			
 			x = [1207, 1207, 1207+36.81, 1207+36.81]
-			y = [0, 84.6, 84.6, 0]
+			y = [0+y_datum, 84.6+y_datum, 84.6+y_datum, 0+y_datum]
 			
 			if canvas_type == 'matplotlib':
 				canvas[0].plot(x, y, color = lav_color)	
 				canvas[0].text(s + (b/2), 40, 'Le', ha='center', va='bottom')
-		if lav[4] == 'Yes': #doghouse
 
-			rect = patches.Rectangle((s-8, 0),8,24,linewidth=1,edgecolor='grey',facecolor='grey')
-			if lav[0] == 'Lav D':
-				canvas[0].add_patch(rect)
-			elif lav[0] == 'Lav E':
-				canvas[1].add_patch(rect)
+			elif canvas_type == 'dxf':
+				points = []
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas[0].add_lwpolyline(points)
 				
+		if lav[4] == 'Yes': #doghouse
+			
+			if canvas_type == 'matplotlib':
+				rect = patches.Rectangle((s-8, 0),8,24,linewidth=1,edgecolor='grey',facecolor='grey')
+				if lav[0] == 'Lav D':
+					canvas[0].add_patch(rect)
+				elif lav[0] == 'Lav E':
+					canvas[1].add_patch(rect)
+			
+			elif canvas_type == 'dxf':
+				points = []
+				x = [s, s, s-8, s-8, s]
+				y = [y_datum, y_datum+24, y_datum+24, y_datum, y_datum]
+				for index, v in enumerate(x):
+					points.append((v, y[index]))
+				canvas[0].add_lwpolyline(points)			
