@@ -1,6 +1,6 @@
 import ezdxf
 
-from Pycabin_Backend import lopa_draw_redo
+import lopa_draw
 
 def draw_psu_rail_side(self, canvas, canvas_type, datum, side):
 

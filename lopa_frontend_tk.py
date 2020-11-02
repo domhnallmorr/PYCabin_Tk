@@ -33,14 +33,16 @@ from docx.enum.text import WD_BREAK
 
 def check_lopa_used(self):
 	lopa_used = False
-	psus, psu_dict = components_tk.get_all_psus(self.mainapp)
+	psus = []
+	psu_dict = components_tk.get_all_components(self.mainapp, 'PSUs')
 	
-	for p in psus:
-		p = self.mainapp.frames[p]
-		if self.backend.drawing_no == p.backend.lopa:
+	for p in psu_dict['All']:
+		
+		if self.backend.title == self.mainapp.frames[p].backend.lopa:
 			lopa_used = True
-			break
-	return lopa_used
+			psus.append(p)
+			
+	return lopa_used, psus
 
 def get_seat_y_datum(station, aircraft, side):
 
@@ -445,6 +447,9 @@ class LOPA_Page_Tk(tk.Frame):
 
 	def update_component(self, window, type):
 		
+		orig_title = self.backend.title
+		lopa_used, psus = check_lopa_used(self)
+		
 		self.backend.update_component(window, type)
 		self.update_label_text()
 		self.update_monuments_tree()
@@ -457,6 +462,13 @@ class LOPA_Page_Tk(tk.Frame):
 		treeview_functions.write_data_to_treeview(self.RHS_lopa_tree, 'replace', self.backend.seat_layout['RHS'])
 		
 		self.update_lopa_plot()
+		
+		if lopa_used:
+			for p in psus:
+				p = self.mainapp.frames[p]
+				p.backend.lopa = self.backend.title
+				p.update_component(p.backend, 'edit')
+					
 		
 	def update_lopa_plot(self):
 		self.backend.ax1.clear()

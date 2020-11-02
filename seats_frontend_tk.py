@@ -220,6 +220,8 @@ class Seat_Page_Tk(tk.Frame):
 	def update_component(self, window, type):
 		
 		orig_part_no = self.backend.part_no
+		seat_used, lopas = check_seat_used(self.mainapp, self.backend)
+		
 		self.backend.update_component(window, type)
 		self.update_label_text()
 		# Redraw the seat
@@ -237,10 +239,16 @@ class Seat_Page_Tk(tk.Frame):
 			components_tk.component_renamed(self)
 		
 		# redraw LOPAs if required
-		seat_used, lopas = check_seat_used(self.mainapp, self.backend)
+		
 		if seat_used:
 			for l in lopas:
-				self.mainapp.frames[l].update_lopa_plot()
+				l = self.mainapp.frames[l]
+				for index, row in enumerate(l.backend.seat_layout[self.backend.side]):
+					
+					if row[1] == orig_part_no:			
+						l.backend.seat_layout[self.backend.side][index][1] = self.backend.title
+				l.update_component(l.backend, 'edit')
+				#self.mainapp.frames[l].update_lopa_plot()
 		#update lopas if part number has changed
 		# if orig_part_no != self.backend.part_no:
 			# self.update_lopa_tables(orig_part_no)

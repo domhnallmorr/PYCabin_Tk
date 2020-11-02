@@ -1,4 +1,4 @@
-from Pycabin_Frontend_Tkinter import treeview_functions
+import treeview_functions
 
 import matplotlib
 matplotlib.use('TkAgg')
