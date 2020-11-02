@@ -82,7 +82,7 @@ def check_entry_input(entry_data):
 	# If data good to this point, check if it is the right range
 	if entry_good:
 	
-		if 'float positive' in entry_data[2]:
+		if 'float positive' in entry_data[2] or 'int positive' in entry_data[2]:
 		
 			if user_input <= 0:
 				
@@ -92,7 +92,7 @@ def check_entry_input(entry_data):
 	
 	if not entry_good:
 		
-		if 'float positive' in entry_data[2]:
+		if 'float positive' in entry_data[2] or 'int positive' in entry_data[2]:
 		
 			entry_msg = 'Should be Numeric and Greater Than 0'
 			

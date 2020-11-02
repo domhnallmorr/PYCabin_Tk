@@ -45,7 +45,7 @@ class MainApplication(tk.Frame):
 		components_tk.show_frame(self, 'Project')
 	def setup_variables(self):
 		
-		self.version = '0.08'
+		self.version = '0.09'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		
@@ -110,6 +110,10 @@ class MainApplication(tk.Frame):
 		item = self.main_treeview.insert("",'end','LOPAs',text='LOPAs',image = fi)
 		item = self.main_treeview.insert("LOPAs",'end','A320 LOPAs',text=' A320 Family',image = abi)
 
+		# ________ PSU ________
+		item = self.main_treeview.insert("",'end','PSUs',text='PSU Layouts',image = fi)
+		item = self.main_treeview.insert("PSUs",'end','A320 PSUs',text=' A320 Family',image = abi)
+		
 		# ________ Changes ________
 		# item = self.main_treeview.insert("",'end','Changes',text='Changes',image = fi)
 
@@ -129,7 +133,7 @@ class MainApplication(tk.Frame):
 
 		self.ids_not_allowed = ['Project', 'Aircraft', 'A320 Aircraft', '737 Aircraft', 'Aircraft', 'Seats', 'A320 Seats',
 								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'Windbreaker'
-									'Windbreakers']		
+									'Windbreakers', 'A320 PSUs', 'PSUs']		
 		
 		# self.treeview_nodes = {'Aircraft': ['A320 Aircraft', '737 Aircraft'], 'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
 								# 'Windbreakers': ['A320 Windbreakers'],
@@ -137,7 +141,7 @@ class MainApplication(tk.Frame):
 
 		self.treeview_nodes = {'Aircraft': ['A320 Aircraft'], 'Seats': ['A320 Seats'], 'Monuments': ['A320 Windbreakers'],
 								'Windbreakers': ['A320 Windbreakers'],
-								'LOPAs': ['A320 LOPAs'], 'Changes': ['Changes']}
+								'LOPAs': ['A320 LOPAs'], 'PSUs': ['A320 PSUs'], 'Changes': ['Changes']}
 								
 
 	def setup_menu(self):
@@ -176,6 +180,8 @@ class MainApplication(tk.Frame):
 		insert_component_menu.add_command(label = 'Windbreaker', command = lambda self=self, type='Windbreaker': components_tk.new_component(self, type))
 		
 		insert_menu.add_command(label = 'LOPA', command = lambda self=self, type='LOPA': components_tk.new_component(self, type))
+		
+		insert_menu.add_command(label = 'PSU Layout', command = lambda self=self, type='PSU': components_tk.new_component(self, type))
 
 		# insert_menu.add_command(label = 'Change', command = lambda self=self, type='Change': components_tk.new_component(self, type))
 		
@@ -197,7 +203,7 @@ class MainApplication(tk.Frame):
 		parent_iid = event.widget.parent(item_iid)
 		
 		ids_to_ignore = ['A320 Aircraft', '737 Aircraft', 'A320 Seats', '737 Seats',
-						'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs']
+						'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'A320 PSUs']
 
 		if parent_iid:
 			if item_iid not in ids_to_ignore:

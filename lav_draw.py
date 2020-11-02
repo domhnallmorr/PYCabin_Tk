@@ -244,7 +244,7 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 			
 			if canvas_type == 'matplotlib':
 				canvas[0].plot(x, y, color = lav_color)	
-				canvas[0].text(s + (b/2), 40, 'Le', ha='center', va='bottom')
+				canvas[0].text(s + (b/2), 40, 'Ld', ha='center', va='bottom')
 
 			elif canvas_type == 'dxf':
 				points = []

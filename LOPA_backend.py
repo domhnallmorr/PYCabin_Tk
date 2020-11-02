@@ -304,6 +304,48 @@ class LOPA_Backend():
 					parts.append([1, seat, self.mainapp.frames[seat].backend.description])
 		
 		return parts
+		
+	def get_psu_rail_start_end(self):
+		
+		'''
+		returns x, a nested list in format [[LHS Start, LHS End], [RHS Start, RHS End]]
+		'''
+		if self.aircraft_type == 'A320':
+			
+			lav_d = True
+			lav_e = True
+			
+			x = []
+			wb_installed = [False, False] #[LHS, RHS]
+			
+			start = [320, 320]
+			
+			for wb in self.windbreakers:
+				side = self.mainapp.frames[wb[0]].backend.side
+				if side == 'LHS':
+					start[0] = float(wb[1])
+					wb_installed[0] = True
+				else:
+					start[1] = float(wb[1])
+					wb_installed[1] = True
+					
+			for lav in self.lavs:
+				if lav[0] == 'Lav D' and lav[1] == 'No':
+					lav_d = False
+				if lav[0] == 'Lav E' and lav[1] == 'No':
+					lav_e = False
+			
+				if lav_d:
+					x.append([start[0],1207])
+				else:
+					x.append([start[0],1250.52])
+					
+				if lav_e:
+					x.append([start[1],1207])
+				else:
+					x.append([start[1],1250.52])
+			
+			return x, lav_d, lav_e, wb_installed
 class LOPA_Saved_State():
 	def __init__(self, lopa):
 	

@@ -9,6 +9,7 @@ import seats_frontend_tk as seats_tk
 import windbreakers_frontend_tk as windbreakers_tk
 import lopa_frontend_tk as lopa_tk
 import aircraft_frontend_tk as aircraft_tk
+import psu_frontend_tk as psu_tk
 import changes_frontend_tk as change_tk
 '''
 V0.02 initial issue
@@ -45,7 +46,11 @@ def new_component(self, type):
 	if type == 'LOPA':
 		self.w=lopa_tk.Edit_LOPA_Window_Tk(self, self.master, None, mode, None)
 		self.master.wait_window(self.w.top)
-	
+
+	if type == 'PSU':
+		self.w=psu_tk.Edit_PSU_Window_Tk(self, self.master, None, mode, None)
+		self.master.wait_window(self.w.top)
+		
 	if type == 'Change':
 		self.w=change_tk.Edit_Change_Window_Tk(self, self.master, mode, None)
 		self.master.wait_window(self.w.top)
@@ -105,7 +110,15 @@ def create_component(self, type, source, update_type, insert=True):
 			ac_type = new_component.backend.aircraft_type
 			if ac_type in ['A320', 'A319']:
 				node = 'A320 LOPAs'
-	
+
+	if type == 'PSU':
+		if update_type == 'new':
+			new_component = psu_tk.PSU_Page_Tk(container=self.container, mainapp=self,)
+			new_component.update_component(source, update_type)
+			ac_type = new_component.backend.aircraft_type
+			if ac_type in ['A320', 'A319']:
+				node = 'A320 PSUs'
+		
 	if type == 'Change':
 
 		if update_type == 'new':
@@ -174,6 +187,9 @@ def get_all_components(mainapp, type):
 	if type == 'LOPAs':
 		components_dict = {'All': [], 'A320': [], 'A319': []}
 
+	if type == 'PSUs':
+		components_dict = {'All': [], 'A320': [], 'A319': []}
+		
 	if type == 'Changes':
 		components_dict = {'All': []}
 		
@@ -197,9 +213,11 @@ def get_all_components(mainapp, type):
 					if f'{ac_type} {side}' in components_dict.keys():
 						components_dict[f'{ac_type} {side}'].append(component.backend.title)
 				
-				if type == 'LOPAs':
+				if type == 'LOPAs' or type == 'PSUs':
 					if f'{ac_type}' in components_dict.keys():
 						components_dict[f'{ac_type}'].append(component.backend.title)
+
+
 						
 	return components_dict
 	

@@ -54,4 +54,5 @@ class Edit_Comments_Window():
 			self.mainapp.states.component_updated('comment', self.component, self.orig_text)
 			
 			self.top.destroy()
-			
+		else:
+			self.top.destroy()

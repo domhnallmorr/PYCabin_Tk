@@ -29,7 +29,7 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.json'
+	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.09\test.json'
 	#mainapp.save_file = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json'
 	write_save_file(mainapp)
 	
@@ -37,7 +37,7 @@ def write_save_file(mainapp):
 
 
 	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Aircraft': [], 'Seats': [],
-					'Windbreakers': [], 'LOPAs': [], 'Changes': []}
+					'Windbreakers': [], 'LOPAs': [], 'PSUs': []}
 	
 	# _________________ AIRCRAFT _________________
 	# ac_dict = components_tk.get_all_components(mainapp, 'Aircraft')
@@ -62,6 +62,12 @@ def write_save_file(mainapp):
 	for l in lopa_dict['All']:
 		save_dict['LOPAs'].append(mainapp.frames[l].backend.gen_save_dict())
 
+	# _________________ PSUs _________________
+	psu_dict = components_tk.get_all_components(mainapp, 'PSUs')
+
+	for p in psu_dict['All']:
+		save_dict['PSUs'].append(mainapp.frames[p].backend.gen_save_dict())
+		
 	# _________________ Changes _________________
 	# change_dict = components_tk.get_all_components(mainapp, 'Changes')
 
@@ -74,7 +80,7 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.09\test.json') as f:
 	#with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
@@ -111,6 +117,13 @@ def load(event=None, mainapp=None):
 			components_tk.create_component(mainapp, 'LOPA', l, 'new')
 			comment_box.insert_comments_text(mainapp.frames[l.title].comment_text, l.comments)
 
+	if 'PSUs' in data.keys():
+		
+		for p in data['PSUs']:
+			p = Load('PSU', p)
+			components_tk.create_component(mainapp, 'PSU', p, 'new')
+			comment_box.insert_comments_text(mainapp.frames[p.title].comment_text, p.comments)
+			
 	if 'Changes' in data.keys():
 		
 		for l in data['Changes']:
@@ -203,6 +216,17 @@ class Load():
 			self.lavs = component_data["Lavs"]
 			self.galleys = component_data["Galleys"]
 			self.windbreakers = component_data["Windbreakers"]
+			self.comments = component_data["Comments"]
+
+		if type == 'PSU':
+			self.title = component_data["Title"]
+			self.description = component_data["Description"]
+			self.aircraft_type = component_data["Aircraft Type"]			
+			self.lopa = component_data["LOPA"]
+			self.drawing_no = component_data["Drawing Number"]
+			self.drawing_rev = component_data["Drawing Rev"]
+			self.parts = component_data["Parts"]
+			self.psu_layout = component_data["Layout"]
 			self.comments = component_data["Comments"]
 			
 		if type == 'Change':
