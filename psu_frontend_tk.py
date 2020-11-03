@@ -14,6 +14,7 @@ import lopa_draw
 #import ipc_generator as ipc_gen
 import psu_draw
 import double_scrollbar
+import comment_box
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -105,7 +106,7 @@ class PSU_Page_Tk(tk.Frame):
 		#self.note.grid(row=1,column=0,sticky='NSEW')
 		self.note.pack(fill=tk.BOTH, expand=True)
 		# ####### COMMENTS TEXT ######################################
-		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50)
+		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50, state='disabled')
 		self.comment_text.grid(row=1, column=0, columnspan = 8, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
 	def setup_label_frames(self):
@@ -229,6 +230,9 @@ class PSU_Page_Tk(tk.Frame):
 						command = self.gen_layout)
 		self.gen_btn.grid(row=0,column=0, sticky="nsew")
 
+		self.edit_comment_button=Button(self.comments_tab,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
+										command= lambda self=self :comment_box.edit_comments(self))
+		self.edit_comment_button.grid(row=0,column=0, pady=5,sticky="nsew", ipadx=2, ipady=2)
 		# self.expand_lopa_tree_btn = Button(self.lopa_frame, text = "Expand Trees",
 							  # command = lambda height=30, trees = [self.LHS_lopa_tree,self.RHS_lopa_tree]: self.expand_tree(trees,height))
 		# self.expand_lopa_tree_btn.grid(row=0, column=0, columnspan=4, sticky='nsew')

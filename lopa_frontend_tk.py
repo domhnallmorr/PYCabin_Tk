@@ -447,9 +447,12 @@ class LOPA_Page_Tk(tk.Frame):
 
 	def update_component(self, window, type):
 		
-		orig_title = self.backend.title
-		lopa_used, psus = check_lopa_used(self)
-		
+		if type != 'new':
+			orig_title = self.backend.title
+			lopa_used, psus = check_lopa_used(self)
+		else:
+			lopa_used = False
+			
 		self.backend.update_component(window, type)
 		self.update_label_text()
 		self.update_monuments_tree()
