@@ -467,7 +467,7 @@ class LOPA_Page_Tk(tk.Frame):
 			for p in psus:
 				p = self.mainapp.frames[p]
 				p.backend.lopa = self.backend.title
-				p.update_component(p.backend, 'edit')
+				p.update_component(p.backend, 'lopa')
 					
 		
 	def update_lopa_plot(self):

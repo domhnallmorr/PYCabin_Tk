@@ -171,7 +171,7 @@ def get_all_components(mainapp, type):
 	if type == 'all':
 		components_dict = {'All': []}
 		#types = ['Aircraft', 'Seats', 'Windbreakers', 'LOPAs']
-		types = ['Seats', 'Windbreakers', 'LOPAs']
+		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 	

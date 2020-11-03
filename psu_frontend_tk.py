@@ -774,8 +774,8 @@ class Double_Click_Part_Window_Tk(object):
 			if self.data_ok:
 				
 				self.pn_qty = self.pn_entry.get() #existing qty
-				self.e_qty = int(self.e_qty_entry.get()) #existing qty
-				self.a_qty = int(self.a_qty_entry.get()) #additonal qty
+				self.e_qty = int(float(self.e_qty_entry.get())) #existing qty
+				self.a_qty = int(float(self.a_qty_entry.get())) #additonal qty
 				
 				self.parts[self.index][2] = self.pn_qty
 				self.parts[self.index][3] = self.e_qty
@@ -798,8 +798,19 @@ class Double_Click_Part_Window_Tk(object):
 		self.message = None
 
 		try:
-			int(self.e_qty_entry.get())
-			int(self.a_qty_entry.get())
+			int(float(self.e_qty_entry.get()))
+			int(float(self.a_qty_entry.get()))
 		except:
 			self.data_ok = False
 			self.message = 'Error: Quantities must be numeric values'
+			
+		if self.data_ok:
+			
+			if int(float(self.e_qty_entry.get())) < 0:
+				self.data_ok = False
+				self.message = 'Error: Quantities must be greater than or equal to 0'				
+
+			if int(float(self.a_qty_entry.get())) < 0:
+				self.data_ok = False
+				self.message = 'Error: Quantities must be greater than or equal to 0'
+				

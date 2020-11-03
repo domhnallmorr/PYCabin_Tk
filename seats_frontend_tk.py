@@ -247,7 +247,7 @@ class Seat_Page_Tk(tk.Frame):
 					
 					if row[1] == orig_part_no:			
 						l.backend.seat_layout[self.backend.side][index][1] = self.backend.title
-				l.update_component(l.backend, 'edit')
+				l.update_component(l.backend, 'seat')
 				#self.mainapp.frames[l].update_lopa_plot()
 		#update lopas if part number has changed
 		# if orig_part_no != self.backend.part_no:

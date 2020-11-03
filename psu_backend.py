@@ -279,11 +279,15 @@ class PSU_Backend():
 		
 		for p in self.parts:	
 			if p[1] in qtys.keys():
+				existing_qty = int(p[3])
+				required_qty = qtys[p[1]]
+				additonal_qty = int(p[5])
+				
 				p[4] = qtys[p[1]]
-				if qtys[p[1]] - int(p[3]) < 0:
+				if required_qty - existing_qty + additonal_qty< 0: #don't need any additonal items
 					p[6] = 0
 				else:
-					p[6] = qtys[p[1]] - int(p[3])
+					p[6] = required_qty - existing_qty + additonal_qty
 		
 	def determine_first_psu_station(self, side):
 
