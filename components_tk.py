@@ -318,6 +318,10 @@ def get_treeview_node(backend):
 	elif backend.type == 'LOPA':
 		if backend.aircraft_type in ['A320', 'A319']:
 			node = 'A320 LOPAs'
+
+	elif backend.type  == 'PSU':
+		if backend.aircraft_type in ['A320', 'A319']:
+			node = 'A320 PSUs'
 	return node
 	
 def update_treeview_iid(mainapp, component_frontend):
