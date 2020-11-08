@@ -153,6 +153,8 @@ def insert_new_item_into_side_treeview(mainapp, parent_node, item_name, componen
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.wb_icon2)
 	elif 'LOPA' in parent_node:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.lopa_icon2)
+	elif 'PSU' in parent_node:
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.psu_icon2)
 	else:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name)	
 	return iid

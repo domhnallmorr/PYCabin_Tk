@@ -15,6 +15,7 @@ import lopa_draw
 import psu_draw
 import double_scrollbar
 import comment_box
+import word_export
 
 import matplotlib
 matplotlib.use('TkAgg')
@@ -112,7 +113,7 @@ class PSU_Page_Tk(tk.Frame):
 	def setup_label_frames(self):
 	
 		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text="PSU Layout Details:")
-		self.main_frame.grid(row=2, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.main_frame.grid(row=2, column=0, columnspan = 16, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
 		self.existing_frame = LabelFrame(self.main_scroll_frame.inner,text="Part Numbers:")
 		self.existing_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
@@ -147,7 +148,7 @@ class PSU_Page_Tk(tk.Frame):
 		
 	def setup_treeviews(self):
 	
-		self.parts_tree = ttk.Treeview(self.existing_frame, selectmode="extended",columns=("A","B",'C','D', 'E', 'F'),height = 12)
+		self.parts_tree = ttk.Treeview(self.existing_frame, selectmode="extended",columns=("A","B",'C','D', 'E', 'F'),height = 15)
 		#self.monument_tree.grid(row=1,column=0, columnspan= 6,sticky="nsew")
 		self.parts_tree.heading("#0", text="#")
 		self.parts_tree.column("#0",minwidth=0,width=60, stretch='NO')
@@ -220,10 +221,10 @@ class PSU_Page_Tk(tk.Frame):
 		self.edit_btn = Button(self.main_scroll_frame.inner, text = 'Edit', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.edit())
 		self.edit_btn.grid(row=1, column=0, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
-		self.dxf_btn = Button(self.main_scroll_frame.inner, text = 'Export to DXF',width = 30, command= lambda: self.export_dxf())
+		self.dxf_btn = Button(self.main_scroll_frame.inner, image = self.mainapp.cad_icon2, compound = LEFT, text = 'Export to DXF',width = 30, command= lambda: self.export_dxf())
 		self.dxf_btn.grid(row=1, column=1, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
-		self.ms_word_btn = Button(self.main_scroll_frame.inner, text = 'Export to Word',width = 30, command= lambda: self.export_word())
+		self.ms_word_btn = Button(self.main_scroll_frame.inner, image = self.mainapp.word_icon2, compound = LEFT, text = 'Export to Word',width = 30, command= lambda: self.export_word())
 		self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 		
 		self.gen_btn = Button(self.layout_scroll_frame.inner, text = 'Generate Layout',
@@ -284,7 +285,11 @@ class PSU_Page_Tk(tk.Frame):
 		treeview_functions.write_data_to_treeview(self.parts_tree, 'replace', self.backend.parts)
 
 		treeview_functions.write_data_to_treeview(self.LHS_tree_psu, 'replace', self.backend.psu_layout['LHS'])
-		treeview_functions.write_data_to_treeview(self.RHS_tree_psu, 'replace', self.backend.psu_layout['RHS'])		
+		treeview_functions.write_data_to_treeview(self.RHS_tree_psu, 'replace', self.backend.psu_layout['RHS'])	
+
+		if self.treeview_iid:
+			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.title)
+			components_tk.component_renamed(self)
 		#self.backend.ax1.draw()
 		#self.backend.ax2.draw()
 		#self.backend.ax3.draw()
@@ -336,17 +341,16 @@ class PSU_Page_Tk(tk.Frame):
 			self.update_component(self.w, 'edit', False)
 
 	def export_word(self):
-	
-		document = Document()
+
+		mode = 'edit'
 		
-		ipc_data = self.backend.gen_ipc_data('FROMTO')
-		
-		ipc_gen.gen_ipc_table(document, ipc_data)
-		
-		document.save(r'C:\Python37\Lib\site-packages\Pycabin_Backend\ipc.docx')
+		self.w=word_export.Export_Word_Window(self.mainapp, self.master, mode, self)
+		self.master.wait_window(self.w.top)	
 
 	def export_dxf(self):
 		psu_draw.gen_dxf(self)
+
+		
 
 	def edit(self):
 
@@ -443,18 +447,21 @@ class Edit_PSU_Window_Tk(object):
 				self.drawing_rev = self.revision_combo.get()
 				self.lopa = self.lopa_combo.get()
 				self.aircraft_type = self.mainapp.frames[self.lopa].backend.aircraft_type
-				self.parts = [[1, 'Oxygen Box', 'Oxy Box', 7, 0, 0, 0],
-						[2, '11" PSIU', '11in', 7, 0, 0, 0],
-						[3, '8" PSIU', '8in', 7, 0, 0, 0],
-						[4, '6" PSIU', '6in', 7, 0, 0, 0],
-						[5, '1" Filler Panel', '1in Filler', 20, 0, 0, 0],
-						[6, '2" Filler Panel', '2in Filler', 7, 0, 0, 0],
-						[7, '4" Filler Panel', '4in Filler', 7, 0, 0, 0],
-						[8, '6" Filler Panel', '6in Filler', 7, 0, 0, 0],
-						[9, '8" Filler Panel', '8in Filler', 2, 0, 0, 0],
-						[10, 'Partition Panel', 'Partition', 1, 0, 0, 0],
-						[11, 'Adjustment Panel', 'Adjust', 1, 0, 0, 0],
-						[12, 'Clamping Panel', 'Clamp', 1, 0, 0, 0],]
+				self.parts = [[1, 'Oxygen Box LHS', 'Oxy Box L', 7, 0, 0, 0],
+						[2, 'Oxygen Box RHS', 'Oxy Box R', 7, 0, 0, 0],
+						[3, '11" PSIU', '11in', 7, 0, 0, 0],
+						[4, '8" PSIU', '8in', 7, 0, 0, 0],
+						[5, '6" PSIU', '6in', 7, 0, 0, 0],
+						[6, '1" Filler Panel', '1in Filler', 20, 0, 0, 0],
+						[7, '2" Filler Panel', '2in Filler', 7, 0, 0, 0],
+						[8, '4" Filler Panel', '4in Filler', 7, 0, 0, 0],
+						[9, '6" Filler Panel', '6in Filler', 7, 0, 0, 0],
+						[10, '8" Filler Panel', '8in Filler', 2, 0, 0, 0],
+						[11, 'Partition Panel LHS', 'Partition', 1, 0, 0, 0],
+						[12, 'Partition Panel RHS', 'Partition', 1, 0, 0, 0],
+						[13, 'Adjustment Panel LHS', 'Adjust', 1, 0, 0, 0],
+						[14, 'Adjustment Panel LHS', 'Adjust', 1, 0, 0, 0],
+						[15, 'Clamping Panel', 'Clamp', 1, 0, 0, 0],]
 				self.top.destroy()
 			else:
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)

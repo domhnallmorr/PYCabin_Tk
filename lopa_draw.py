@@ -429,3 +429,323 @@ def add_seats_to_dxf(self, dxf, modelspace, draw_top, draw_side):
 			
 			y = lopa_frontend_tk.get_seat_y_datum(station, self.backend.aircraft_type, side)
 			modelspace.add_blockref(row[1], (station, y))
+
+
+class LOPA_Drawing():
+
+	def __init__(self, lopa_backend, canvas_type, top_canvas=None, lhs_canvas=None, rhs_canvas=None, dxf=None):
+
+		self.lopa_backend = lopa_backend
+		self.seat_layout = lopa_backend.seat_layout
+		self.mainapp = lopa_backend.mainapp
+
+		self.canvas_type = canvas_type
+		self.top_canvas = top_canvas
+		self.lhs_canvas = lhs_canvas
+		self.rhs_canvas = rhs_canvas
+
+		self.seat_blocks = {}
+		self.lav_blocks = {}
+		self.galley_blocks = {}
+		self.wb_blocks = {}
+
+		self.dxf=dxf
+
+
+		if self.canvas_type == 'dxf':
+			self.floor_coords = [-180, 130] #lhs, rhs
+		else:
+			self.floor_coords = [0, 0]
+
+	def draw_all(self, psu=False):
+
+		if not psu:
+			self.draw_top_down_view()
+		self.draw_side_view()
+		self.draw_lavs_side()
+		self.draw_lavs_top()
+		self.draw_galleys_top()
+		self.draw_galleys_side()
+		self.draw_wb_side()
+		self.draw_wb_top()
+
+		if self.canvas_type == 'dxf':
+			self.add_seat_blocks()
+			self.add_lav_blocks()
+			self.add_galley_blocks()
+			self.add_wb_blocks()
+
+	def draw_top_down_view(self):
+
+		if self.top_canvas != None:
+
+			for side in ['LHS', 'RHS']:
+				for row in self.seat_layout[side]:
+					
+					if self.lopa_backend.aircraft_type in ['A320', 'A319']:
+						if side == 'LHS':
+							y_datum = -30.12
+						else:
+							y_datum = 30.12
+					#get the seat
+					seat = self.mainapp.frames[row[1]].backend					
+
+					#if canvas_type == 'matplotlib':
+					#	canvas = self.ax2
+					if '(' in str(row[3]):
+						station = float(str(row[3]).split('(')[-1].replace(')', ''))
+					else:
+						station = float(row[3])
+
+					if row[1] not in self.seat_blocks.keys() and self.canvas_type == 'dxf':
+
+						canvas = self.seat_blocks[row[1]] = self.dxf.blocks.new(name=f'Seat_{row[1]}')
+
+					if self.canvas_type == 'dxf':
+						seats_draw.triple_economy_top_down(seat, self.seat_blocks[row[1]], self.canvas_type, [0, 0])
+
+					elif self.canvas_type == 'matplotlib':
+
+						seats_draw.triple_economy_top_down(seat, self.top_canvas, self.canvas_type, [station, y_datum])
+
+	def draw_side_view(self):
+
+			side_canvas_s = {'LHS': self.lhs_canvas, 'RHS': self.rhs_canvas}
+
+			for side in ['LHS', 'RHS']:
+
+				if side_canvas_s[side] != None:
+					for row in self.seat_layout[side]:
+						
+						if self.lopa_backend.aircraft_type in ['A320', 'A319']:
+							if self.lhs_canvas == self.rhs_canvas:
+								if side == 'LHS':
+									y_datum = -150
+								else:
+									y_datum = 100
+							else:
+								y_datum = 0
+
+						#get the seat
+						seat = self.mainapp.frames[row[1]].backend						
+
+						#if canvas_type == 'matplotlib':
+						#	canvas = self.ax2
+						if '(' in str(row[3]):
+							station = float(str(row[3]).split('(')[-1].replace(')', ''))
+						else:
+							station = float(row[3])
+						side_datum = [station, y_datum]
+
+
+					if row[1] not in self.seat_blocks.keys() and self.canvas_type == 'dxf':
+
+						canvas = self.seat_blocks[row[1]] = self.dxf.blocks.new(name=f'Seat_{row[1]}')
+
+					if self.canvas_type == 'dxf':
+						seats_draw.economy_seat_generic_side_view(seat, self.seat_blocks[row[1]], self.canvas_type, [0, y_datum])
+
+					elif self.canvas_type == 'matplotlib':
+
+						seats_draw.economy_seat_generic_side_view(seat, canvas, self.canvas_type, side_datum)
+
+	def add_seat_blocks(self):
+
+		side_canvas_s = {'LHS': self.lhs_canvas, 'RHS': self.rhs_canvas}
+
+		for side in ['LHS', 'RHS']:
+
+			if self.lopa_backend.aircraft_type in ['A320', 'A319']:
+				if side == 'LHS':
+					y_datum = -30.12
+				else:
+					y_datum = 30.12
+
+			if side_canvas_s[side] != None:
+				for row in self.seat_layout[side]:
+					station = float(row[3])
+
+					side_canvas_s[side].add_blockref(f'Seat_{row[1]}', (station, y_datum))
+
+	def draw_lavs_top(self):
+
+		for lav in self.lopa_backend.lavs:
+			if lav[1] == 'Yes':
+
+				if lav[0] in ['Lav A', 'Lav D']:
+					canvas = self.lhs_canvas
+				else:
+					canvas = self.rhs_canvas
+
+				if canvas != None:
+					if self.canvas_type == 'dxf':
+
+						if lav[0] not in self.lav_blocks:
+								canvas = self.lav_blocks[lav[0]] = self.dxf.blocks.new(name=lav[0])
+						else:
+								canvas = self.lav_blocks[lav[0]]
+
+					if self.lopa_backend.aircraft_type in ['A320', 'A319']:
+						if lav[0] in ['Lav A', 'Lav D']: 
+							m_datum = [0, 0]
+						else:
+							m_datum = [0, 0]
+					else:
+						m_datum = [0,0]
+
+
+					lav_draw.draw_lav_top_down(self.lopa_backend, lav, canvas, self.canvas_type, m_datum)
+
+	def draw_lavs_side(self):
+
+		for lav in self.lopa_backend.lavs:
+			if lav[1] == 'Yes':
+
+				if lav[0] in ['Lav A', 'Lav D']:
+					canvas = self.lhs_canvas
+				else:
+					canvas = self.rhs_canvas
+
+				if canvas != None:
+					if self.canvas_type == 'dxf':
+
+						if lav[0] not in self.lav_blocks:
+								canvas = self.lav_blocks[lav[0]] = self.dxf.blocks.new(name=lav[0])
+						else:
+								canvas = self.lav_blocks[lav[0]]
+
+					if self.lopa_backend.aircraft_type in ['A320', 'A319']:
+						if lav[0] in ['Lav A', 'Lav D']: 
+							m_datum = [0, self.floor_coords[0]]
+						else:
+							m_datum = [0, self.floor_coords[1]]
+					else:
+						m_datum = [0,0]
+
+
+					lav_draw.draw_lav_side(self.lopa_backend, lav, canvas, self.canvas_type, m_datum)
+
+	def add_lav_blocks(self):
+
+		for lav in self.lopa_backend.lavs:
+
+			if lav[0] in self.lav_blocks:
+				sta = self.lopa_backend.lav_coords[self.lopa_backend.aircraft_type][lav[0]]
+
+				self.top_canvas.add_blockref(lav[0], (sta, 0))
+
+	def draw_galleys_top(self):
+		for galley in self.lopa_backend.galleys:
+			if galley[1] == 'Yes':
+
+				if self.top_canvas != None:
+					if self.canvas_type == 'dxf':
+
+						if galley[0] not in self.galley_blocks:
+								canvas = self.galley_blocks[galley[0]] = self.dxf.blocks.new(name=galley[0])
+						else:
+								canvas = self.galley_blocks[galley[0]]
+					else:
+						canvas = self.top_canvas
+
+					m_datum = [0,0]
+
+					galley_draw.draw_galley_top_down(self.lopa_backend, galley, canvas, self.canvas_type, m_datum)
+
+	def draw_galleys_side(self):
+
+		for galley in self.lopa_backend.galleys:
+			if galley[1] == 'Yes':
+
+				if galley[0] in ['Galley 1']:
+					canvas = self.rhs_canvas
+				else:
+					canvas = self.lhs_canvas
+
+				if canvas != None:
+					if self.canvas_type == 'dxf':
+
+						if galley[0] not in self.galley_blocks:
+								canvas = self.galley_blocks[galley[0]] = self.dxf.blocks.new(name=galley[0])
+						else:
+								canvas = self.galley_blocks[galley[0]]
+
+						if galley[0] in ['Galley 1']:
+							m_datum = [0,self.floor_coords[1]]
+						else:
+							m_datum = [0, self.floor_coords[0]]
+					else:
+						m_datum = [0,0]
+
+					galley_draw.draw_galley_side(self.lopa_backend, galley, canvas, self.canvas_type, m_datum)
+
+					if galley[0] == 'Galley 5' and self.canvas_type == 'dxf':	
+						galley_draw.draw_galley_side(self.lopa_backend, galley, canvas, self.canvas_type, [0, self.floor_coords[1]])
+
+	def add_galley_blocks(self):
+
+		for galley in self.lopa_backend.galleys:
+
+			if galley[0] in self.galley_blocks:
+				sta = self.lopa_backend.galley_coords[self.lopa_backend.aircraft_type][galley[0]]
+
+				self.top_canvas.add_blockref(galley[0], (sta, 0))
+
+	def draw_wb_side(self):
+
+		for wb in self.lopa_backend.windbreakers:
+
+			wb_bknd = self.mainapp.frames[wb[0]].backend
+			side = wb_bknd.side
+
+			if side == 'LHS':
+				canvas = self.lhs_canvas
+			else:
+				canvas = self.rhs_canvas
+
+			if canvas != None:
+				if self.canvas_type == 'dxf':
+
+					if wb[0] not in self.wb_blocks:
+							canvas = self.wb_blocks[wb[0]] = self.dxf.blocks.new(name=wb[0])
+					else:
+							canvas = self.wb_blocks[wb[0]]
+
+					if side == 'LHS':
+						m_datum = [0,self.floor_coords[0]]
+					else:
+						m_datum = [0, self.floor_coords[1]]
+				else:
+					m_datum = [0,0]
+
+				windbreaker_draw.windbreaker_side_view(canvas, self.canvas_type, m_datum, wb_bknd)
+
+	def draw_wb_top(self):
+		for wb in self.lopa_backend.windbreakers:
+			wb_bknd = self.mainapp.frames[wb[0]].backend
+
+			if self.top_canvas != None:
+				if self.canvas_type == 'dxf':
+
+					if wb[0] not in self.wb_blocks:
+							canvas = self.wb_blocks[wb[0]] = self.dxf.blocks.new(name=wb[0])
+					else:
+							canvas = self.wb_blocks[wb[0]]
+				else:
+					canvas = self.top_canvas
+
+				if wb_bknd.side == 'LHS':
+					m_datum = [0,float(wb_bknd.dist_from_cl)*-1]
+				else:
+					m_datum = [0,float(wb_bknd.dist_from_cl)]
+
+				windbreaker_draw.windbreaker_top_down_view(canvas, self.canvas_type, m_datum, wb_bknd)
+
+	def add_wb_blocks(self):
+
+		for wb in self.lopa_backend.windbreakers:
+
+			if wb[0] in self.wb_blocks:
+				sta = float(wb[1])
+
+				self.top_canvas.add_blockref(wb[0], (sta, 0))

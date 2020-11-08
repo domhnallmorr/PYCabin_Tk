@@ -6,7 +6,7 @@
         "Client": "4",
         "Current Operator": "5",
         "Go To Operator": "6",
-        "Comments": " Schw\u00e4bisch \n\n<b>\u0633\u064f\u0648\u06e1\u0631\u064e\u0629\u064f \u0627\u0644\u0641\u064e\u0627\u062a\u0650\u062d\u064e\u0629\n\n\n\n\n\n\n\n\n\n\n\n"
+        "Comments": " Schw\u00e4bisch \n\n<b>\u0633\u064f\u0648\u06e1\u0631\u064e\u0629\u064f \u0627\u0644\u0641\u064e\u0627\u062a\u0650\u062d\u064e\u0629\n\n\n\n\n\n\n\n\n\n\n\n\n"
     },
     "Aircraft": [],
     "Seats": [
@@ -36,7 +36,7 @@
             "CMM Version": "1",
             "CMM Date": "Jan 1, 1900",
             "CMM Install": "",
-            "Comments": "\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n"
         },
         {
             "Title": "A320 Seat 2",
@@ -64,7 +64,7 @@
             "CMM Version": "",
             "CMM Date": "",
             "CMM Install": "",
-            "Comments": "\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n"
         }
     ],
     "Windbreakers": [
@@ -89,7 +89,7 @@
             "CMM Date": "",
             "CMM Install": "",
             "CMM Remove": "",
-            "Comments": "\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n"
         },
         {
             "Title": "A320 WB RHS",
@@ -112,7 +112,7 @@
             "CMM Date": "",
             "CMM Install": "",
             "CMM Remove": "",
-            "Comments": "\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n"
         }
     ],
     "LOPAs": [
@@ -131,6 +131,7 @@
                         "A320 Seat 1",
                         340,
                         340.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -138,6 +139,7 @@
                         "A320 Seat 1",
                         28,
                         368.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -145,6 +147,7 @@
                         "A320 Seat 1",
                         28,
                         396.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -152,6 +155,7 @@
                         "A320 Seat 1",
                         28,
                         424.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -159,6 +163,7 @@
                         "A320 Seat 1",
                         28,
                         452.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -166,6 +171,7 @@
                         "A320 Seat 1",
                         28,
                         480.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -173,6 +179,7 @@
                         "A320 Seat 1",
                         28,
                         508.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -180,6 +187,7 @@
                         "A320 Seat 1",
                         28,
                         536.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -187,6 +195,7 @@
                         "A320 Seat 1",
                         28,
                         564.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -194,6 +203,7 @@
                         "A320 Seat 1",
                         28,
                         592.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -201,6 +211,7 @@
                         "A320 Seat 1",
                         28,
                         620.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -208,6 +219,7 @@
                         "A320 Seat 1",
                         28,
                         648.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -215,6 +227,7 @@
                         "A320 Seat 1",
                         28,
                         676.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -222,6 +235,7 @@
                         "A320 Seat 1",
                         28,
                         704.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -229,6 +243,7 @@
                         "A320 Seat 1",
                         28,
                         732.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -236,6 +251,7 @@
                         "A320 Seat 1",
                         28,
                         760.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -243,6 +259,7 @@
                         "A320 Seat 1",
                         28,
                         788.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -250,6 +267,7 @@
                         "A320 Seat 1",
                         28,
                         816.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -257,6 +275,7 @@
                         "A320 Seat 1",
                         28,
                         844.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -264,6 +283,7 @@
                         "A320 Seat 1",
                         28,
                         872.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -271,6 +291,7 @@
                         "A320 Seat 1",
                         28,
                         900.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -278,6 +299,7 @@
                         "A320 Seat 1",
                         28,
                         928.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -285,6 +307,7 @@
                         "A320 Seat 1",
                         28,
                         956.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -292,6 +315,7 @@
                         "A320 Seat 1",
                         28,
                         984.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -299,6 +323,7 @@
                         "A320 Seat 1",
                         28,
                         1012.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -306,6 +331,7 @@
                         "A320 Seat 1",
                         28,
                         1040.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -313,6 +339,7 @@
                         "A320 Seat 1",
                         28,
                         1068.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -320,6 +347,7 @@
                         "A320 Seat 1",
                         28,
                         1096.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -327,6 +355,7 @@
                         "A320 Seat 1",
                         28,
                         1124.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -334,6 +363,7 @@
                         "A320 Seat 1",
                         28,
                         1152.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ]
                 ],
@@ -343,6 +373,7 @@
                         "A320 Seat 2",
                         340,
                         340.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -350,6 +381,7 @@
                         "A320 Seat 2",
                         28,
                         368.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -357,6 +389,7 @@
                         "A320 Seat 2",
                         28,
                         396.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -364,6 +397,7 @@
                         "A320 Seat 2",
                         28,
                         424.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -371,6 +405,7 @@
                         "A320 Seat 2",
                         28,
                         452.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -378,6 +413,7 @@
                         "A320 Seat 2",
                         28,
                         480.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -385,6 +421,7 @@
                         "A320 Seat 2",
                         28,
                         508.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -392,6 +429,7 @@
                         "A320 Seat 2",
                         28,
                         536.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -399,6 +437,7 @@
                         "A320 Seat 2",
                         28,
                         564.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -406,6 +445,7 @@
                         "A320 Seat 2",
                         28,
                         592.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -413,6 +453,7 @@
                         "A320 Seat 2",
                         28,
                         620.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -420,6 +461,7 @@
                         "A320 Seat 2",
                         28,
                         648.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -427,6 +469,7 @@
                         "A320 Seat 2",
                         28,
                         676.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -434,6 +477,7 @@
                         "A320 Seat 2",
                         28,
                         704.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -441,6 +485,7 @@
                         "A320 Seat 2",
                         28,
                         732.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -448,6 +493,7 @@
                         "A320 Seat 2",
                         28,
                         760.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -455,6 +501,7 @@
                         "A320 Seat 2",
                         28,
                         788.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -462,6 +509,7 @@
                         "A320 Seat 2",
                         28,
                         816.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -469,6 +517,7 @@
                         "A320 Seat 2",
                         28,
                         844.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -476,6 +525,7 @@
                         "A320 Seat 2",
                         28,
                         872.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -483,6 +533,7 @@
                         "A320 Seat 2",
                         28,
                         900.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -490,6 +541,7 @@
                         "A320 Seat 2",
                         28,
                         928.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -497,6 +549,7 @@
                         "A320 Seat 2",
                         28,
                         956.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -504,6 +557,7 @@
                         "A320 Seat 2",
                         28,
                         984.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -511,6 +565,7 @@
                         "A320 Seat 2",
                         28,
                         1012.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -518,6 +573,7 @@
                         "A320 Seat 2",
                         28,
                         1040.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -525,6 +581,7 @@
                         "A320 Seat 2",
                         28,
                         1068.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -532,6 +589,7 @@
                         "A320 Seat 2",
                         28,
                         1096.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ],
                     [
@@ -539,6 +597,7 @@
                         "A320 Seat 2",
                         28,
                         1124.0,
+                        "11\" PSIU",
                         "11\" PSIU"
                     ],
                     [
@@ -546,6 +605,7 @@
                         "A320 Seat 2",
                         28,
                         1152.0,
+                        "8\" PSIU",
                         "8\" PSIU"
                     ]
                 ]
@@ -591,7 +651,7 @@
                     "320"
                 ]
             ],
-            "Comments": "\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n"
         }
     ],
     "PSUs": [
@@ -605,15 +665,24 @@
             "Parts": [
                 [
                     1,
-                    "Oxygen Box",
-                    "Oxy Box",
+                    "Oxygen Box LHS",
+                    "Oxy Box L",
                     7,
-                    60,
+                    30,
                     0,
-                    53
+                    23
                 ],
                 [
                     2,
+                    "Oxygen Box RHS",
+                    "Oxy Box R",
+                    7,
+                    30,
+                    0,
+                    23
+                ],
+                [
+                    3,
                     "11\" PSIU",
                     "11in",
                     7,
@@ -622,7 +691,7 @@
                     25
                 ],
                 [
-                    3,
+                    4,
                     "8\" PSIU",
                     "8in",
                     7,
@@ -631,7 +700,7 @@
                     21
                 ],
                 [
-                    4,
+                    5,
                     "6\" PSIU",
                     "6in",
                     7,
@@ -640,7 +709,7 @@
                     0
                 ],
                 [
-                    5,
+                    6,
                     "1\" Filler Panel",
                     "1in Filler",
                     20,
@@ -649,7 +718,7 @@
                     18
                 ],
                 [
-                    6,
+                    7,
                     "2\" Filler Panel",
                     "2in Filler",
                     7,
@@ -658,7 +727,7 @@
                     21
                 ],
                 [
-                    7,
+                    8,
                     "4\" Filler Panel",
                     "4in Filler",
                     7,
@@ -667,16 +736,16 @@
                     21
                 ],
                 [
-                    8,
+                    9,
                     "6\" Filler Panel",
                     "6in Filler",
                     7,
                     1,
                     0,
-                    -6
+                    0
                 ],
                 [
-                    9,
+                    10,
                     "8\" Filler Panel",
                     "8in Filler",
                     2,
@@ -685,8 +754,8 @@
                     7
                 ],
                 [
-                    10,
-                    "Partition Panel",
+                    11,
+                    "Partition Panel LHS",
                     "Partition",
                     1,
                     1,
@@ -694,16 +763,34 @@
                     0
                 ],
                 [
-                    11,
-                    "Adjustment Panel",
-                    "Adjust",
+                    12,
+                    "Partition Panel RHS",
+                    "Partition",
                     1,
-                    2,
                     0,
-                    1
+                    0,
+                    0
                 ],
                 [
-                    12,
+                    13,
+                    "Adjustment Panel LHS",
+                    "Adjust",
+                    1,
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    14,
+                    "Adjustment Panel LHS",
+                    "Adjust",
+                    1,
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    15,
                     "Clamping Panel",
                     "Clamp",
                     1,
@@ -716,7 +803,7 @@
                 "LHS": [
                     [
                         "WB",
-                        "Partition Panel",
+                        "Partition Panel LHS",
                         "-",
                         320.0
                     ],
@@ -740,7 +827,7 @@
                     ],
                     [
                         1,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         340.0
                     ],
@@ -770,7 +857,7 @@
                     ],
                     [
                         2,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         368.0
                     ],
@@ -794,7 +881,7 @@
                     ],
                     [
                         3,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         396.0
                     ],
@@ -824,7 +911,7 @@
                     ],
                     [
                         4,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         424.0
                     ],
@@ -848,7 +935,7 @@
                     ],
                     [
                         5,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         452.0
                     ],
@@ -878,7 +965,7 @@
                     ],
                     [
                         6,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         480.0
                     ],
@@ -902,7 +989,7 @@
                     ],
                     [
                         7,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         508.0
                     ],
@@ -932,7 +1019,7 @@
                     ],
                     [
                         8,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         536.0
                     ],
@@ -956,7 +1043,7 @@
                     ],
                     [
                         9,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         564.0
                     ],
@@ -986,7 +1073,7 @@
                     ],
                     [
                         10,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         592.0
                     ],
@@ -1010,7 +1097,7 @@
                     ],
                     [
                         11,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         620.0
                     ],
@@ -1040,7 +1127,7 @@
                     ],
                     [
                         12,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         648.0
                     ],
@@ -1064,7 +1151,7 @@
                     ],
                     [
                         13,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         676.0
                     ],
@@ -1088,7 +1175,7 @@
                     ],
                     [
                         14,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         704.0
                     ],
@@ -1118,7 +1205,7 @@
                     ],
                     [
                         15,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         732.0
                     ],
@@ -1148,7 +1235,7 @@
                     ],
                     [
                         16,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         760.0
                     ],
@@ -1178,7 +1265,7 @@
                     ],
                     [
                         17,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         788.0
                     ],
@@ -1208,7 +1295,7 @@
                     ],
                     [
                         18,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         816.0
                     ],
@@ -1238,7 +1325,7 @@
                     ],
                     [
                         19,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         844.0
                     ],
@@ -1268,7 +1355,7 @@
                     ],
                     [
                         20,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         872.0
                     ],
@@ -1298,7 +1385,7 @@
                     ],
                     [
                         21,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         900.0
                     ],
@@ -1328,7 +1415,7 @@
                     ],
                     [
                         22,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         928.0
                     ],
@@ -1352,7 +1439,7 @@
                     ],
                     [
                         23,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         956.0
                     ],
@@ -1382,7 +1469,7 @@
                     ],
                     [
                         24,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         984.0
                     ],
@@ -1406,7 +1493,7 @@
                     ],
                     [
                         25,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         1012.0
                     ],
@@ -1436,7 +1523,7 @@
                     ],
                     [
                         26,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         1040.0
                     ],
@@ -1460,7 +1547,7 @@
                     ],
                     [
                         27,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         1068.0
                     ],
@@ -1490,7 +1577,7 @@
                     ],
                     [
                         28,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         1096.0
                     ],
@@ -1514,7 +1601,7 @@
                     ],
                     [
                         29,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         1124.0
                     ],
@@ -1544,7 +1631,7 @@
                     ],
                     [
                         30,
-                        "Oxygen Box",
+                        "Oxygen Box LHS",
                         "-",
                         1152.0
                     ],
@@ -1586,7 +1673,7 @@
                     ],
                     [
                         30,
-                        "Adjustment Panel",
+                        "Adjustment Panel LHS",
                         "-",
                         1201.0
                     ],
@@ -1618,7 +1705,7 @@
                     ],
                     [
                         1,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         340.0
                     ],
@@ -1648,7 +1735,7 @@
                     ],
                     [
                         2,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         368.0
                     ],
@@ -1672,7 +1759,7 @@
                     ],
                     [
                         3,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         396.0
                     ],
@@ -1702,7 +1789,7 @@
                     ],
                     [
                         4,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         424.0
                     ],
@@ -1726,7 +1813,7 @@
                     ],
                     [
                         5,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         452.0
                     ],
@@ -1756,7 +1843,7 @@
                     ],
                     [
                         6,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         480.0
                     ],
@@ -1780,7 +1867,7 @@
                     ],
                     [
                         7,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         508.0
                     ],
@@ -1810,7 +1897,7 @@
                     ],
                     [
                         8,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         536.0
                     ],
@@ -1834,7 +1921,7 @@
                     ],
                     [
                         9,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         564.0
                     ],
@@ -1864,7 +1951,7 @@
                     ],
                     [
                         10,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         592.0
                     ],
@@ -1888,7 +1975,7 @@
                     ],
                     [
                         11,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         620.0
                     ],
@@ -1918,7 +2005,7 @@
                     ],
                     [
                         12,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         648.0
                     ],
@@ -1942,7 +2029,7 @@
                     ],
                     [
                         13,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         676.0
                     ],
@@ -1966,7 +2053,7 @@
                     ],
                     [
                         14,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         704.0
                     ],
@@ -1990,7 +2077,7 @@
                     ],
                     [
                         15,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         732.0
                     ],
@@ -2020,7 +2107,7 @@
                     ],
                     [
                         16,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         760.0
                     ],
@@ -2044,7 +2131,7 @@
                     ],
                     [
                         17,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         788.0
                     ],
@@ -2074,7 +2161,7 @@
                     ],
                     [
                         18,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         816.0
                     ],
@@ -2098,7 +2185,7 @@
                     ],
                     [
                         19,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         844.0
                     ],
@@ -2128,7 +2215,7 @@
                     ],
                     [
                         20,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         872.0
                     ],
@@ -2152,7 +2239,7 @@
                     ],
                     [
                         21,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         900.0
                     ],
@@ -2182,7 +2269,7 @@
                     ],
                     [
                         22,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         928.0
                     ],
@@ -2206,7 +2293,7 @@
                     ],
                     [
                         23,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         956.0
                     ],
@@ -2236,7 +2323,7 @@
                     ],
                     [
                         24,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         984.0
                     ],
@@ -2260,7 +2347,7 @@
                     ],
                     [
                         25,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         1012.0
                     ],
@@ -2290,7 +2377,7 @@
                     ],
                     [
                         26,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         1040.0
                     ],
@@ -2314,7 +2401,7 @@
                     ],
                     [
                         27,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         1068.0
                     ],
@@ -2344,7 +2431,7 @@
                     ],
                     [
                         28,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         1096.0
                     ],
@@ -2368,7 +2455,7 @@
                     ],
                     [
                         29,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         1124.0
                     ],
@@ -2398,7 +2485,7 @@
                     ],
                     [
                         30,
-                        "Oxygen Box",
+                        "Oxygen Box RHS",
                         "-",
                         1152.0
                     ],
@@ -2440,7 +2527,7 @@
                     ],
                     [
                         30,
-                        "Adjustment Panel",
+                        "Adjustment Panel RHS",
                         "-",
                         1201.0
                     ],
@@ -2452,7 +2539,7 @@
                     ]
                 ]
             },
-            "Comments": "\n\n"
+            "Comments": "\n"
         }
     ]
 }

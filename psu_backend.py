@@ -7,6 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 
 import copy
+import Default_AC_Models
 
 def setup_variables(w):
 	w.type = 'PSU'
@@ -42,7 +43,9 @@ class PSU_Backend():
 		self.psu_layout = copy.deepcopy(source.psu_layout)
 		
 		if self.aircraft_type in ['A320', 'A319']:
-			self.treeview_node = 'A320 PSUs'		
+			self.treeview_node = 'A320 PSUs'
+			self.psu_y_coords = [70, 75]
+			
 		elif self.aircraft_type in ['B737-800']:
 			self.treeview_node = 'B737 PSUs'
 			
@@ -64,6 +67,7 @@ class PSU_Backend():
 		self.ax3 = self.lopa_figure.add_subplot(212, aspect='equal', adjustable='box')
 		
 		self.lopa_figure.subplots_adjust(left=0.05, bottom=0.02, right=0.99, top=0.98, wspace=None, hspace=None)
+
 	def gen_save_dict(self, comments_from_text_widget = True, comments = None):
 
 		if comments_from_text_widget:
@@ -80,7 +84,29 @@ class PSU_Backend():
 				'Parts': self.parts,
 				'Layout': self.psu_layout,
 				'Comments': comments}
+
+	def gen_parts_table(self):
+	
+		parts_table = [] #[qty, part_no, description]
+		
+		for part in self.parts:
 				
+			parts_table.append([part[4], part[2], part[1]])
+		
+		return parts_table
+
+	def gen_ipc_table(self):
+
+		ipc_table = []
+
+		count = 0
+
+		for part in self.parts:
+			count += 1
+			ipc_table.append([count, part[2], part[1], '', part[4]])
+
+		return ipc_table
+
 	def auto_assign_psius(self):
 		self.psiu_layout = {}
 		for side in ['LHS', 'RHS']:
@@ -106,10 +132,10 @@ class PSU_Backend():
 		psu_layout = {'LHS': [], 'RHS': []}
 		
 		if wb_installed[0]:
-			psu_layout['LHS'] = [['WB', 'Partition Panel', '-', start_stations['LHS']]]
+			psu_layout['LHS'] = [['WB', 'Partition Panel LHS', '-', start_stations['LHS']]]
 			start_stations['LHS'] = start_stations['LHS']+2
 		if wb_installed[1]:
-			psu_layout['RHS'] = [['WB', 'Partition Panel', '-', start_stations['RHS']]]
+			psu_layout['RHS'] = [['WB', 'Partition Panel RHS', '-', start_stations['RHS']]]
 			start_stations['RHS'] = start_stations['LHS']+2
 			
 		self.lopa_page = self.mainapp.frames[self.lopa]
@@ -174,7 +200,7 @@ class PSU_Backend():
 
 					
 				psu_layout[side].append([row_number, psiu, '-', row_end - psiu_len - oxygen_len - gasper_len])
-				psu_layout[side].append([row_number, 'Oxygen Box', '-', row_end - oxygen_len - gasper_len])
+				psu_layout[side].append([row_number, f'Oxygen Box {side}', '-', row_end - oxygen_len - gasper_len])
 				psu_layout[side].append([row_number, 'Gasper', '-', row_end - gasper_len])
 				
 			# Add panels at end of layout
@@ -215,7 +241,7 @@ class PSU_Backend():
 					local_station += p			
 			
 			if lav:
-				psu_layout[side].append([row_number, 'Adjustment Panel', '-', local_station])
+				psu_layout[side].append([row_number, f'Adjustment Panel {side}', '-', local_station])
 				psu_layout[side].append([row_number, 'Clamping Panel', '-', local_station+4])
 				
 
@@ -266,7 +292,7 @@ class PSU_Backend():
 		return can_use
 		
 	def update_parts_table(self):
-
+		
 		qtys = {}
 		
 		for side in ['LHS', 'RHS']:

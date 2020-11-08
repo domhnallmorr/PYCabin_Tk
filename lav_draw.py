@@ -37,7 +37,10 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 
 		if lav[0] == 'Lav A':
 			
-			s = 278.6
+			if canvas_type == 'matplotlib':
+				s = 278.6
+			elif canvas_type == 'dxf':
+				s=0
 			b = 36.6
 			cl = 19.685
 			w = 46.51
@@ -72,12 +75,15 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 				
 		if lav[0] == 'Lav D':
 			
-			s = 1207
+			if canvas_type == 'matplotlib':
+				s = 1207 #station
+			elif canvas_type == 'dxf':
+				s = 0 #station is handled when block is inserted
 			cl = -19.68
 			b = 36.81
 			w = 51.51
 			
-			x = [1207, 1207, 1207+36.81, 1207+36.81]
+			x = [s, s, s+36.81, s+36.81]
 			y = [-19.68-51.51, -19.68, -19.68, -19.68-46.51]
 			
 			if canvas_type == 'matplotlib':
@@ -89,7 +95,7 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 					points.append((v, y[index]))
 				canvas.add_lwpolyline(points)
 				
-			x = [1207, 1207 + 36.81]
+			x = [s, s + 36.81]
 			y = [-19.68-40, -19.68-40]
 		
 			if canvas_type == 'matplotlib':
@@ -101,7 +107,7 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 					points.append((v, y[index]))
 				canvas.add_lwpolyline(points)
 				
-			x = [1207+7, 1207+7]
+			x = [s+7, s+7]
 			y = [-19.68-40, -19.68]
 
 			if canvas_type == 'matplotlib':
@@ -120,12 +126,15 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 				
 		if lav[0] == 'Lav E':
 			
-			s = 1207
+			if canvas_type == 'matplotlib':
+				s = 1207
+			elif canvas_type == 'dxf':
+				s = 0
 			cl = 19.68
 			b = 36.61
 			w = 51.51
 			
-			x = [1207, 1207, 1207+36.81, 1207+36.81]
+			x = [s, s, s+36.81, s+36.81]
 			y = [19.68+51.51, 19.68, 19.68, 19.68+46.51]
 			
 			if canvas_type == 'matplotlib':
@@ -137,7 +146,7 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 					points.append((v, y[index]))
 				canvas.add_lwpolyline(points)
 				
-			x = [1207, 1207 + 36.81]
+			x = [s, s + 36.81]
 			y = [19.68+40, +19.68+40]
 		
 			if canvas_type == 'matplotlib':
@@ -149,7 +158,7 @@ def draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, top_down_datum):
 					points.append((v, y[index]))
 				canvas.add_lwpolyline(points)
 		
-			x = [1207+7, 1207+7]
+			x = [s+7, s+7]
 			y = [+19.68+40, +19.68]
 
 			if canvas_type == 'matplotlib':
@@ -199,11 +208,15 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 		y_datum = side_datum[1]
 		
 		if lav[0] == 'Lav A':
-			s=278.6
+
+			if canvas_type == 'matplotlib':
+				s=278.6
+			elif canvas_type == 'dxf':
+				s=0
 			b = 36.6
 			
 			
-			x = [278.6, 278.6, 278.6-36.6, 278.6-36.6]
+			x = [s, s, s-36.6, s-36.6]
 			y = [0+y_datum, 82.12+y_datum, 82.12+y_datum, 0+y_datum]
 			
 			if canvas_type == 'matplotlib':
@@ -214,14 +227,18 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas[1].add_lwpolyline(points)
+				canvas.add_lwpolyline(points)
 				
 		if lav[0] == 'Lav E':
 			
-			s = 1207
+			if canvas_type == 'matplotlib':
+				s = 1207
+			elif canvas_type == 'dxf':
+				s = 0
+
 			b= 36.6
 			
-			x = [1207, 1207, 1207+36.81, 1207+36.81]
+			x = [s, s, s+36.81, s+36.81]
 			y = [0+y_datum, 84.6+y_datum, 84.6+y_datum, 0+y_datum]
 			
 			if canvas_type == 'matplotlib':
@@ -232,14 +249,18 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas[1].add_lwpolyline(points)
+				canvas.add_lwpolyline(points)
 				
 		if lav[0] == 'Lav D':
 			
-			s = 1207
+			if canvas_type == 'matplotlib':
+				s = 1207
+			elif canvas_type == 'dxf':
+				s=0
+
 			b = 36.81
 			
-			x = [1207, 1207, 1207+36.81, 1207+36.81]
+			x = [s, s, s+36.81, s+36.81]
 			y = [0+y_datum, 84.6+y_datum, 84.6+y_datum, 0+y_datum]
 			
 			if canvas_type == 'matplotlib':
@@ -250,7 +271,7 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas[0].add_lwpolyline(points)
+				canvas.add_lwpolyline(points)
 				
 		if lav[4] == 'Yes': #doghouse
 			
@@ -267,4 +288,4 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 				y = [y_datum, y_datum+24, y_datum+24, y_datum, y_datum]
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas[0].add_lwpolyline(points)			
+				canvas.add_lwpolyline(points)			

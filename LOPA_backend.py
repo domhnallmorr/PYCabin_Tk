@@ -171,7 +171,24 @@ class LOPA_Backend():
 		self.setup_lopa_plot()
 		self.save_class = LOPA_Saved_State
 		self.mainapp = self.parent_page.mainapp
-		
+
+		self.setup_lav_coords()
+
+	def setup_lav_coords(self):
+
+		self.lav_coords = {'A320': 
+									{'Lav A': 278.6,
+									'Lav D': 1207,
+									'Lav E': 1207
+									}
+							}
+
+		self.galley_coords = {'A320': 
+									{'Galley 1': 278.6,
+									'Galley 5': 1280,
+									}
+							}
+
 	def gen_save_dict(self, comments_from_text_widget = True, comments = None):
 
 		if comments_from_text_widget:
