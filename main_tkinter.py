@@ -45,7 +45,7 @@ class MainApplication(tk.Frame):
 		components_tk.show_frame(self, 'Project')
 	def setup_variables(self):
 		
-		self.version = '0.10'
+		self.version = '0.11.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		
@@ -113,7 +113,11 @@ class MainApplication(tk.Frame):
 		# ________ PSU ________
 		item = self.main_treeview.insert("",'end','PSUs',text='PSU Layouts',image = fi)
 		item = self.main_treeview.insert("PSUs",'end','A320 PSUs',text=' A320 Family',image = abi)
-		
+
+		# ________ Emergency Equipment ________
+		item = self.main_treeview.insert("",'end','Emergency Equipment',text='Emergency Equipment',image = fi)
+		item = self.main_treeview.insert("Emergency Equipment",'end','A320 EE',text=' A320 Family',image = abi)
+
 		# ________ Changes ________
 		# item = self.main_treeview.insert("",'end','Changes',text='Changes',image = fi)
 
@@ -178,6 +182,7 @@ class MainApplication(tk.Frame):
 		insert_component_menu.add_command(label = 'Seat', command = lambda self=self, type='Seat': components_tk.new_component(self, type))
 		insert_component_menu.add_command(label = 'Multiple Seats', command = lambda self=self, type='Seats - Multiple': components_tk.new_component(self, type))
 		insert_component_menu.add_command(label = 'Windbreaker', command = lambda self=self, type='Windbreaker': components_tk.new_component(self, type))
+		insert_component_menu.add_command(label = 'Emergency Equipment', command = lambda self=self, type='Emergency Equipment': components_tk.new_component(self, type))
 		
 		insert_menu.add_command(label = 'LOPA', command = lambda self=self, type='LOPA': components_tk.new_component(self, type))
 		

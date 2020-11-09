@@ -4,21 +4,26 @@ def setup_variables(w):
 	w.type = 'Emergency_Equip'
 	w.title = None
 	w.description = None
+	w.aircraft_type = None
 	w.equipment_type = None
 	w.aircraft_type = None
+	w.manufacturer = None
 	w.attaching_hardware = []
 	w.weight= 0
-	
+
+	w.available_equipment= ['Crash Axe', 'ELT', 'Fire Extinguisher', 'Flashlight', 'Life Vest', 'Life Vest Crew', 'Life Vest Infant',
+							'Manual Release Tool', 'Megaphone', 'PBE']	
 
 def update_variables(w, source):
 	w.title = source.title
 	w.description = source.description
+	w.aircraft_type = source.aircraft_type
 	w.equipment_type = source.equipment_type
 	w.attaching_hardware = source.attaching_hardware
 	w.weight = source.weight
+	w.manufacturer = source.manufacturer
 	
-	w.available_equipment= ['Crash Axe', 'ELT', 'Fire Extinguisher', 'Flashlight', 'Life Vest', 'Life Vest Crew', 'Life Vest Infant',
-							'Manual Release Tool', 'Megaphone', 'PBE']
+
 	
 class Emergency_Equip_Backend():
 
