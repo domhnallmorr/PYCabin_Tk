@@ -37,7 +37,7 @@ def write_save_file(mainapp):
 
 
 	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Aircraft': [], 'Seats': [],
-					'Windbreakers': [], 'LOPAs': [], 'PSUs': []}
+					'Windbreakers': [], 'LOPAs': [], 'PSUs': [], 'Emergency Equipment': []}
 	
 	# _________________ AIRCRAFT _________________
 	# ac_dict = components_tk.get_all_components(mainapp, 'Aircraft')
@@ -67,7 +67,12 @@ def write_save_file(mainapp):
 
 	for p in psu_dict['All']:
 		save_dict['PSUs'].append(mainapp.frames[p].backend.gen_save_dict())
-		
+
+	# _________________ Emergency Equipment _________________
+	ee_dict = components_tk.get_all_components(mainapp, 'Emergency Equipment')
+
+	for e in ee_dict['All']:
+		save_dict['Emergency Equipment'].append(mainapp.frames[e].backend.gen_save_dict())
 	# _________________ Changes _________________
 	# change_dict = components_tk.get_all_components(mainapp, 'Changes')
 
@@ -123,7 +128,14 @@ def load(event=None, mainapp=None):
 			p = Load('PSU', p)
 			components_tk.create_component(mainapp, 'PSU', p, 'new')
 			comment_box.insert_comments_text(mainapp.frames[p.title].comment_text, p.comments)
-			
+	
+	if 'Emergency Equipment' in data.keys():
+		
+		for p in data['Emergency Equipment']:
+			p = Load('Emergency Equipment', p)
+			components_tk.create_component(mainapp, 'Emergency Equipment', p, 'new')
+			comment_box.insert_comments_text(mainapp.frames[p.title].comment_text, p.comments)
+
 	if 'Changes' in data.keys():
 		
 		for l in data['Changes']:
@@ -228,7 +240,18 @@ class Load():
 			self.parts = component_data["Parts"]
 			self.psu_layout = component_data["Layout"]
 			self.comments = component_data["Comments"]
+
+		if type == 'Emergency Equipment':
+			self.title = component_data["Title"]
+			self.description = component_data["Description"]
+			self.aircraft_type = component_data["Aircraft Type"]
+			self.equipment_type = component_data["Equipment Type"]
+			self.attaching_hardware = component_data["Attaching Hardware"]
+			self.weight = component_data["Weight"]
+			self.manufacturer = component_data["Manufacturer"]
+			self.comments = component_data["Comments"]
 			
+
 		if type == 'Change':
 			self.title = component_data["Title"]
 			self.sb_title = component_data["SB Title"]

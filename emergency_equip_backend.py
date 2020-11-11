@@ -1,7 +1,7 @@
 import copy
 
 def setup_variables(w):
-	w.type = 'Emergency_Equip'
+	w.type = 'Emergency Equipment'
 	w.title = None
 	w.description = None
 	w.aircraft_type = None
@@ -15,15 +15,17 @@ def setup_variables(w):
 							'Manual Release Tool', 'Megaphone', 'PBE']	
 
 def update_variables(w, source):
+
 	w.title = source.title
 	w.description = source.description
 	w.aircraft_type = source.aircraft_type
 	w.equipment_type = source.equipment_type
-	w.attaching_hardware = source.attaching_hardware
+	w.attaching_hardware = copy.deepcopy(source.attaching_hardware)
 	w.weight = source.weight
 	w.manufacturer = source.manufacturer
-	
 
+	if w.aircraft_type in ['A320', 'A319']:
+		w.treeview_node = 'A320 EE'
 	
 class Emergency_Equip_Backend():
 
@@ -42,6 +44,22 @@ class Emergency_Equip_Backend():
 		elif type == 'new':
 			self.controller.states.component_updated(type, self, Emergency_Equip_Saved_State)
 		update_variables(self, source)		
+
+	def gen_save_dict(self, comments_from_text_widget = True, comments = None):
+
+		if comments_from_text_widget:
+			comments = self.parent_page.comment_text.get("1.0","end")
+		else:
+			comments = comments
+
+		return {'Title': self.title,
+				'Description': self.description,
+				'Aircraft Type': self.aircraft_type,
+				'Equipment Type': self.equipment_type,
+				'Attaching Hardware': self.attaching_hardware,
+				'Weight': self.weight,
+				'Manufacturer': self.manufacturer,
+				'Comments': comments}
 		
 class Emergency_Equip_Saved_State():
 	def __init__(self, emergency_equip):

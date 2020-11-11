@@ -59,11 +59,28 @@ def get_treeview_headers(treeview):
 	
 	# return df
 	
-def del_selected_items(treeview):
+def del_selected_items(treeview, msg = False):
 	selected_item = treeview.selection()
 	if selected_item:
-		MsgBox = tk.messagebox.askquestion ('Delete Selected Item??','This Cannont Be Undone!',icon = 'warning')
-		if MsgBox == 'yes':
+
+		if msg: #if we require a messagebox
+			MsgBox = tk.messagebox.askquestion ('Delete Selected Item??','This Cannont Be Undone!',icon = 'warning')
+			if MsgBox == 'yes':
+				treeview.delete(selected_item)
+		else:
 			treeview.delete(selected_item)
 			
 	return MsgBox
+
+
+
+def get_current_selection(treeview):
+
+	item = treeview.selection()[0]
+	index = treeview.index(item)
+	
+	data = list(treeview.item(item,"values"))
+	data.insert(0, treeview.item(item,"text"))
+
+
+	return index, data

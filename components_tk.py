@@ -129,7 +129,7 @@ def create_component(self, type, source, update_type, insert=True):
 			new_component = ee_tk.Emergency_Equipment_Page_Tk(container=self.container, mainapp=self,)
 			new_component.update_component(source, update_type)
 			ac_type = new_component.backend.aircraft_type
-			if ac_type in ['A320', 'A319']:
+			if ac_type in ['A320', 'A319', ]:
 				node = 'A320 EE'
 
 	if type == 'Change':
@@ -188,7 +188,7 @@ def get_all_components(mainapp, type):
 	if type == 'all':
 		components_dict = {'All': []}
 		#types = ['Aircraft', 'Seats', 'Windbreakers', 'LOPAs']
-		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs']
+		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs', 'Emergency Equipment']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 	
@@ -206,10 +206,14 @@ def get_all_components(mainapp, type):
 
 	if type == 'PSUs':
 		components_dict = {'All': [], 'A320': [], 'A319': []}
-		
+
+	if type == 'Emergency Equipment':
+		components_dict = {'All': [], 'A320': [], 'A319': [], 'A320 Family':[]}
+
 	if type == 'Changes':
 		components_dict = {'All': []}
-		
+	
+
 	for type in types:
 		for node in mainapp.treeview_nodes[type]:
 
@@ -230,7 +234,7 @@ def get_all_components(mainapp, type):
 					if f'{ac_type} {side}' in components_dict.keys():
 						components_dict[f'{ac_type} {side}'].append(component.backend.title)
 				
-				if type == 'LOPAs' or type == 'PSUs':
+				if type == 'LOPAs' or type == 'PSUs' or type == 'Emergency Equipment':
 					if f'{ac_type}' in components_dict.keys():
 						components_dict[f'{ac_type}'].append(component.backend.title)
 
@@ -339,6 +343,10 @@ def get_treeview_node(backend):
 	elif backend.type  == 'PSU':
 		if backend.aircraft_type in ['A320', 'A319']:
 			node = 'A320 PSUs'
+
+	elif backend.type  == 'Emergency Equipment':
+		if backend.aircraft_type in ['A320', 'A319']:
+			node = 'A320 EE'
 	return node
 	
 def update_treeview_iid(mainapp, component_frontend):

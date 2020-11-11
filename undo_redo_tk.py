@@ -46,7 +46,7 @@ class Undo_Redo():
 				
 				name = action['component'].title
 				save_class = action['new_class']
-
+				
 				self.redo_stack.insert(0, {'type': 'edit', 'component': action['component'],
 												'new_class': component_backend.save_class(component_backend)})
 				component_backend.parent_page.update_component(save_class, 'undo_redo')

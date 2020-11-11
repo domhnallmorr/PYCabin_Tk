@@ -145,7 +145,8 @@ class MainApplication(tk.Frame):
 
 		self.treeview_nodes = {'Aircraft': ['A320 Aircraft'], 'Seats': ['A320 Seats'], 'Monuments': ['A320 Windbreakers'],
 								'Windbreakers': ['A320 Windbreakers'],
-								'LOPAs': ['A320 LOPAs'], 'PSUs': ['A320 PSUs'], 'Changes': ['Changes']}
+								'LOPAs': ['A320 LOPAs'], 'PSUs': ['A320 PSUs'], 'Emergency Equipment': ['A320 EE'],
+								'Changes': ['Changes']}
 								
 
 	def setup_menu(self):
@@ -208,7 +209,7 @@ class MainApplication(tk.Frame):
 		parent_iid = event.widget.parent(item_iid)
 		
 		ids_to_ignore = ['A320 Aircraft', '737 Aircraft', 'A320 Seats', '737 Seats',
-						'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'A320 PSUs']
+						'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'A320 PSUs', 'A320 EE']
 
 		if parent_iid:
 			if item_iid not in ids_to_ignore:
