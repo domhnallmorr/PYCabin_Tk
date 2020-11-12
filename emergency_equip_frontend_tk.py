@@ -246,6 +246,7 @@ class Edit_Emergency_Equip_Window_Tk(object):
 
 		self.weight_entry = Entry(self.main_frame, width=50)
 		self.weight_entry.grid(row=5, column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.data_checks['Weight'] = ['entry', self.weight_entry, 'float greater equal zero', 'Weight']
 		if self.mode == 'edit':
 			self.weight_entry.insert(0, self.parent_ee.backend.weight)
 
@@ -268,15 +269,19 @@ class Edit_Emergency_Equip_Window_Tk(object):
 	
 		if button == 'ok':
 			
-			self.title = self.title_entry.get()
-			self.aircraft_type = self.ac_combo.get()
-			self.description = self.description_entry.get()
-			self.equipment_type = self.equip_type_combo.get()
-			self.manufacturer = self.manu_entry.get()
-			self.weight = self.weight_entry.get()
-			self.button = 'ok'
-			self.top.destroy()
-			
+			data_good, msg = data_input_checks_tk.check_data_input(self.data_checks, self.mainapp)
+
+			if data_good:
+				self.title = self.title_entry.get()
+				self.aircraft_type = self.ac_combo.get()
+				self.description = self.description_entry.get()
+				self.equipment_type = self.equip_type_combo.get()
+				self.manufacturer = self.manu_entry.get()
+				self.weight = self.weight_entry.get()
+				self.button = 'ok'
+				self.top.destroy()
+			else:
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 		else:
 			self.top.destroy()
 		
@@ -325,6 +330,7 @@ class Double_Click_Part_Window_Tk(object):
 
 		self.qty_entry=Entry(self.options_frame, width=20)		
 		self.qty_entry.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.data_checks['Qty'] = ['entry', self.qty_entry, 'int positive', 'Qty']
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
@@ -339,12 +345,19 @@ class Double_Click_Part_Window_Tk(object):
 		self.button = button
 		if button == 'ok':
 
-			self.attach_type = self.type_combo.get()
-			self.attach_part_no = self.pn_entry.get()
-			self.attach_qty = self.qty_entry.get()
+			data_good, msg = data_input_checks_tk.check_data_input(self.data_checks, self.mainapp)
 
-			self.attaching_hardware.append([len(self.attaching_hardware)+1, self.attach_type, self.attach_part_no, self.attach_qty])
-			self.top.destroy()
+			if data_good:
+
+				self.attach_type = self.type_combo.get()
+				self.attach_part_no = self.pn_entry.get()
+				self.attach_qty = self.qty_entry.get()
+
+				self.attaching_hardware.append([len(self.attaching_hardware)+1, self.attach_type, self.attach_part_no, self.attach_qty])
+				self.top.destroy()
+
+			else:
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 
 		else:
 			self.top.destroy()

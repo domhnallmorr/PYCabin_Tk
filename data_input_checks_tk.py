@@ -79,6 +79,15 @@ def check_entry_input(entry_data):
 		else:
 			entry_good = False
 
+	if 'int ' in entry_data[2]:
+		if user_input.strip() != '':
+			try:
+				user_input = int(user_input)
+			except:
+				entry_good = False
+		else:
+			entry_good = False
+
 	# If data good to this point, check if it is the right range
 	if entry_good:
 	
@@ -87,14 +96,24 @@ def check_entry_input(entry_data):
 			if user_input <= 0:
 				
 				entry_good = False
-				
+		elif 'float greater equal zero' in entry_data[2]:
+
+			if user_input < 0:
+				entry_good = False		
 			
 	
 	if not entry_good:
 		
-		if 'float positive' in entry_data[2] or 'int positive' in entry_data[2]:
+		if 'float positive' in entry_data[2]:
 		
 			entry_msg = 'Should be Numeric and Greater Than 0'
+
+		elif 'int positive' in entry_data[2]:
+
+			entry_msg = 'Should be a Positive Integer'
+
+		elif 'float greater equal zero' in entry_data[2]:
+			entry_msg = 'Should be Numberic and Greater Than or Equal to 0'
 			
 	return entry_good, entry_msg
 	
