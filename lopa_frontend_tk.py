@@ -474,6 +474,7 @@ class LOPA_Page_Tk(tk.Frame):
 					
 		
 	def update_lopa_plot(self):
+
 		self.backend.ax1.clear()
 		self.backend.ax2.clear()
 		self.backend.ax3.clear()

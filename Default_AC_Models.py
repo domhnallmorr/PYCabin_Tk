@@ -1,4 +1,4 @@
-
+import numpy as np
 def convert_matplotlib_to_dxf(x, y):
 
 	points = []

@@ -10,6 +10,7 @@ import windbreakers_frontend_tk as windbreakers_tk
 import lopa_frontend_tk as lopa_tk
 import aircraft_frontend_tk as aircraft_tk
 import psu_frontend_tk as psu_tk
+import ohsc_frontend_tk as ohsc_tk
 import emergency_equip_frontend_tk as ee_tk
 import changes_frontend_tk as change_tk
 '''
@@ -50,6 +51,10 @@ def new_component(self, type):
 
 	if type == 'PSU':
 		self.w=psu_tk.Edit_PSU_Window_Tk(self, self.master, None, mode, None)
+		self.master.wait_window(self.w.top)
+
+	if type == 'OHSC':
+		self.w=ohsc_tk.Edit_OHSC_Window_Tk(self, self.master, mode, None)
 		self.master.wait_window(self.w.top)
 
 	if type == 'Emergency Equipment':
@@ -132,6 +137,14 @@ def create_component(self, type, source, update_type, insert=True):
 			if ac_type in ['A320', 'A319', ]:
 				node = 'A320 EE'
 
+	if type == 'OHSC':
+		if update_type == 'new':
+			new_component = ohsc_tk.OHSC_Page_Tk(container=self.container, mainapp=self,)
+			new_component.update_component(source, update_type)
+			ac_type = new_component.backend.aircraft_type
+			if ac_type in ['A320', 'A319', ]:
+				node = 'A320 OHSCs'
+
 	if type == 'Change':
 
 		if update_type == 'new':
@@ -168,7 +181,9 @@ def insert_new_item_into_side_treeview(mainapp, parent_node, item_name, componen
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.lopa_icon2)
 	elif 'PSU' in parent_node:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.psu_icon2)
-	elif 'Emergency Equipment':
+	elif 'OHSC' in parent_node:
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.ohsc_icon2)
+	elif 'Emergency Equipment' in parent_node:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.ee_icon2)
 	else:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name)	
@@ -188,7 +203,7 @@ def get_all_components(mainapp, type):
 	if type == 'all':
 		components_dict = {'All': []}
 		#types = ['Aircraft', 'Seats', 'Windbreakers', 'LOPAs']
-		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs', 'Emergency Equipment']
+		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs', 'OHSCs', 'Emergency Equipment']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 	
@@ -205,6 +220,9 @@ def get_all_components(mainapp, type):
 		components_dict = {'All': [], 'A320': [], 'A319': []}
 
 	if type == 'PSUs':
+		components_dict = {'All': [], 'A320': [], 'A319': []}
+
+	if type == 'OHSCs':
 		components_dict = {'All': [], 'A320': [], 'A319': []}
 
 	if type == 'Emergency Equipment':
@@ -234,7 +252,7 @@ def get_all_components(mainapp, type):
 					if f'{ac_type} {side}' in components_dict.keys():
 						components_dict[f'{ac_type} {side}'].append(component.backend.title)
 				
-				if type == 'LOPAs' or type == 'PSUs' or type == 'Emergency Equipment':
+				if type == 'LOPAs' or type == 'PSUs' or type == 'OHSCs' or type == 'Emergency Equipment':
 					if f'{ac_type}' in components_dict.keys():
 						components_dict[f'{ac_type}'].append(component.backend.title)
 
@@ -343,6 +361,11 @@ def get_treeview_node(backend):
 	elif backend.type  == 'PSU':
 		if backend.aircraft_type in ['A320', 'A319']:
 			node = 'A320 PSUs'
+
+	elif backend.type  == 'OHSC':
+		#if backend.aircraft_type in ['A320', 'A319']:
+			#node = 'A320 PSUs'
+		node = backend.treeview_node
 
 	elif backend.type  == 'Emergency Equipment':
 		if backend.aircraft_type in ['A320', 'A319']:
