@@ -45,7 +45,7 @@ class MainApplication(tk.Frame):
 		components_tk.show_frame(self, 'Project')
 	def setup_variables(self):
 		
-		self.version = '0.12.0'
+		self.version = '0.13.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		
@@ -122,6 +122,10 @@ class MainApplication(tk.Frame):
 		item = self.main_treeview.insert("",'end','Emergency Equipment',text='Emergency Equipment',image = fi)
 		item = self.main_treeview.insert("Emergency Equipment",'end','A320 EE',text=' A320 Family',image = abi)
 
+		# ________ EELs ________
+		item = self.main_treeview.insert("",'end','EELs',text='Emergency Equipment Layouts',image = fi)
+		item = self.main_treeview.insert("EELs",'end','A320 EELs',text=' A320 Family',image = abi)
+
 		# ________ Changes ________
 		# item = self.main_treeview.insert("",'end','Changes',text='Changes',image = fi)
 
@@ -141,7 +145,7 @@ class MainApplication(tk.Frame):
 
 		self.ids_not_allowed = ['Project', 'Aircraft', 'A320 Aircraft', '737 Aircraft', 'Aircraft', 'Seats', 'A320 Seats',
 								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'Windbreaker'
-									'Windbreakers', 'A320 PSUs', 'PSUs', 'OHSCs', 'A320 OHSCs']		
+									'Windbreakers', 'A320 PSUs', 'PSUs', 'OHSCs', 'A320 OHSCs', 'EELs', 'A320 EELs']		
 		
 		# self.treeview_nodes = {'Aircraft': ['A320 Aircraft', '737 Aircraft'], 'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
 								# 'Windbreakers': ['A320 Windbreakers'],
@@ -150,7 +154,7 @@ class MainApplication(tk.Frame):
 		self.treeview_nodes = {'Aircraft': ['A320 Aircraft'], 'Seats': ['A320 Seats'], 'Monuments': ['A320 Windbreakers'],
 								'Windbreakers': ['A320 Windbreakers'],
 								'LOPAs': ['A320 LOPAs'], 'PSUs': ['A320 PSUs'], 'Emergency Equipment': ['A320 EE'],
-								'OHSCs': ['A320 OHSCs'],
+								'OHSCs': ['A320 OHSCs'], 'EELs': ['A320 EELs'],
 								'Changes': ['Changes']}
 								
 
@@ -196,6 +200,8 @@ class MainApplication(tk.Frame):
 
 		insert_menu.add_command(label = 'OHSC Layout', command = lambda self=self, type='OHSC': components_tk.new_component(self, type))
 
+		insert_menu.add_command(label = 'Emergency Equipment Layout', command = lambda self=self, type='EEL': components_tk.new_component(self, type))
+
 		# insert_menu.add_command(label = 'Change', command = lambda self=self, type='Change': components_tk.new_component(self, type))
 		
 		# ________ DATABASE ________
@@ -216,7 +222,8 @@ class MainApplication(tk.Frame):
 		parent_iid = event.widget.parent(item_iid)
 		
 		ids_to_ignore = ['A320 Aircraft', '737 Aircraft', 'A320 Seats', '737 Seats',
-						'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'A320 PSUs', 'A320 OHSCs', 'A320 EE']
+						'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'A320 PSUs', 'A320 OHSCs', 'A320 EE',
+						'A320 EELs']
 
 		if parent_iid:
 			if item_iid not in ids_to_ignore:

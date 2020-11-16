@@ -206,7 +206,7 @@ class Edit_Emergency_Equip_Window_Tk(object):
 			self.orig_title = parent_ee.backend.title
 			ee_bknd.update_variables(self, self.parent_ee.backend)
 		else:
-			self.orig_part_no = None
+			self.orig_title = None
 			
 		self.data_checks = {}
 		
@@ -220,7 +220,7 @@ class Edit_Emergency_Equip_Window_Tk(object):
 		
 	def setup_widgets(self):
 	
-		labels = ['Title:', 'Description:', 'Equipment Type:', 'Aircraft Type:', 'Weight (lbs):', 'Manufacturer:']
+		labels = ['Part Number:', 'Description:', 'Equipment Type:', 'Aircraft Type:', 'Weight (lbs):', 'Manufacturer:']
 		row = 1
 		gui_styles_tk.create_multiple_labels(self.main_frame, labels, row, 2, 20, 2, 2)	
 		
@@ -240,7 +240,7 @@ class Edit_Emergency_Equip_Window_Tk(object):
 		if self.mode == 'edit':
 			self.equip_type_combo.set(self.parent_ee.backend.equipment_type)
 		
-		self.ac_combo= ttk.Combobox(self.main_frame, values=['A320'], state='disabled')
+		self.ac_combo= ttk.Combobox(self.main_frame, values=['A320 Family'], state='disabled')
 		self.ac_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.ac_combo.set('A320')
 

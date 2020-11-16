@@ -29,7 +29,7 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.12\test.json'
+	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.13\test.json'
 	#mainapp.save_file = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json'
 	write_save_file(mainapp)
 	
@@ -37,7 +37,7 @@ def write_save_file(mainapp):
 
 
 	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Aircraft': [], 'Seats': [],
-					'Windbreakers': [], 'LOPAs': [], 'PSUs': [], 'OHSCs': [], 'Emergency Equipment': []}
+					'Windbreakers': [], 'LOPAs': [], 'PSUs': [], 'OHSCs': [], 'Emergency Equipment': [], 'EELs': []}
 	
 	# _________________ AIRCRAFT _________________
 	# ac_dict = components_tk.get_all_components(mainapp, 'Aircraft')
@@ -79,6 +79,12 @@ def write_save_file(mainapp):
 
 	for e in ee_dict['All']:
 		save_dict['Emergency Equipment'].append(mainapp.frames[e].backend.gen_save_dict())
+
+	# _________________ EELs _________________
+	eel_dict = components_tk.get_all_components(mainapp, 'EELs')
+
+	for e in eel_dict['All']:
+		save_dict['EELs'].append(mainapp.frames[e].backend.gen_save_dict())
 	# _________________ Changes _________________
 	# change_dict = components_tk.get_all_components(mainapp, 'Changes')
 
@@ -91,7 +97,7 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.12\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.13\test.json') as f:
 	#with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
@@ -147,6 +153,13 @@ def load(event=None, mainapp=None):
 		for p in data['Emergency Equipment']:
 			p = Load('Emergency Equipment', p)
 			components_tk.create_component(mainapp, 'Emergency Equipment', p, 'new')
+			comment_box.insert_comments_text(mainapp.frames[p.title].comment_text, p.comments)
+
+	if 'EELs' in data.keys():
+		
+		for p in data['EELs']:
+			p = Load('EEL', p)
+			components_tk.create_component(mainapp, 'EEL', p, 'new')
 			comment_box.insert_comments_text(mainapp.frames[p.title].comment_text, p.comments)
 
 	if 'Changes' in data.keys():
@@ -270,7 +283,18 @@ class Load():
 			self.weight = component_data["Weight"]
 			self.manufacturer = component_data["Manufacturer"]
 			self.comments = component_data["Comments"]
-			
+
+		if type == 'EEL':
+			self.title = component_data["Title"]
+			self.description = component_data["Description"]
+			self.aircraft_type = component_data["Aircraft Type"]			
+			self.lopa = component_data["LOPA"]			
+			self.ohsc = component_data["OHSC"]			
+			self.locations = component_data["Locations"]			
+			self.layout = component_data["Layout"]
+			self.summary = component_data["Summary"]
+			self.summary_table = component_data["Summary Table"]
+			self.comments = component_data["Comments"]			
 
 		if type == 'Change':
 			self.title = component_data["Title"]

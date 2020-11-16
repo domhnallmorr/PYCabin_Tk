@@ -12,6 +12,7 @@ import aircraft_frontend_tk as aircraft_tk
 import psu_frontend_tk as psu_tk
 import ohsc_frontend_tk as ohsc_tk
 import emergency_equip_frontend_tk as ee_tk
+import eel_frontend_tk as eel_tk
 import changes_frontend_tk as change_tk
 '''
 V0.02 initial issue
@@ -59,6 +60,10 @@ def new_component(self, type):
 
 	if type == 'Emergency Equipment':
 		self.w=ee_tk.Edit_Emergency_Equip_Window_Tk(self, self.master, mode, None)
+		self.master.wait_window(self.w.top)
+
+	if type == 'EEL':
+		self.w=eel_tk.Edit_EEL_Window_Tk(self, self.master, mode, None)
 		self.master.wait_window(self.w.top)
 
 	if type == 'Change':
@@ -134,7 +139,7 @@ def create_component(self, type, source, update_type, insert=True):
 			new_component = ee_tk.Emergency_Equipment_Page_Tk(container=self.container, mainapp=self,)
 			new_component.update_component(source, update_type)
 			ac_type = new_component.backend.aircraft_type
-			if ac_type in ['A320', 'A319', ]:
+			if ac_type in ['A320', 'A319', 'A320 Family']:
 				node = 'A320 EE'
 
 	if type == 'OHSC':
@@ -144,6 +149,14 @@ def create_component(self, type, source, update_type, insert=True):
 			ac_type = new_component.backend.aircraft_type
 			if ac_type in ['A320', 'A319', ]:
 				node = 'A320 OHSCs'
+
+	if type == 'EEL':
+		if update_type == 'new':
+			new_component = eel_tk.EEL_Page_Tk(container=self.container, mainapp=self,)
+			new_component.update_component(source, update_type)
+			ac_type = new_component.backend.aircraft_type
+			if ac_type in ['A320', 'A319', ]:
+				node = 'A320 EELs'
 
 	if type == 'Change':
 
@@ -203,7 +216,7 @@ def get_all_components(mainapp, type):
 	if type == 'all':
 		components_dict = {'All': []}
 		#types = ['Aircraft', 'Seats', 'Windbreakers', 'LOPAs']
-		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs', 'OHSCs', 'Emergency Equipment']
+		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs', 'OHSCs', 'Emergency Equipment', ]
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 	
@@ -227,6 +240,9 @@ def get_all_components(mainapp, type):
 
 	if type == 'Emergency Equipment':
 		components_dict = {'All': [], 'A320': [], 'A319': [], 'A320 Family':[]}
+
+	if type == 'EELs':
+		components_dict = {'All': [], 'A320': [], 'A319': []}
 
 	if type == 'Changes':
 		components_dict = {'All': []}
@@ -370,6 +386,11 @@ def get_treeview_node(backend):
 	elif backend.type  == 'Emergency Equipment':
 		if backend.aircraft_type in ['A320', 'A319']:
 			node = 'A320 EE'
+
+	elif backend.type  == 'EEL':
+		if backend.aircraft_type in ['A320', 'A319']:
+			node = 'A320 EELs'
+
 	return node
 	
 def update_treeview_iid(mainapp, component_frontend):
