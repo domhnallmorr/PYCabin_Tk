@@ -201,12 +201,21 @@ class EEL_Page_Tk(tk.Frame):
 		#print(w.attaching_hardware)
 		index, data = treeview_functions.get_current_selection(self.eel_tree)
 
-		loc = data[2]
-		w.layout.pop(index)
+		count = 0
+		for loc in w.layout.keys():
+			
+			for idx, part in enumerate(w.layout[loc]):
+				
+				if count == index:
+
+					w.layout[loc].pop(idx)
+					break
+				else:
+					count += 1
 		#print(w.attaching_hardware)
 		#print(self.backend.attaching_hardware)
 		
-		self.update_component(w, 'edit', False)
+		self.update_component(w, 'edit')
 
 		del(w)
 
@@ -386,15 +395,17 @@ class Add_Part_Window_Tk(object):
 		if self.button == 'ok':
 			
 			eel_bk.setup_variables(self)
-			eel_bk.EEL_Backend.update_variables(self, self.parent_eel.backend)
+			eel_bk.update_variables(self, self.parent_eel.backend)
 			
 			self.location = self.location_combo.get()
 			self.part_no = self.part_no_combo.get()
 			self.type = self.mainapp.frames[self.part_no].backend.equipment_type
 			self.qty = self.qty_combo.get()
 			
-			self.layout[self.location].append([self.type, self.part_no, self.location, self.qty])
-			
+			if self.location in self.layout.keys():
+				self.layout[self.location].append([self.type, self.part_no, self.location, self.qty])
+			else:
+				self.layout[self.location] = [[self.type, self.part_no, self.location, self.qty]]
 			eel_bk.EEL_Backend.gen_summary_dict(self)
 			eel_bk.EEL_Backend.gen_summary_table(self)
 
