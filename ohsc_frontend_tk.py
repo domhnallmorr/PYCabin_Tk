@@ -23,6 +23,19 @@ import Default_AC_Models
 
 import copy
 
+def check_ohsc_used(self):
+	used = False
+	eels = []
+	eel_dict = components_tk.get_all_components(self.mainapp, 'EELs')
+
+	for e in eel_dict['All']:
+		
+		if self.backend.title == self.mainapp.frames[e].backend.ohsc:
+			used = True
+			eels.append(e)
+			
+	return used, eels
+
 class OHSC_Page_Tk(tk.Frame):
 
 	def __init__(self, container, mainapp):
@@ -149,6 +162,12 @@ class OHSC_Page_Tk(tk.Frame):
 
 	def update_component(self, window, type):
 
+		if type != 'new':
+			orig_title = self.backend.title
+			used, eels = check_ohsc_used(self)
+		else:
+			used = False
+			
 		self.backend.update_component(window, type)
 		self.update_label_text()
 
@@ -168,6 +187,14 @@ class OHSC_Page_Tk(tk.Frame):
 		if self.treeview_iid:
 			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.title)
 			components_tk.component_renamed(self)
+		
+		if used:
+			for e in eels:
+				e = self.mainapp.frames[e]
+				e.backend.ohsc = self.backend.title
+				e.update_component(e.backend, 'ohsc')	
+		
+
 	def update_label_text(self):
 
 		self.top_label.config(text=f'OHSC Layout: {self.backend.title}')

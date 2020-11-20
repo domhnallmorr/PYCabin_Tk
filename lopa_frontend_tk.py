@@ -34,15 +34,23 @@ from docx.enum.text import WD_BREAK
 def check_lopa_used(self):
 	lopa_used = False
 	psus = []
+	eels = []
 	psu_dict = components_tk.get_all_components(self.mainapp, 'PSUs')
+	eel_dict = components_tk.get_all_components(self.mainapp, 'EELs')
 	
 	for p in psu_dict['All']:
 		
 		if self.backend.title == self.mainapp.frames[p].backend.lopa:
 			lopa_used = True
 			psus.append(p)
+
+	for e in eel_dict['All']:
+		
+		if self.backend.title == self.mainapp.frames[e].backend.lopa:
+			lopa_used = True
+			eels.append(e)
 			
-	return lopa_used, psus
+	return lopa_used, psus, eels
 
 def get_seat_y_datum(station, aircraft, side):
 
@@ -449,7 +457,7 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		if type != 'new':
 			orig_title = self.backend.title
-			lopa_used, psus = check_lopa_used(self)
+			lopa_used, psus, eels = check_lopa_used(self)
 		else:
 			lopa_used = False
 			
@@ -471,7 +479,11 @@ class LOPA_Page_Tk(tk.Frame):
 				p = self.mainapp.frames[p]
 				p.backend.lopa = self.backend.title
 				p.update_component(p.backend, 'lopa')
-					
+				
+			for e in eels:
+				e = self.mainapp.frames[e]
+				e.backend.lopa = self.backend.title
+				e.update_component(e.backend, 'lopa')					
 		
 	def update_lopa_plot(self):
 
@@ -555,7 +567,7 @@ class LOPA_Page_Tk(tk.Frame):
 				
 			#find nearest seats
 			ow_rows = self.backend.find_overwing_seats() #gives indexs in backend.seat_layout of nearest seats to OW exits
-			print(ow_rows)
+			
 			sides = {'LHS': self.overwing_ax1, 'RHS': self.overwing_ax1}
 			
 			#draw seats (and get stations to annotatate
@@ -570,8 +582,7 @@ class LOPA_Page_Tk(tk.Frame):
 				side_datum = [station, 0]
 				seats_draw.economy_seat_generic_side_view(seat, canvas, canvas_type, side_datum)
 				
-				print(station)
-				print(seat.length_fwd)
+
 				annotate_stations['Front'].append(station - float(seat.length_fwd))
 				annotate_stations['Rear'].append(station + float(seat.length_aft))
 				annotate_stations['Top'].append(float(seat.height))

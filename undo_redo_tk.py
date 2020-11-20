@@ -148,18 +148,22 @@ class Undo_Redo():
 			self.redo_stack.pop(0)
 			
 		
-	def component_updated(self, update_type, component, save_class):
+	def component_updated(self, update_type, component, save_class, reset_redo=True):
 		
 		# when a seat is updated any lopas using it are automatically updated
 		# 'seat' in list below refers to when a lopa is updated due to seat being changed
 		# when we undo in this case, we just want to undo the seat change, which will then automatically update lopa
 		# if we didn't handle for this, the lopa would undo, then seat would undo, not nessecary, just need to undo seat
 		# 'lopa' refers to a psu being update due to lopa change. the above also applies in this case
-		if update_type not in ['comment', 'seat', 'lopa']:
+		
+		
+		
+		if update_type not in ['comment', 'seat', 'lopa', 'ohsc']:
 			self.undo_stack.append({'type': update_type, 'component': component,
 															'new_class': save_class(component)})
-		elif update_type not in ['seat', 'lopa']:
+		elif update_type not in ['seat', 'lopa', 'ohsc']:
 			self.undo_stack.append({'type': update_type, 'component': component,
 															'new_class': save_class})			
-														
-		self.reset(undo=False, redo=True)
+															
+		if update_type not in ['undo_redo', 'seat', 'lopa', 'ohsc']:
+			self.reset(undo=False, redo=reset_redo)

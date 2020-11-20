@@ -275,6 +275,7 @@ class LOPA_Backend():
 		
 	def update_component(self, source, type):
 		#pass current joint through to state class (for undo redo)
+
 		if type != 'undo_redo':
 			self.controller.states.component_updated(type, self, LOPA_Saved_State)
 		elif type == 'new':

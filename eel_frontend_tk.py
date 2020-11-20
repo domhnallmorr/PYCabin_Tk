@@ -115,13 +115,27 @@ class EEL_Page_Tk(tk.Frame):
 	def update_treeviews(self):
 	
 		data = []
-		print(self.backend.layout)
+		
 		for loc in self.backend.layout.keys():
 			for p in self.backend.layout[loc]:
 				data.append(p)
 		
 		treeview_functions.write_data_to_treeview(self.eel_tree, 'replace', data)
 		treeview_functions.write_data_to_treeview(self.summary_pn_tree, 'replace', self.backend.summary_table)
+		
+		# self.summary_pn_tree.delete(*self.summary_pn_tree.get_children())
+		# for d in self.backend.summary_table:
+			# if d[0] != '':
+				# print('here')
+				# self.summary_pn_tree.insert('', 'end', text=d[0], values=tuple(d[1:]), tags='header_row')
+			# else:
+				# self.summary_pn_tree.insert('', 'end', text=d[0], values=tuple(d[1:]))
+		#add tags
+		
+		for child in self.summary_pn_tree.get_children():
+			if self.summary_pn_tree.item(child, 'text') != '':
+				
+				self.summary_pn_tree.item(child,tag='header_row')
 	def setup_scrollable_frames(self):
 		### Canvas widgets (for vertical scrollbar)
 
@@ -153,6 +167,8 @@ class EEL_Page_Tk(tk.Frame):
 		self.eel_tree.column("#3",minwidth=0,width=150, stretch='NO')
 
 		self.eel_tree.bind("<Double-1>", lambda event: self.eel_double_click(event))
+		
+		
 
 		self.summary_pn_tree = ttk.Treeview(self.summary_frame,selectmode="extended",columns=("A","B"))
 		self.summary_pn_tree.grid(row=2,column=0, columnspan=6,sticky="nsew")
@@ -163,6 +179,8 @@ class EEL_Page_Tk(tk.Frame):
 		self.summary_pn_tree.heading("#2", text="Qty")
 		self.summary_pn_tree.column("#2",minwidth=0,width=150, stretch='NO')
 
+		self.summary_pn_tree.tag_configure('header_row', background='blue', foreground='white')
+		
 		self.summary_item_tree = ttk.Treeview(self.summary_item_frame,selectmode="extended",columns=("A"))
 		self.summary_item_tree.grid(row=2,column=0, columnspan=6,sticky="nsew")
 		self.summary_item_tree.heading("#0", text="Item")
@@ -377,8 +395,8 @@ class Add_Part_Window_Tk(object):
 
 			self.location_combo.set(parts_data[2])
 			self.location_combo.config(state='disabled')
-			self.part_no_combo.insert(0, parts_data[1])
-			self.qty_combo.insert(0, parts_data[3])
+			self.part_no_combo.set(parts_data[1])
+			self.qty_combo.set(parts_data[3])
 		self.button = 'cancel'
 		
 	def setup_label_frames(self):

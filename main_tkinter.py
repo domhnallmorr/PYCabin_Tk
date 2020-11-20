@@ -43,6 +43,11 @@ class MainApplication(tk.Frame):
 		self.states = undo_redo_tk.Undo_Redo(self)
 		components_tk.show_frame(self, 'Seats')
 		components_tk.show_frame(self, 'Project')
+		
+		#fix for treeview tags
+		self.style = ttk.Style()
+		self.style.map('Treeview', foreground=self.fixed_map('foreground'), background=self.fixed_map('background'))
+
 	def setup_variables(self):
 		
 		self.version = '0.13.0'
@@ -70,6 +75,18 @@ class MainApplication(tk.Frame):
 		self.rootpane.add(self.container,stretch="always")
 		
 		self.frames = {}
+
+	def fixed_map(self, option):
+		# Fix for setting text colour for Tkinter 8.6.9
+		# From: https://core.tcl.tk/tk/info/509cafafae
+		#
+		# Returns the style map for 'option' with any styles starting with
+		# ('!disabled', '!selected', ...) filtered out.
+
+		# style.map() returns an empty list for missing options, so this
+		# should be future-safe.
+		return [elm for elm in self.style.map('Treeview', query_opt=option) if
+			elm[:2] != ('!disabled', '!selected')]
 		
 	def setup_main_treeview(self):
 	
@@ -84,6 +101,11 @@ class MainApplication(tk.Frame):
 
 		self.main_treeview = ttk.Treeview(self.sidebar_frame,selectmode='browse', show="tree")
 		self.main_treeview.grid(row=1, column=0, columnspan = 20, sticky='nsew')
+		
+		tree_scrollbar = Scrollbar(self.sidebar_frame, command=self.main_treeview.yview)
+		tree_scrollbar.grid(row=1, column=20, sticky='nsew')
+		self.main_treeview.config(yscrollcommand=tree_scrollbar.set)
+		
 		fi = self.folder_icon2
 		abi = self.airbus_icon2
 		bi = self.boeing_icon2

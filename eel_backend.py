@@ -47,12 +47,13 @@ class EEL_Backend():
 		self.mainapp = self.parent_page.mainapp
 		
 		
-	def update_component(self, source, type):
+	def update_component(self, source, type, reset_redo = True):
 		#pass current joint through to state class (for undo redo)
+
 		if type != 'undo_redo':
-			self.controller.states.component_updated(type, self, EEL_Saved_State)
+			self.controller.states.component_updated(type, self, EEL_Saved_State, reset_redo)
 		elif type == 'new':
-			self.controller.states.component_updated(type, self, EEL_Saved_State)
+			self.controller.states.component_updated(type, self, EEL_Saved_State, reset_redo)
 			
 		update_variables(self, source)
 
