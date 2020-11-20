@@ -39,6 +39,12 @@ def check_combo_input(combo_data):
 		if user_input not in values:
 			combo_good = False
 			combo_msg = 'Selection Not Available'
+
+	elif 'not empty' in combo_data[2]:
+
+		if user_input.strip() == '':
+			combo_good = False
+			combo_msg = 'Must be Entered'			
 	
 	elif 'int greater than' in combo_data[2]:
 		

@@ -30,7 +30,10 @@ def update_variables(self, source):
 	self.summary = copy.deepcopy(source.summary)
 	self.summary_table = copy.deepcopy(source.summary_table)
 
-	if source.aircraft_type == 'A320':
+	EEL_Backend.gen_summary_dict(self)
+	EEL_Backend.gen_summary_table(self)
+
+	if source.aircraft_type in ['A320']:
 		self.treeview_node = 'A320 EELs'
 		
 class EEL_Backend():
@@ -92,16 +95,44 @@ class EEL_Backend():
 					
 	def gen_summary_table(self):
 		self.summary_table = []
+
+		summary_dict = {}
+		items = []
+
 		index = 0
 		
-		for item in self.summary.keys():
-			
-			self.summary_table.append([item, '', 0])
-			idx = len(self.summary_table)-1
-			for part in self.summary[item].keys():
-				self.summary_table.append(['', part, self.summary[item][part]])
+		for loc in self.layout:
 
-				self.summary_table[idx][2] += self.summary[item][part]
+			for item in self.layout[loc]:
+				item_type = item[0]
+				pn = item[1]
+				qty = int(item[3])
+
+				if item_type not in summary_dict.keys():
+					summary_dict[item_type] = {}
+					summary_dict[item_type][pn] = qty
+				else:
+					if pn not in summary_dict[item_type].keys():
+						summary_dict[item_type][pn] = qty
+					else:
+						summary_dict[item_type][pn] += qty
+
+		for item_type in summary_dict.keys():
+
+			total_qty = 0
+			
+			for pn in summary_dict[item_type]:
+				
+				total_qty += summary_dict[item_type][pn]
+
+			self.summary_table.append([item_type, '', total_qty])
+
+			for pn in summary_dict[item_type]:
+				self.summary_table.append(['', pn, summary_dict[item_type][pn]])
+
+
+
+
 class EEL_Saved_State():
 	def __init__(self, ohsc):
 

@@ -123,8 +123,12 @@ class MainApplication(tk.Frame):
 		item = self.main_treeview.insert("Emergency Equipment",'end','A320 EE',text=' A320 Family',image = abi)
 
 		# ________ EELs ________
-		item = self.main_treeview.insert("",'end','EELs',text='Emergency Equipment Layouts',image = fi)
+		item = self.main_treeview.insert("",'end','EELs',text='EELs',image = fi)
 		item = self.main_treeview.insert("EELs",'end','A320 EELs',text=' A320 Family',image = abi)
+
+		# ________ EEL Comparisons ________
+		item = self.main_treeview.insert("",'end','EEL Comparisons',text='EEL Comparisons',image = fi)
+		item = self.main_treeview.insert("EEL Comparisons",'end','A320 EEL Comparisons',text=' A320 Family',image = abi)
 
 		# ________ Changes ________
 		# item = self.main_treeview.insert("",'end','Changes',text='Changes',image = fi)

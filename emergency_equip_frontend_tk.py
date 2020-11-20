@@ -242,7 +242,7 @@ class Edit_Emergency_Equip_Window_Tk(object):
 		
 		self.ac_combo= ttk.Combobox(self.main_frame, values=['A320 Family'], state='disabled')
 		self.ac_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
-		self.ac_combo.set('A320')
+		self.ac_combo.set('A320 Family')
 
 		self.weight_entry = Entry(self.main_frame, width=50)
 		self.weight_entry.grid(row=5, column=3,padx=2, pady=2,sticky = 'NSEW')

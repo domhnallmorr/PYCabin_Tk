@@ -152,6 +152,8 @@ class EEL_Page_Tk(tk.Frame):
 		self.eel_tree.heading("#3", text="Qty")
 		self.eel_tree.column("#3",minwidth=0,width=150, stretch='NO')
 
+		self.eel_tree.bind("<Double-1>", lambda event: self.eel_double_click(event))
+
 		self.summary_pn_tree = ttk.Treeview(self.summary_frame,selectmode="extended",columns=("A","B"))
 		self.summary_pn_tree.grid(row=2,column=0, columnspan=6,sticky="nsew")
 		self.summary_pn_tree.heading("#0", text="Item")
@@ -173,11 +175,11 @@ class EEL_Page_Tk(tk.Frame):
 		self.edit_btn = Button(self.main_scroll_frame.inner, text = 'Edit', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.edit())
 		self.edit_btn.grid(row=1, column=0, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
-		self.add_part_btn = Button(self.parts_frame, text = 'Add Part',
+		self.add_part_btn = Button(self.parts_frame, text = 'Add Part', image = self.mainapp.add_icon2, compound = LEFT,
 								command = self.add_part)
 		self.add_part_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
 
-		self.del_part_btn = Button(self.parts_frame, text = 'Delete Part',
+		self.del_part_btn = Button(self.parts_frame, text = 'Delete Part',  image = self.mainapp.del_icon2, compound = LEFT,
 								command = self.del_part)
 		self.del_part_btn.grid(row = 1, column = 2, columnspan = 2, sticky = 'NSEW')
 
@@ -187,7 +189,7 @@ class EEL_Page_Tk(tk.Frame):
 
 	def add_part(self):
 	
-		self.w=Add_Part_Window_Tk(self.mainapp, self.master, None, 'add', self)
+		self.w=Add_Part_Window_Tk(self.mainapp, self.master, 'add', self, None, None)
 		self.master.wait_window(self.w.top)
 		
 		if self.w.button == 'ok':
@@ -227,6 +229,17 @@ class EEL_Page_Tk(tk.Frame):
 		if self.w.button == 'ok':
 			self.update_component(self.w, 'edit')
 
+	def eel_double_click(self, event):
+		index, data = treeview_functions.get_current_selection(self.eel_tree)
+
+		self.w=Add_Part_Window_Tk(self.mainapp, self.master, 'edit', self, index, data) #lazy nones, not used
+		self.master.wait_window(self.w.top)
+
+		if self.w.button == 'ok':
+
+			self.update_component(self.w, 'edit')
+
+
 class Edit_EEL_Window_Tk(object):
 	def __init__(self, mainapp, master, mode, parent_page):
 		#self.drawing_dictionary = drawing_dictionary
@@ -237,8 +250,10 @@ class Edit_EEL_Window_Tk(object):
 		self.parent_page = parent_page
 
 		self.lopa_dict = components_tk.get_all_components(mainapp, 'LOPAs')
+		self.lopa_dict['A320'].insert(0, '')
 		#self.lopas = components_tk.gen_seat_dict(mainapp, self.seats)
 		self.ohsc_dict = components_tk.get_all_components(mainapp, 'OHSCs')
+		self.ohsc_dict['A320'].insert(0, '')
 		
 		eel_bk.setup_variables(self)
 
@@ -284,14 +299,14 @@ class Edit_EEL_Window_Tk(object):
 		self.ac_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.ac_combo.set('A320')
 
-		self.lopa_combo= ttk.Combobox(self.details_frame, values=self.lopa_dict['A320'])
+		self.lopa_combo= ttk.Combobox(self.details_frame, values=self.lopa_dict['A320'], state='readonly')
 		self.lopa_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 
 		if self.mode == 'edit':
 			self.lopa_combo.set(self.parent_page.backend.lopa)
 			self.lopa_combo.config(state='disabled')
 
-		self.layout_combo= ttk.Combobox(self.details_frame, values=self.ohsc_dict['A320'])
+		self.layout_combo= ttk.Combobox(self.details_frame, values=self.ohsc_dict['A320'], state='readonly')
 		self.layout_combo.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')
 
 		if self.mode == 'edit':
@@ -343,18 +358,27 @@ class Edit_EEL_Window_Tk(object):
 			
 			
 class Add_Part_Window_Tk(object):
-	def __init__(self, mainapp, master, ac, mode, parent_eel):
+	def __init__(self, mainapp, master, mode, parent_eel, index, parts_data):
 		#self.drawing_dictionary = drawing_dictionary
 		top=self.top=Toplevel(master)
 		top.grab_set()
 		self.mainapp = mainapp
 		self.mode = mode
 		self.parent_eel = parent_eel
+		self.index = index
 
 		self.eel_dict = components_tk.get_all_components(self.mainapp, 'Emergency Equipment')
 		
+		self.data_checks = {}
 		self.setup_label_frames()
 		self.setup_widgets()
+
+		if self.mode == 'edit':
+
+			self.location_combo.set(parts_data[2])
+			self.location_combo.config(state='disabled')
+			self.part_no_combo.insert(0, parts_data[1])
+			self.qty_combo.insert(0, parts_data[3])
 		self.button = 'cancel'
 		
 	def setup_label_frames(self):
@@ -370,16 +394,19 @@ class Add_Part_Window_Tk(object):
 		
 		self.location_combo = ttk.Combobox(self.main_frame, values=self.parent_eel.backend.locations)
 		self.location_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.data_checks['Location'] = ['combo', self.location_combo, 'not empty', 'Location']
 
 		#self.type_combo = ttk.Combobox(self.main_frame, values=['Crash Axe'])
 		#self.type_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 
-		self.part_no_combo = ttk.Combobox(self.main_frame, values=self.eel_dict['A320 Family'])
+		self.part_no_combo = ttk.Combobox(self.main_frame, values=self.eel_dict['A320 Family'], state='readonly')
 		self.part_no_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
-		
-		self.qty_combo = ttk.Combobox(self.main_frame, values=[i for i in range(500)])
+		self.data_checks['Part Number'] = ['combo', self.part_no_combo, 'not empty', 'Part Number']
+
+		self.qty_combo = ttk.Combobox(self.main_frame, values=[i for i in range(500)], state='readonly')
 		self.qty_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
-		
+		self.data_checks['Qty'] = ['combo', self.qty_combo, 'not empty', 'Qty']
+
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
 		self.ok_button.grid(row=11,column=3, pady=5,sticky="nsew")
@@ -394,22 +421,36 @@ class Add_Part_Window_Tk(object):
 		
 		if self.button == 'ok':
 			
-			eel_bk.setup_variables(self)
-			eel_bk.update_variables(self, self.parent_eel.backend)
-			
-			self.location = self.location_combo.get()
-			self.part_no = self.part_no_combo.get()
-			self.type = self.mainapp.frames[self.part_no].backend.equipment_type
-			self.qty = self.qty_combo.get()
-			
-			if self.location in self.layout.keys():
-				self.layout[self.location].append([self.type, self.part_no, self.location, self.qty])
-			else:
-				self.layout[self.location] = [[self.type, self.part_no, self.location, self.qty]]
-			eel_bk.EEL_Backend.gen_summary_dict(self)
-			eel_bk.EEL_Backend.gen_summary_table(self)
+			data_good, msg = data_input_checks_tk.check_data_input(self.data_checks, self.mainapp)
 
-			self.top.destroy()
+			if data_good:
+				eel_bk.setup_variables(self)
+				eel_bk.update_variables(self, self.parent_eel.backend)
+				
+				self.location = self.location_combo.get()
+				self.part_no = self.part_no_combo.get()
+				self.type = self.mainapp.frames[self.part_no].backend.equipment_type
+				self.qty = self.qty_combo.get()
+				
+				if self.mode != 'edit':
+					if self.location in self.layout.keys():
+						self.layout[self.location].append([self.type, self.part_no, self.location, self.qty])
+					else:
+						self.layout[self.location] = [[self.type, self.part_no, self.location, self.qty]]
+
+				else:
+					count = 0
+					for loc in self.layout.keys():
+					
+						for idx, part in enumerate(self.layout[loc]):
+							
+							if count == self.index:
+								self.layout[loc][idx] = [self.type, self.part_no, self.location, self.qty]
+
+				self.top.destroy()
+
+			else:
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 			
 		else:
 			self.top.destroy()
