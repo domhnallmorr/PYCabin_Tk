@@ -82,6 +82,7 @@ class EEL_Backend():
 		
 	def gen_summary_dict(self):
 		
+		self.summary = {}
 		for loc in self.layout.keys():
 			
 			for part in self.layout[loc]:
@@ -93,6 +94,7 @@ class EEL_Backend():
 					self.summary[item_type][part_no] = int(part[3])
 				else:
 					self.summary[item_type][part_no] += int(part[3])
+	
 					
 	def gen_summary_table(self):
 		self.summary_table = []

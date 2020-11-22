@@ -13,6 +13,7 @@ import psu_frontend_tk as psu_tk
 import ohsc_frontend_tk as ohsc_tk
 import emergency_equip_frontend_tk as ee_tk
 import eel_frontend_tk as eel_tk
+import eel_comparison_frontend_tk as eel_comp_tk
 import changes_frontend_tk as change_tk
 '''
 V0.02 initial issue
@@ -64,6 +65,10 @@ def new_component(self, type):
 
 	if type == 'EEL':
 		self.w=eel_tk.Edit_EEL_Window_Tk(self, self.master, mode, None)
+		self.master.wait_window(self.w.top)
+
+	if type == 'EEL Comparison':
+		self.w=eel_comp_tk.Edit_EEL_Comparison_Window_Tk(self, self.master, mode, None)
 		self.master.wait_window(self.w.top)
 
 	if type == 'Change':
@@ -158,6 +163,14 @@ def create_component(self, type, source, update_type, insert=True):
 			if ac_type in ['A320', 'A319', ]:
 				node = 'A320 EELs'
 
+	if type == 'EEL Comparison':
+		if update_type == 'new':
+			new_component = eel_comp_tk.EEL_Comparison_Page_Tk(container=self.container, mainapp=self,)
+			new_component.update_component(source, update_type)
+			ac_type = new_component.backend.aircraft_type
+			if ac_type in ['A320', 'A319', ]:
+				node = 'A320 EEL Comparisons'
+
 	if type == 'Change':
 
 		if update_type == 'new':
@@ -218,7 +231,7 @@ def get_all_components(mainapp, type):
 	if type == 'all':
 		components_dict = {'All': []}
 		#types = ['Aircraft', 'Seats', 'Windbreakers', 'LOPAs']
-		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs', 'OHSCs', 'Emergency Equipment', 'EELs']
+		types = ['Seats', 'Windbreakers', 'LOPAs', 'PSUs', 'OHSCs', 'Emergency Equipment', 'EELs', 'EEL Comparisons']
 	else:
 		types = [type] # make this into a list, to iterate over any nodes required
 	
@@ -246,6 +259,9 @@ def get_all_components(mainapp, type):
 	if type == 'EELs':
 		components_dict = {'All': [], 'A320': [], 'A319': []}
 
+	if type == 'EEL Comparisons':
+		components_dict = {'All': [], 'A320': [], 'A319': []}
+
 	if type == 'Changes':
 		components_dict = {'All': []}
 	
@@ -269,8 +285,9 @@ def get_all_components(mainapp, type):
 					side = component.backend.side
 					if f'{ac_type} {side}' in components_dict.keys():
 						components_dict[f'{ac_type} {side}'].append(component.backend.title)
-				
-				if type == 'LOPAs' or type == 'PSUs' or type == 'OHSCs' or type == 'Emergency Equipment':
+
+				#if type == 'LOPAs' or type == 'PSUs' or type == 'OHSCs' or type == 'Emergency Equipment' or type == 'EELs':
+				else:
 					if f'{ac_type}' in components_dict.keys():
 						components_dict[f'{ac_type}'].append(component.backend.title)
 

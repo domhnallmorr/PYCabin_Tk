@@ -31,7 +31,7 @@ class EEL_Page_Tk(tk.Frame):
 		
 		self.mainapp = mainapp
 
-		self.top_label = tk.Label(self, text=('PSU Layout: '),font=self.mainapp.title_font, anchor="w")
+		self.top_label = tk.Label(self, text=('EEL: '),font=self.mainapp.title_font, anchor="w")
 		self.top_label.pack(fill=tk.BOTH, expand=True)
 
 		self.backend = eel_bk.EEL_Backend(self, mainapp)

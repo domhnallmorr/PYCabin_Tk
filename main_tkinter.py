@@ -50,7 +50,7 @@ class MainApplication(tk.Frame):
 
 	def setup_variables(self):
 		
-		self.version = '0.13.0'
+		self.version = '0.14.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		
@@ -180,7 +180,7 @@ class MainApplication(tk.Frame):
 		self.treeview_nodes = {'Aircraft': ['A320 Aircraft'], 'Seats': ['A320 Seats'], 'Monuments': ['A320 Windbreakers'],
 								'Windbreakers': ['A320 Windbreakers'],
 								'LOPAs': ['A320 LOPAs'], 'PSUs': ['A320 PSUs'], 'Emergency Equipment': ['A320 EE'],
-								'OHSCs': ['A320 OHSCs'], 'EELs': ['A320 EELs'],
+								'OHSCs': ['A320 OHSCs'], 'EELs': ['A320 EELs'], 'EEL Comparisons': ['A320 EEL Comparisons'],
 								'Changes': ['Changes']}
 								
 
@@ -227,6 +227,7 @@ class MainApplication(tk.Frame):
 		insert_menu.add_command(label = 'OHSC Layout', command = lambda self=self, type='OHSC': components_tk.new_component(self, type))
 
 		insert_menu.add_command(label = 'Emergency Equipment Layout', command = lambda self=self, type='EEL': components_tk.new_component(self, type))
+		insert_menu.add_command(label = 'EEL Comparison', command = lambda self=self, type='EEL Comparison': components_tk.new_component(self, type))
 
 		# insert_menu.add_command(label = 'Change', command = lambda self=self, type='Change': components_tk.new_component(self, type))
 		
@@ -320,7 +321,7 @@ if __name__ == "__main__":
 	#root.bind('<Control-z>', MA.states.undo)
 	#root.bind('<Control-y>', MA.states.redo)
 	
-	root.geometry('{}x{}'.format(1600, 800))    
+	root.geometry('{}x{}'.format(MA.screen_width, MA.screen_height))    
 	
 	root.bind('<Control-n>', lambda event, MA=MA: fm.new_project(event, MA))
 	root.bind('<Control-o>', lambda event, MA=MA: fm.load(event, MA))
