@@ -327,10 +327,16 @@ class Gen_Layout_Window_Tk(object):
 		self.label_frame_row = 3
 
 		#setup label frame for each location to be process
-		locations = self.go_to_eel.backend.get_item_locations(self.item)
-
+		self.locations = self.go_to_eel.backend.get_item_locations(self.item)
+		
+		current_locations = self.current_eel.backend.get_item_locations(self.item)
+		
+		for loc in current_locations:
+			if loc not in self.locations:
+				self.locations.append(loc)
+		
 		self.locations_frames = {}
-		for loc in locations:
+		for loc in self.locations:
 			lf = LabelFrame(self.main_scroll_frame.inner,text=loc)
 			self.locations_frames[loc] = lf
 			lf.grid(row=self.label_frame_row, column=0, columnspan = 3, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
@@ -426,22 +432,28 @@ class Gen_Layout_Window_Tk(object):
 			label.grid(row = 0, column = 6, padx=10)
 
 			# Add Current Parts
-
+			
+			item_part_nos = self.current_eel.backend.get_item_part_no_by_location(self.item)
+			
 			row = 1
-			for part_no in self.current_eel.backend.summary[self.item]:
 
-				tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
+			if loc in item_part_nos.keys():
+				for part_no in item_part_nos[loc]:
+				
+		#	for part_no in self.current_eel.backend.summary[self.item]:
 
-				q = self.current_eel.backend.summary[self.item][part_no]
-				c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
-				c.grid(row = row, column = 2, sticky = 'W', padx=10)
-				c.set(0)
+					tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
 
-				c.bind('<<ComboboxSelected>>',
-               			lambda event: self.combo_callback(event))
+					q = self.current_eel.backend.summary[self.item][part_no]
+					c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
+					c.grid(row = row, column = 2, sticky = 'W', padx=10)
+					c.set(0)
 
-				self.combos[loc]['Current'][part_no] = c
-				row += 1
+					c.bind('<<ComboboxSelected>>',
+							lambda event: self.combo_callback(event))
+
+					self.combos[loc]['Current'][part_no] = c
+					row += 1
 
 			#Add Go To Parts
 
@@ -449,23 +461,23 @@ class Gen_Layout_Window_Tk(object):
 			total_qty = 0
 
 			item_part_nos = self.go_to_eel.backend.get_item_part_no_by_location(self.item)
+						if loc in item_part_nos.keys():
+				for part_no in item_part_nos[loc]:
 
-			for part_no in item_part_nos[loc]:
+					tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 3, sticky = 'W')
 
-				tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 3, sticky = 'W')
+					q = item_part_nos[loc][part_no]
 
-				q = item_part_nos[loc][part_no]
+					total_qty += q
+					c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
+					c.grid(row = row, column = 4, sticky = 'W', padx=10)
+					c.set(0)
 
-				total_qty += q
-				c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
-				c.grid(row = row, column = 4, sticky = 'W', padx=10)
-				c.set(0)
+					c.bind('<<ComboboxSelected>>',
+							lambda event: self.combo_callback(event))
 
-				c.bind('<<ComboboxSelected>>',
-               			lambda event: self.combo_callback(event))
-
-				self.combos[loc]['Go To'][part_no] = c
-				row += 1
+					self.combos[loc]['Go To'][part_no] = c
+					row += 1
 
 			# Add Total 
 			self.combos[loc]['Total Required'] = total_qty
@@ -555,26 +567,26 @@ class Gen_Layout_Window_Tk(object):
 				data_ok = False
 				msg = f'Total Selected Parts Must be Equal to {required}.\n Current Selected Qty is {selected}'
 
-			# Check total selected for each location is correct
-			for loc in self.combos:
-				required = int(self.combos[loc]['Total Required'])
-				selected = int(self.combos[loc]['Total Selected Label'].cget('text'))
-				if required != selected:
-					data_ok = False	
-					msg = f'Total Selected Parts for {loc} Must be Equal to {required}.\n Current Selected Qty is {selected}'
-					break
+			# # Check total selected for each location is correct
+			# for loc in self.combos:
+				# required = int(self.combos[loc]['Total Required'])
+				# selected = int(self.combos[loc]['Total Selected Label'].cget('text'))
+				# if required != selected:
+					# data_ok = False	
+					# msg = f'Total Selected Parts for {loc} Must be Equal to {required}.\n Current Selected Qty is {selected}'
+					# break
 
-			# Check not to many current parts selected
-			if data_ok:
+			# # Check not to many current parts selected
+			# if data_ok:
 
-				for part_no in self.total_labels['Current']:
-					available = int(self.total_labels['Current'][part_no]['Available'])
-					selected = int(self.total_labels['Current'][part_no]['Label'].cget('text'))
+				# for part_no in self.total_labels['Current']:
+					# available = int(self.total_labels['Current'][part_no]['Available'])
+					# selected = int(self.total_labels['Current'][part_no]['Label'].cget('text'))
 
-					if selected > available:
-						data_ok = False	
-						msg = f'Total Selected Current Parts for {part_no} Must not be greater than {available}.\n Current Selected Qty is {selected}'
-						break
+					# if selected > available:
+						# data_ok = False	
+						# msg = f'Total Selected Current Parts for {part_no} Must not be greater than {available}.\n Current Selected Qty is {selected}'
+						# break
 
 			if not data_ok:
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
@@ -585,39 +597,83 @@ class Gen_Layout_Window_Tk(object):
 			self.top.destroy()
 
 	def process_final_layout(self):
-
-		self.instructions = []
+		
+		qty_tracker = self.go_to_eel.backend.get_total_qty_item_per_location(self.item)
 		self.layout = {}
-		print(self.combos)
-		current_layout = copy.deepcopy(self.current_eel.backend.layout) # to keep track of available parts
-		count = 0
-		# Loop through each loc
-
-		for loc in self.combos:
+		self.instructions = []
+		
+		instructions_count = 0
+		
+		current_leftovers = []#tracker existing parts being kept that have not been assigned a location
+		go_to_leftovers = []#tracker existing parts being kept that have not been assigned a location
+		
+		# Loop through each go to location
+		# if current item selected, leave it there
+		for loc in qty_tracker:
+			
 			self.layout[loc] = []
+			qty_required = qty_tracker[loc]
+			
+			for part_no in self.combos[loc]['Current']:
+				
+				qty_selected = int(self.combos[loc]['Current'][part_no].get())
+				
+				if qty_selected > 0:
+				
+					if qty_selected >= qty_required:
+					
+						leftover = qty_selected - qty_required
+						
+						qty_tracker[loc] += qty_required*-1
+						
+						current_leftovers.append([part_no, loc, qty])
+						
+					else:
+					
+						qty_tracker[loc] += qty_selected*-1
+						
+					self.layout[loc].append([self.item, part_no, loc, qty_selected, 'Existing'])
+						
+		# Loop through new Items, assign to their location if that location is not full
+		for loc in qty_tracker:
+			
+			qty_required = qty_tracker[loc]
+			
+			if qty_required > 0:
 
-			for layout in ['Current', 'Go To']:
-				for part_no in self.combos[loc][layout]:
-					selected = int(self.combos[loc][layout][part_no].get())
-
-					if selected > 0:
-
-						count += 1
-
-						if layout == 'Current':
-							text = 'Existing'
+				for part_no in self.combos[loc]['Go To']:
+					
+					qty_selected = int(self.combos[loc]['Go To'][part_no].get())
+					
+					if qty_selected > 0:
+					
+						if qty_selected >= qty_required:
+						
+							leftover = qty_selected - qty_required
+							
+							qty_tracker[loc] += qty_selected*-1
+							
+							go_to_leftovers.append([part_no, loc, qty])
+							
 						else:
-							text = 'New'
-
-						self.layout[loc].append([self.item, part_no, loc, selected, text])
-
-						# Instructions
-
-						if layout == 'Current':
-							pass
-							# find any parts that can stay in their current location
-
-							# Assign location for any exisiting part that has to be moved
-						else:
-
-							self.instructions.append([count, f'Install new {part_no} in {loc}'])
+						
+							qty_tracker[loc] += qty_selected*-1
+							
+						self.layout[loc].append([self.item, part_no, loc, qty_selected, 'New'])						
+			
+		# Assign any left over parts (both existing and new) to any unfilled positions
+		
+		for loc in qty_tracker:
+			
+			# loop through current leftovers first
+			qty_required = qty_tracker[loc]
+			
+			if qty_required > 0:
+				
+				for part in current_leftovers:
+					
+					qty_available = part[2]
+					
+					if qty_available >= qty_required:
+						
+						

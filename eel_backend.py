@@ -171,6 +171,26 @@ class EEL_Backend():
 					item_part_numbers[loc][part_no] = int(item[3])
 		return item_part_numbers
 
+	def get_total_qty_item_per_location(self, item_to_find):
+
+		# returns dict (locations are keys) showing total qty for a given item in that location
+		# e.g. {'Cockpit': 1} 
+
+		item_part_numbers = {}
+
+		for loc in self.layout:
+			for item in self.layout[loc]:
+				if item[0]==item_to_find:
+
+					part_no = item[1]
+					if loc in item_part_numbers.keys():
+						pass
+					else:
+						item_part_numbers[loc] = 0
+					
+					item_part_numbers[loc] += int(item[3])
+		return item_part_numbers	
+		
 class EEL_Saved_State():
 	def __init__(self, ohsc):
 
