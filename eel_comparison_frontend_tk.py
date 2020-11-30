@@ -14,6 +14,7 @@ import data_input_checks_tk
 import file_menu
 
 import copy
+import treeview_functions
 
 class EEL_Comparison_Page_Tk(tk.Frame):
 
@@ -32,7 +33,7 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.setup_scrollable_frames()
 		self.setup_label_frames()
 		self.setup_labels()
-		#self.setup_treeviews()
+		self.setup_treeviews()
 		self.setup_buttons()
 
 	def setup_notebook(self):
@@ -56,6 +57,11 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text="EEL Details:")
 		self.main_frame.grid(row=2, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)		
 
+		self.parts_frame = LabelFrame(self.main_scroll_frame.inner,text="EEL Details:")
+		self.parts_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)		
+
+		self.instr_frame = LabelFrame(self.inst_scroll_frame.inner,text="Instructions:")
+		self.instr_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
 
 	def setup_labels(self):
 
@@ -76,11 +82,32 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.goto_label.grid(row = 3, column = 1,pady=2,padx=2,sticky="nsew")		
 		#self.goto_label.configure(width=20)
 
+	def setup_treeviews(self):
+		self.eel_tree = ttk.Treeview(self.parts_frame,selectmode="extended",columns=("A","B",'C','D'), height=25)
+		self.eel_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
+		self.eel_tree.heading("#0", text="Item")
+		self.eel_tree.column("#0",minwidth=0,width=150, stretch='NO')
+		self.eel_tree.heading("#1", text="Part Number")
+		self.eel_tree.column("#1",minwidth=0,width=150, stretch='NO')
+		self.eel_tree.heading("#2", text="Location")
+		self.eel_tree.column("#2",minwidth=0,width=150, stretch='NO')
+		self.eel_tree.heading("#3", text="Qty")
+		self.eel_tree.column("#3",minwidth=0,width=150, stretch='NO')
+		self.eel_tree.heading("#4", text="Existing/New")
+		self.eel_tree.column("#4",minwidth=0,width=150, stretch='NO')
+
+		self.instructions_tree = ttk.Treeview(self.instr_frame,selectmode="extended",columns=("A","B"), height=25)
+		self.instructions_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
+		self.instructions_tree.heading("#0", text="#")
+		self.instructions_tree.column("#0",minwidth=0,width=50, stretch='NO')
+		self.instructions_tree.heading("#1", text="Instruction")
+		self.instructions_tree.column("#1",minwidth=0,width=550, stretch='NO')
+
 	def update_component(self, window, type):
 		self.backend.update_component(window, type)
 
 		self.update_label_text()
-		#self.update_treeviews()
+		self.update_treeviews()
 
 		if self.treeview_iid:
 			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.title)
@@ -129,7 +156,12 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		canceled = False
 
 		user_selection = {}
-		instructions = {'Existing Remain': [], 'Existing Move': [], 'Existing Remove': [], 'New Install': []}
+		#instructions = {'Existing Remain': [], 'Existing Move': [], 'Existing Remove': [], 'New Install': []}
+		
+		save_dict = copy.deepcopy(self.backend.gen_save_dict())
+		w = file_menu.Load('EEL Comparison', save_dict)
+		w.layout = {}
+		w.instructions = []
 
 		for item in go_to.backend.summary:
 			print(item)
@@ -141,38 +173,27 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 				break
 
 			else:
-				user_selection[item] = copy.deepcopy(self.w.user_selection)
+				for loc in self.w.layout:
+					if loc not in w.layout.keys():
+						w.layout[loc] = []
+					for part in self.w.layout[loc]:
+						w.layout[loc].append(part)
 
+					for part in self.w.instructions:
+						w.instructions.append(part)
 
-		print(user_selection)
-		# process user input
-		for item in user_selection:
+		self.update_component(w, 'edit')
 
-			# handle existing items that don't move
-			for pn in user_selection[item]['Current']:
+	def update_treeviews(self):
 
-				qty = user_selection[item]['Current'][pn]
+		data = []
+		for loc in self.backend.layout:
+			for part in self.backend.layout[loc]:
+				data.append(part)
+		treeview_functions.write_data_to_treeview(self.eel_tree, 'replace', data)
 
-				if qty > 0:
-
-					#find location in go to
-					for loc in go_to_eel.backend.layout:
-						for item in go_to_eel.layout[loc]:
-							item_type = item[0]
-							pn = item[1]
-							qty = int(item[3])
-
-							#if pn 
-
-			# handle existing items that do move
-
-			# handle new items 
-
-
-		# update treeview with final layout
-
-
-		# BOM for attach hardware
+		if self.backend.instructions:
+			treeview_functions.write_data_to_treeview(self.instructions_tree, 'replace', self.backend.instructions)
 
 
 class Edit_EEL_Comparison_Window_Tk(object):
@@ -276,7 +297,10 @@ class Gen_Layout_Window_Tk(object):
 		self.top_label.grid(row = 0, column=0, columnspan=3, sticky='NSEW')
 
 		self.setup_label_frames()
-		self.setup_labels()
+		
+		self.setup_totals()
+
+		self.setup_locations()
 		self.setup_buttons()
 
 		self.top.geometry("1300x600")
@@ -299,6 +323,20 @@ class Gen_Layout_Window_Tk(object):
 		self.total_frame = LabelFrame(self.main_scroll_frame.inner,text="Total Items:")
 		self.total_frame.grid(row=1, column=2, columnspan = 1, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
 
+		ttk.Separator(self.main_scroll_frame.inner,orient=HORIZONTAL).grid(row=2, columnspan=3, pady=10, sticky='NSEW')
+		self.label_frame_row = 3
+
+		#setup label frame for each location to be process
+		locations = self.go_to_eel.backend.get_item_locations(self.item)
+
+		self.locations_frames = {}
+		for loc in locations:
+			lf = LabelFrame(self.main_scroll_frame.inner,text=loc)
+			self.locations_frames[loc] = lf
+			lf.grid(row=self.label_frame_row, column=0, columnspan = 3, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+			self.label_frame_row += 1
+
+
 	def setup_buttons(self):
 
 		# ok button
@@ -309,97 +347,277 @@ class Gen_Layout_Window_Tk(object):
 		self.b=Button(self.main_scroll_frame.inner,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
 		self.b.grid(row=11,column=2, pady=5,sticky="nsew")
 
-	def setup_labels(self):
+	def setup_totals(self):
 
-		frames = [self.current_frame, self.goto_frame]
-		for i, f in enumerate(frames):
-			tk.Label(f,text='Part Number',width=20).grid(row = 0, column = 1, sticky = 'W')
-			if i == 0:
-				tk.Label(f,text='Current Qty',width=10).grid(row = 0, column = 2, sticky = 'W')
-				tk.Label(f,text='Qty to Keep',width=20).grid(row = 0, column = 3, sticky = 'W')
-			else:
-				tk.Label(f,text='Go To Qty',width=10).grid(row = 0, column = 2, sticky = 'W')
-				tk.Label(f,text='Qty to Install',width=20).grid(row = 0, column = 3, sticky = 'W')
+		self.total_labels = {'Current': {}, 'Go To': {}, 'Total': {}}
+		
+		# Current 
+		ttk.Label(self.current_frame, text="Part Number").grid(row = 0, column = 1, columnspan=1, padx=10)
+		ttk.Label(self.current_frame, text="Existing Qty").grid(row = 0, column = 2, columnspan=1, padx=10)
+		ttk.Label(self.current_frame, text="Selected Qty").grid(row = 0, column = 3, columnspan=1, padx=10)
 
-		for i, layout in enumerate([self.current_eel, self.go_to_eel]):
+		row = 1
+		for part_no in self.current_eel.backend.summary[self.item]:
+
+			tk.Label(self.current_frame,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
+
+			qty = self.current_eel.backend.summary[self.item][part_no]
+
+			tk.Label(self.current_frame,text=qty,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 2, sticky = 'W')
+
+			label = tk.Label(self.current_frame,text='0',bg="white",borderwidth=2, relief="groove",width=20)
+			label.grid(row = row, column = 3, sticky = 'W')
+
+			self.total_labels['Current'][part_no] = {'Available': qty, 'Label': label}
+			row += 1
+		# Go To
+		ttk.Label(self.goto_frame, text="Part Number").grid(row = 0, column = 1, columnspan=1, padx=10)
+		ttk.Label(self.goto_frame, text="Selected Qty").grid(row = 0, column = 2, columnspan=1, padx=10)
+
+		total_qty = 0
+		row = 1
+		for part_no in self.go_to_eel.backend.summary[self.item]:
+
+			tk.Label(self.goto_frame,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
+
+			qty = self.go_to_eel.backend.summary[self.item][part_no]
+			total_qty += qty
+
+			label = tk.Label(self.goto_frame,text='0',bg="white",borderwidth=2, relief="groove",width=20)
+			label.grid(row = row, column = 2, sticky = 'W')
+
+			self.total_labels['Go To'][part_no] = {'Label': label}
+			row += 1
+
+		# Totals
+		ttk.Label(self.total_frame, text="Total Required Qty").grid(row = 0, column = 1, columnspan=1, padx=10)
+		ttk.Label(self.total_frame, text="Total Selected Qty").grid(row = 0, column = 2, columnspan=1, padx=10)
+
+		tk.Label(self.total_frame,text=str(total_qty),bg="white",borderwidth=2, relief="groove",width=20).grid(row = 1, column = 1, sticky = 'W')
+
+		label = tk.Label(self.total_frame,text='0',bg="white",borderwidth=2, relief="groove",width=20)
+		label.grid(row = 1, column = 2, sticky = 'W')
+
+		self.total_labels['Total']['Total Required'] = total_qty
+		self.total_labels['Total']['Total Selected Label'] = label
+
+	def setup_locations(self):
+
+		self.combos = {}
+
+		#self.current_eel.backend.gen_summary_dict() #updates backend.summary dict
+
+		for loc in self.locations_frames:
+
+			self.combos[loc] = {'Current': {}, 'Go To': {}, 'Total Required': None, 'Total Selected Label': None}
+			# header labels
+			lf = self.locations_frames[loc]
+
+			label = ttk.Label(lf, text="Existing Items To Keep")
+			label.grid(row = 0, column = 1, columnspan=2, padx=10)
+
+			label = ttk.Label(lf, text="New Items")
+			label.grid(row = 0, column = 3, columnspan=2, padx=10)
+
+			label = ttk.Label(lf, text="Total Required Qty")
+			label.grid(row = 0, column = 5, padx=10)
+
+			label = ttk.Label(lf, text="Total Selected Qty")
+			label.grid(row = 0, column = 6, padx=10)
+
+			# Add Current Parts
+
 			row = 1
-			f = frames[i]
-			for pn in layout.backend.summary[self.item]:
-				tk.Label(f,text=pn,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
+			for part_no in self.current_eel.backend.summary[self.item]:
 
-				q = layout.backend.summary[self.item][pn]
-				tk.Label(f,text=q,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 2, sticky = 'W')
-				
-				c = ttk.Combobox(f, values=[q for q in range(q+1)], state='readonly')
-				c.grid(row = row, column = 3, sticky = 'W')
+				tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
+
+				q = self.current_eel.backend.summary[self.item][part_no]
+				c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
+				c.grid(row = row, column = 2, sticky = 'W', padx=10)
 				c.set(0)
+
 				c.bind('<<ComboboxSelected>>',
-                      lambda event: self.combo_callback(event))
+               			lambda event: self.combo_callback(event))
 
-				if i == 0:
-					self.combos['Current'][pn] = c
-				else:
-					self.combos['Go To'][pn] = c
-
-					self.total_required += q
+				self.combos[loc]['Current'][part_no] = c
 				row += 1
 
-		tk.Label(self.total_frame,text='Total Required',width=20).grid(row = 0, column = 1, sticky = 'W')
-		tk.Label(self.total_frame,text='Total Selected',width=20).grid(row = 0, column = 2, sticky = 'W')
+			#Add Go To Parts
 
-		tk.Label(self.total_frame,bg="white",borderwidth=2, relief="groove",text=str(q),width=20).grid(row = 1, column = 1, sticky = 'W')
+			row = 1
+			total_qty = 0
 
-		self.total_label = (tk.Label(self.total_frame,bg="SteelBlue1",borderwidth=2, relief="groove",text='0',width=20))
-		self.total_label.grid(row = 1, column = 2, sticky = 'W')
+			item_part_nos = self.go_to_eel.backend.get_item_part_no_by_location(self.item)
+
+			for part_no in item_part_nos[loc]:
+
+				tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 3, sticky = 'W')
+
+				q = item_part_nos[loc][part_no]
+
+				total_qty += q
+				c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
+				c.grid(row = row, column = 4, sticky = 'W', padx=10)
+				c.set(0)
+
+				c.bind('<<ComboboxSelected>>',
+               			lambda event: self.combo_callback(event))
+
+				self.combos[loc]['Go To'][part_no] = c
+				row += 1
+
+			# Add Total 
+			self.combos[loc]['Total Required'] = total_qty
+			#Total Required
+			tk.Label(lf,text=total_qty,bg="white",borderwidth=2, relief="groove",width=20).grid(row = 1, column = 5, sticky = 'W')
+
+			# Total Selected
+			label = tk.Label(lf, text="0",bg='SteelBlue1',borderwidth=2, relief="groove",width=20)
+			label.grid(row = 1, column = 6, padx=10)
+
+			self.combos[loc]['Total Selected Label'] = label
 
 	def combo_callback(self, event):
-		print('callback')
-		total_qty = 0
 
-		for layout in self.combos.keys():
-			for pn in self.combos[layout]:
-				c = self.combos[layout][pn]
-				try:
-					q = int(c.get())
-				except:
-					q = 0
-				
-				total_qty += q
-		
-		if total_qty > self.total_required:
-			color = 'firebrick1'
-		elif total_qty == self.total_required:
-			color = 'green yellow'
-		elif total_qty < self.total_required:
-			color = 'SteelBlue1'
-			
-		self.total_label.config(text = str(total_qty), bg=color)
+		total_selected = 0
+		current_parts = {}
+		go_to_parts = {}
 
-		self.total_selected = total_qty
+		for loc in self.combos:
+			location_selected = 0
+
+			for layout in ['Current', 'Go To']:
+				for part_no in self.combos[loc][layout]:
+					location_selected += int(self.combos[loc][layout][part_no].get())
+
+					if layout == 'Current':
+						if part_no not in current_parts.keys():
+							current_parts[part_no] = location_selected
+						else:
+							current_parts[part_no] += location_selected
+
+					if layout == 'Go To':
+						if part_no not in go_to_parts.keys():
+							go_to_parts[part_no] = location_selected
+						else:
+							go_to_parts[part_no] += location_selected
+
+			total_selected += location_selected
+
+			required = self.combos[loc]['Total Required']
+
+			color = self.get_label_color(required, location_selected)
+
+			self.combos[loc]['Total Selected Label'].config(text=str(location_selected), bg=color)
+
+		for part_no in current_parts:
+			available = self.total_labels['Current'][part_no]['Available']
+			selected = current_parts[part_no]
+
+			color = self.get_label_color(available, selected)
+			self.total_labels['Current'][part_no]['Label'].config(text=str(selected), bg=color)
+
+		for part_no in go_to_parts:
+			selected = go_to_parts[part_no]
+
+			self.total_labels['Go To'][part_no]['Label'].config(text=str(selected))
 
 
+		required = self.total_labels['Total']['Total Required']
+
+		color =self.get_label_color(required, total_selected)
+		self.total_labels['Total']['Total Selected Label'].config(text=str(total_selected), bg=color)
+
+	def get_label_color(self, required, selected):
+
+			if selected > required:
+				color = 'IndianRed1'
+			elif selected < required:
+				color = 'SteelBlue1'
+			else:
+				color = 'green yellow'
+
+			return color
 	def cleanup(self, button):
 
 		self.button = button
 
 		if button == 'ok':
 
-			if self.total_selected != self.total_required:
-				tkinter.messagebox.showerror(master=self.top, title='Error', message=f'Total Selected Must Equal {self.total_required}')
+			data_ok = True
+			# Check total selected is correct
+
+			required = int(self.total_labels['Total']['Total Required'])
+			selected = int(self.total_labels['Total']['Total Selected Label'].cget('text'))
+
+			if required != selected:
+				data_ok = False
+				msg = f'Total Selected Parts Must be Equal to {required}.\n Current Selected Qty is {selected}'
+
+			# Check total selected for each location is correct
+			for loc in self.combos:
+				required = int(self.combos[loc]['Total Required'])
+				selected = int(self.combos[loc]['Total Selected Label'].cget('text'))
+				if required != selected:
+					data_ok = False	
+					msg = f'Total Selected Parts for {loc} Must be Equal to {required}.\n Current Selected Qty is {selected}'
+					break
+
+			# Check not to many current parts selected
+			if data_ok:
+
+				for part_no in self.total_labels['Current']:
+					available = int(self.total_labels['Current'][part_no]['Available'])
+					selected = int(self.total_labels['Current'][part_no]['Label'].cget('text'))
+
+					if selected > available:
+						data_ok = False	
+						msg = f'Total Selected Current Parts for {part_no} Must not be greater than {available}.\n Current Selected Qty is {selected}'
+						break
+
+			if not data_ok:
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 			else:
-
-				self.user_selection = {'Current': {}, 'Go To': {}}
-
-				for layout in self.user_selection:
-					for pn in self.combos[layout]:
-						print(self.combos[layout][pn])
-						print(self.combos[layout][pn].get())
-
-						self.user_selection[layout][pn] = self.combos[layout][pn].get()
-
-				self.user_selection['Total'] = self.total_required
-				self.user_selection['Processed'] = 0
-
+				self.process_final_layout()
 				self.top.destroy()
 		else:
 			self.top.destroy()
+
+	def process_final_layout(self):
+
+		self.instructions = []
+		self.layout = {}
+		print(self.combos)
+		current_layout = copy.deepcopy(self.current_eel.backend.layout) # to keep track of available parts
+		count = 0
+		# Loop through each loc
+
+		for loc in self.combos:
+			self.layout[loc] = []
+
+			for layout in ['Current', 'Go To']:
+				for part_no in self.combos[loc][layout]:
+					selected = int(self.combos[loc][layout][part_no].get())
+
+					if selected > 0:
+
+						count += 1
+
+						if layout == 'Current':
+							text = 'Existing'
+						else:
+							text = 'New'
+
+						self.layout[loc].append([self.item, part_no, loc, selected, text])
+
+						# Instructions
+
+						if layout == 'Current':
+							pass
+							# find any parts that can stay in their current location
+
+							# Assign location for any exisiting part that has to be moved
+						else:
+
+							self.instructions.append([count, f'Install new {part_no} in {loc}'])

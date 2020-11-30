@@ -9,6 +9,7 @@ def setup_variables(w):
 	w.current_eel = None
 	w.go_to_eel = None
 	w.layout = {}
+	w.instructions = []
 
 def update_variables(self, source):
 	self.title = source.title
@@ -18,6 +19,7 @@ def update_variables(self, source):
 	self.go_to_eel = source.go_to_eel
 	#self.locations = copy.deepcopy(source.locations)
 	self.layout = copy.deepcopy(source.layout)
+	self.instructions = copy.deepcopy(source.instructions)
 
 	#EEL_Backend.gen_summary_dict(self)
 	#EEL_Backend.gen_summary_table(self)
@@ -59,6 +61,7 @@ class EEL_Comparison_Backend():
 				'Current EEL': self.current_eel,
 				'GoTo EEL': self.go_to_eel,
 				'Layout': self.layout,
+				'Instructions': self.instructions,
 				'Comments': comments}
 
 class EEL_Comparison_Saved_State():

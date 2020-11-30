@@ -318,6 +318,7 @@ class Load():
 			self.current_eel = component_data["Current EEL"]			
 			self.go_to_eel = component_data["GoTo EEL"]						
 			self.layout = component_data["Layout"]
+			self.instructions = None
 			self.comments = component_data["Comments"]		
 
 		if type == 'Change':

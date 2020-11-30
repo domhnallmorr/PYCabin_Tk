@@ -133,8 +133,43 @@ class EEL_Backend():
 			for pn in summary_dict[item_type]:
 				self.summary_table.append(['', pn, summary_dict[item_type][pn]])
 
+	def get_item_locations(self, item_to_find, part_no=None):
+		#get all locations where an item is found
+		# if part_no is None, will return all part numbers for that item type
 
+		locations = []
 
+		for loc in self.layout:
+			for item in self.layout[loc]:
+				item_type = item[0]
+
+				if item_type == item_to_find:
+					if not part_no:
+						locations.append(loc)
+					else:
+						if item[1] == part_no:
+							locations.append(loc)
+
+		return locations
+
+	def get_item_part_no_by_location(self, item_to_find):
+
+		# returns dict (locations are keys) showing all part numbers for a given item in that location
+
+		item_part_numbers = {}
+
+		for loc in self.layout:
+			for item in self.layout[loc]:
+				if item[0]==item_to_find:
+
+					part_no = item[1]
+					if loc in item_part_numbers.keys():
+						pass
+					else:
+						item_part_numbers[loc] = {}
+					
+					item_part_numbers[loc][part_no] = int(item[3])
+		return item_part_numbers
 
 class EEL_Saved_State():
 	def __init__(self, ohsc):
