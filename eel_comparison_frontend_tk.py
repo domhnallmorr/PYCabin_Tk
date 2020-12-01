@@ -162,6 +162,8 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		w = file_menu.Load('EEL Comparison', save_dict)
 		w.layout = {}
 		w.instructions = []
+		
+		instructions_count = 1
 
 		for item in go_to.backend.summary:
 			print(item)
@@ -179,7 +181,9 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 					for part in self.w.layout[loc]:
 						w.layout[loc].append(part)
 
-					for part in self.w.instructions:
+					for idx, part in enumerate(self.w.instructions):
+						part[0] =instructions_count
+						instructions_count += 1
 						w.instructions.append(part)
 
 		self.update_component(w, 'edit')
@@ -363,19 +367,20 @@ class Gen_Layout_Window_Tk(object):
 		ttk.Label(self.current_frame, text="Selected Qty").grid(row = 0, column = 3, columnspan=1, padx=10)
 
 		row = 1
-		for part_no in self.current_eel.backend.summary[self.item]:
+		if self.item in self.current_eel.backend.summary.keys():
+			for part_no in self.current_eel.backend.summary[self.item]:
 
-			tk.Label(self.current_frame,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
+				tk.Label(self.current_frame,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
 
-			qty = self.current_eel.backend.summary[self.item][part_no]
+				qty = self.current_eel.backend.summary[self.item][part_no]
 
-			tk.Label(self.current_frame,text=qty,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 2, sticky = 'W')
+				tk.Label(self.current_frame,text=qty,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 2, sticky = 'W')
 
-			label = tk.Label(self.current_frame,text='0',bg="white",borderwidth=2, relief="groove",width=20)
-			label.grid(row = row, column = 3, sticky = 'W')
+				label = tk.Label(self.current_frame,text='0',bg="white",borderwidth=2, relief="groove",width=20)
+				label.grid(row = row, column = 3, sticky = 'W')
 
-			self.total_labels['Current'][part_no] = {'Available': qty, 'Label': label}
-			row += 1
+				self.total_labels['Current'][part_no] = {'Available': qty, 'Label': label}
+				row += 1
 		# Go To
 		ttk.Label(self.goto_frame, text="Part Number").grid(row = 0, column = 1, columnspan=1, padx=10)
 		ttk.Label(self.goto_frame, text="Selected Qty").grid(row = 0, column = 2, columnspan=1, padx=10)
@@ -603,7 +608,7 @@ class Gen_Layout_Window_Tk(object):
 		self.layout = {}
 		self.instructions = []
 		
-		instructions_count = 0
+		instructions_count = 1
 		
 		current_leftovers = []#tracker existing parts being kept that have not been assigned a location
 		go_to_leftovers = []#tracker existing parts being kept that have not been assigned a location
@@ -635,7 +640,8 @@ class Gen_Layout_Window_Tk(object):
 						qty_tracker[loc] += qty_selected*-1
 						
 					self.layout[loc].append([self.item, part_no, loc, qty_selected, 'Existing'])
-		
+					self.instructions.append([instructions_count ,f'x{qty_selected} {part_no} ({self.item}) Remains Installed in {loc}'])
+					instructions_count += 1
 		# For locations in Current EEL, not present in the Go To EEL, Add those parts to the leftovers
 
 		for loc in self.combos:
@@ -673,8 +679,9 @@ class Gen_Layout_Window_Tk(object):
 						qty_tracker[loc] += qty_selected*-1
 					
 					if qty_required > 0:
-						self.layout[loc].append([self.item, part_no, loc, qty_selected, 'New'])						
-			
+						self.layout[loc].append([self.item, part_no, loc, qty_selected, 'New'])	
+						self.instructions.append([instructions_count ,f'Install x{qty_selected} {part_no} ({self.item}) in {loc}'])
+						instructions_count += 1
 		# Assign any left over parts (both existing and new) to any unfilled positions
 
 		for loc in qty_tracker:
@@ -691,7 +698,10 @@ class Gen_Layout_Window_Tk(object):
 					if qty_available >= qty_required:
 
 						self.layout[loc].append([self.item, part[0], loc, qty_required, 'Existing'])
-
+						
+						self.instructions.append([instructions_count ,f'Relocate x{qty_required} {part[0]} ({self.item}) from {part[1]} to {loc}'])
+						instructions_count += 1
+						
 						current_leftovers[idx][2] += qty_required*-1
 
 						qty_required = 0
@@ -699,6 +709,8 @@ class Gen_Layout_Window_Tk(object):
 					elif qty_available >0:
 
 						self.layout[loc].append([self.item, part[0], loc, qty_available, 'Existing'])
+						self.instructions.append([instructions_count ,f'Relocate x{qty_available} {part[0]} ({self.item}) from {part[1]} to {loc}'])
+						instructions_count += 1
 						
 						current_leftovers[idx][2] += qty_available*-1
 
