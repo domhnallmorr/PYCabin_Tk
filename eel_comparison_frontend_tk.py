@@ -461,7 +461,8 @@ class Gen_Layout_Window_Tk(object):
 			total_qty = 0
 
 			item_part_nos = self.go_to_eel.backend.get_item_part_no_by_location(self.item)
-						if loc in item_part_nos.keys():
+			
+			if loc in item_part_nos.keys():
 				for part_no in item_part_nos[loc]:
 
 					tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 3, sticky = 'W')
@@ -626,54 +627,110 @@ class Gen_Layout_Window_Tk(object):
 						
 						qty_tracker[loc] += qty_required*-1
 						
-						current_leftovers.append([part_no, loc, qty])
+						if leftover > 0:
+							current_leftovers.append([part_no, loc, leftover])
 						
 					else:
 					
 						qty_tracker[loc] += qty_selected*-1
 						
 					self.layout[loc].append([self.item, part_no, loc, qty_selected, 'Existing'])
-						
+		
+		# For locations in Current EEL, not present in the Go To EEL, Add those parts to the leftovers
+
+		for loc in self.combos:
+			if loc not in qty_tracker.keys():
+				for part_no in self.combos[loc]['Current']:
+					
+					qty_selected = int(self.combos[loc]['Current'][part_no].get())
+					
+					if qty_selected > 0:
+						current_leftovers.append([part_no, loc, qty_selected])
+
 		# Loop through new Items, assign to their location if that location is not full
 		for loc in qty_tracker:
 			
 			qty_required = qty_tracker[loc]
-			
-			if qty_required > 0:
 
-				for part_no in self.combos[loc]['Go To']:
+			for part_no in self.combos[loc]['Go To']:
+				
+				qty_selected = int(self.combos[loc]['Go To'][part_no].get())
+				
+				if qty_selected > 0:
+				
+					if qty_selected >= qty_required:
 					
-					qty_selected = int(self.combos[loc]['Go To'][part_no].get())
-					
-					if qty_selected > 0:
-					
-						if qty_selected >= qty_required:
+						leftover = qty_selected - qty_required
 						
-							leftover = qty_selected - qty_required
-							
+						if qty_required > 0: #handles if current items already fill this location
 							qty_tracker[loc] += qty_selected*-1
-							
-							go_to_leftovers.append([part_no, loc, qty])
-							
-						else:
 						
-							qty_tracker[loc] += qty_selected*-1
-							
+						if leftover > 0:
+							go_to_leftovers.append([part_no, loc, leftover])
+						
+					else:
+					
+						qty_tracker[loc] += qty_selected*-1
+					
+					if qty_required > 0:
 						self.layout[loc].append([self.item, part_no, loc, qty_selected, 'New'])						
 			
 		# Assign any left over parts (both existing and new) to any unfilled positions
-		
+
 		for loc in qty_tracker:
 			
 			# loop through current leftovers first
 			qty_required = qty_tracker[loc]
-			
-			if qty_required > 0:
 				
-				for part in current_leftovers:
+			for idx, part in enumerate(current_leftovers):
 					
+				if qty_required > 0:
+
 					qty_available = part[2]
 					
 					if qty_available >= qty_required:
+
+						self.layout[loc].append([self.item, part[0], loc, qty_required, 'Existing'])
+
+						current_leftovers[idx][2] += qty_required*-1
+
+						qty_required = 0
+
+					elif qty_available >0:
+
+						self.layout[loc].append([self.item, part[0], loc, qty_available, 'Existing'])
 						
+						current_leftovers[idx][2] += qty_available*-1
+
+						qty_required += qty_available*-1
+
+		# Assign any left over parts (both existing and new) to any unfilled positions
+		# Repeat for Go To leftovers
+		for loc in qty_tracker:
+			
+			# loop through current leftovers first
+			qty_required = qty_tracker[loc]
+				
+			for idx, part in enumerate(go_to_leftovers):
+					
+				if qty_required > 0:
+
+					qty_available = part[2]
+					
+					if qty_available >= qty_required:
+
+						self.layout[loc].append([self.item, part[0], loc, qty_required, 'New'])
+
+						go_to_leftovers[idx][2] += qty_required*-1
+
+						qty_required = 0
+
+					elif qty_available >0:
+
+						self.layout[loc].append([self.item, part[0], loc, qty_available, 'New'])
 						
+						go_to_leftovers[idx][2] += qty_available*-1
+
+						qty_required += qty_available*-1
+
+
