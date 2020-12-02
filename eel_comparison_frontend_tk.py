@@ -41,10 +41,12 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.note = ttk.Notebook(self)
 		self.main_tab = Frame(self.note)
 		self.instructions_tab = Frame(self.note)
+		self.comparison_tab = Frame(self.note)
 		self.comments_tab = Frame(self.note)
 		
 		self.note.add(self.main_tab, text = "Main")
 		self.note.add(self.instructions_tab, text = "Instructions")
+		self.note.add(self.comparison_tab, text = "Comparisons")
 		self.note.add(self.comments_tab, text = "Comments")
 		
 		#self.note.grid(row=1,column=0,sticky='NSEW')
@@ -59,10 +61,15 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 		self.parts_frame = LabelFrame(self.main_scroll_frame.inner,text="EEL Details:")
 		self.parts_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)		
-
 		self.instr_frame = LabelFrame(self.inst_scroll_frame.inner,text="Instructions:")
 		self.instr_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
 
+		self.comp_item_frame = LabelFrame(self.comp_scroll_frame.inner,text="Comparison by Item Type:")
+		self.comp_item_frame.grid(row=1, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
+
+		self.comp_part_frame = LabelFrame(self.comp_scroll_frame.inner,text="Comparison by Part Number:")
+		self.comp_part_frame.grid(row=3, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		
 	def setup_labels(self):
 
 		#self.top_label = tk.Label(self, text=('EEL Layout: '),font=self.mainapp.title_font)
@@ -103,6 +110,37 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.instructions_tree.heading("#1", text="Instruction")
 		self.instructions_tree.column("#1",minwidth=0,width=550, stretch='NO')
 
+		self.comp_item_tree = ttk.Treeview(self.comp_item_frame,selectmode="extended",columns=("A","B",'C'), height=25)
+		self.comp_item_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
+		self.comp_item_tree.heading("#0", text="Item")
+		self.comp_item_tree.column("#0",minwidth=0,width=150, stretch='NO')
+		self.comp_item_tree.heading("#1", text="Current Qty")
+		self.comp_item_tree.column("#1",minwidth=0,width=150, stretch='NO')
+		self.comp_item_tree.heading("#2", text="Go To Qty")
+		self.comp_item_tree.column("#2",minwidth=0,width=150, stretch='NO')
+		self.comp_item_tree.heading("#3", text="Delta")
+		self.comp_item_tree.column("#3",minwidth=0,width=150, stretch='NO')
+		
+		self.comp_item_tree.tag_configure('positive', background=self.mainapp.green_color, foreground='black')
+		self.comp_item_tree.tag_configure('negative', background=self.mainapp.red_color, foreground='white')
+		self.comp_item_tree.tag_configure('none', background=self.mainapp.grey_color, foreground='white')
+
+		self.comp_part_tree = ttk.Treeview(self.comp_part_frame,selectmode="extended",columns=("A","B",'C','D'), height=25)
+		self.comp_part_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
+		self.comp_part_tree.heading("#0", text="Part Number")
+		self.comp_part_tree.column("#0",minwidth=0,width=150, stretch='NO')
+		self.comp_part_tree.heading("#1", text="Item")
+		self.comp_part_tree.column("#1",minwidth=0,width=150, stretch='NO')
+		self.comp_part_tree.heading("#2", text="Current Qty")
+		self.comp_part_tree.column("#2",minwidth=0,width=150, stretch='NO')
+		self.comp_part_tree.heading("#3", text="Go To Qty")
+		self.comp_part_tree.column("#3",minwidth=0,width=150, stretch='NO')
+		self.comp_part_tree.heading("#4", text="Delta")
+		self.comp_part_tree.column("#4",minwidth=0,width=150, stretch='NO')
+		
+		self.comp_part_tree.tag_configure('positive', background=self.mainapp.green_color, foreground='black')
+		self.comp_part_tree.tag_configure('negative', background=self.mainapp.red_color, foreground='white')
+		
 	def update_component(self, window, type):
 		self.backend.update_component(window, type)
 
@@ -130,6 +168,9 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.inst_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.instructions_tab, self.mainapp)
 		self.inst_scroll_frame.pack(fill=tk.BOTH, expand=True)
 
+		self.comp_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.comparison_tab, self.mainapp)
+		self.comp_scroll_frame.pack(fill=tk.BOTH, expand=True)
+		
 	def setup_buttons(self):
 		
 		self.edit_btn = Button(self.main_scroll_frame.inner, text = 'Edit', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.edit())
@@ -198,8 +239,24 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 		if self.backend.instructions:
 			treeview_functions.write_data_to_treeview(self.instructions_tree, 'replace', self.backend.instructions)
+		
+		go_to_eel = self.mainapp.frames[self.backend.go_to_eel]
+		item_comparison, parts_comparison = go_to_eel.backend.compare_eels(self.mainapp.frames[self.backend.current_eel].backend)
+		
+		treeview_functions.write_data_to_treeview(self.comp_item_tree, 'replace', item_comparison)
+		treeview_functions.write_data_to_treeview(self.comp_part_tree, 'replace', parts_comparison)
 
-
+		for tree in [self.comp_item_tree, self.comp_part_tree]:
+			for child in tree.get_children():
+				if tree.item(child, 'values')[-1] == '-':
+					tree.item(child,tag='none')
+				else:
+					if float(tree.item(child, 'values')[-1]) >= 0:
+						tree.item(child,tag='positive')
+					else:
+						tree.item(child,tag='negative')
+				
+		
 class Edit_EEL_Comparison_Window_Tk(object):
 	def __init__(self, mainapp, master, mode, parent_page):
 		#self.drawing_dictionary = drawing_dictionary

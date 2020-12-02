@@ -190,6 +190,89 @@ class EEL_Backend():
 					
 					item_part_numbers[loc] += int(item[3])
 		return item_part_numbers	
+
+	def count_items(self):
+		'''
+		Counts the different item types e.g. {crash axe: 1, lifevest: 2, etc}
+		'''
+		item_count = {}
+		
+		for loc in self.layout:
+			for part in self.layout[loc]:
+				item_type = part[0]
+				
+				if item_type not in item_count.keys():
+					item_count[item_type] = int(part[3])
+				else:
+					item_count[item_type] += int(part[3])
+					
+		return item_count
+
+	def count_part_nos(self):
+
+		'''
+		Counts the different part nos e.g. {pn1: 1, pn2: 2, etc}
+		'''
+		pn_count = {}
+		
+		for loc in self.layout:
+			for part in self.layout[loc]:
+				part_no = part[1]
+				
+				if part_no not in pn_count.keys():
+					pn_count[part_no] = int(part[3])
+				else:
+					pn_count[part_no] += int(part[3])
+					
+		return pn_count	
+		
+		
+	def compare_eels(self, current_eel):
+		# self should refer to the go to eel
+		# other eel should refer to the backend object
+		item_comparison = []
+		parts_comparison = []
+			
+		# Item Type Comparison
+		item_count_go_to = self.count_items()
+		item_count_current = current_eel.count_items()
+		
+		for item in item_count_go_to.keys():
+			goto_qty = item_count_go_to[item]
+			
+			if item in item_count_current.keys():
+				current_qty = item_count_current[item]
+				delta = current_qty - goto_qty
+			else:
+				current_qty = 0
+				delta = goto_qty*-1
+			item_comparison.append([item, current_qty, goto_qty, delta])
+		
+		# add any current items not in go to
+		for item in item_count_current.keys():
+			if item not in item_count_go_to.keys():
+				current_qty = item_count_current[item]
+				item_comparison.append([item, current_qty, '-', '-'])
+		
+		# Part Number Comparison
+		item_count_go_to = self.count_part_nos()
+		item_count_current = current_eel.count_part_nos()
+		
+		for item in item_count_go_to.keys():
+			goto_qty = item_count_go_to[item]
+			
+			if item in item_count_current.keys():
+				current_qty = item_count_current[item]
+				delta = current_qty - goto_qty
+			else:
+				current_qty = 0
+				delta = goto_qty*-1
+				
+			#get item type
+			type = self.mainapp.frames[item].backend.equipment_type
+			parts_comparison.append([item, type, current_qty, goto_qty, delta])
+		
+		return item_comparison, parts_comparison
 		
 class EEL_Saved_State():
 	def __init__(self, ohsc):

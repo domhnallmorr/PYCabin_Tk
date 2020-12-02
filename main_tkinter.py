@@ -28,6 +28,7 @@ class MainApplication(tk.Frame):
 		
 		self.icons_folder = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\Icons'
 		gui_styles.setup_icons(self)
+		self.setup_colors()
 		self.setup_variables()
 		
 		self.parent.title(f"PYCabin V{self.version}")
@@ -284,6 +285,13 @@ class MainApplication(tk.Frame):
 	
 		self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
 		self.title_font.configure(underline=True)
+
+	def setup_colors(self):
+	
+		self.red_color = 'IndianRed1'
+		self.green_color = 'green yellow'
+		self.grey_color = 'grey'
+		
 
 	def setup_project_page(self):
 	
