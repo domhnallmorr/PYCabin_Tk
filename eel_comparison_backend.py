@@ -8,6 +8,7 @@ def setup_variables(w):
 	w.description = None
 	w.current_eel = None
 	w.go_to_eel = None
+	w.bom = {}
 	w.layout = {}
 	w.instructions = []
 
@@ -64,6 +65,9 @@ class EEL_Comparison_Backend():
 				'Instructions': self.instructions,
 				'Comments': comments}
 
+	def gen_bom(self):
+	
+		pass
 class EEL_Comparison_Saved_State():
 	def __init__(self, ohsc):
 

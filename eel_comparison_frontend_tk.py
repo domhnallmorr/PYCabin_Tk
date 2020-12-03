@@ -41,11 +41,13 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.note = ttk.Notebook(self)
 		self.main_tab = Frame(self.note)
 		self.instructions_tab = Frame(self.note)
+		self.bom_tab = Frame(self.note)
 		self.comparison_tab = Frame(self.note)
 		self.comments_tab = Frame(self.note)
 		
 		self.note.add(self.main_tab, text = "Main")
 		self.note.add(self.instructions_tab, text = "Instructions")
+		self.note.add(self.bom_tab, text = "BOM")
 		self.note.add(self.comparison_tab, text = "Comparisons")
 		self.note.add(self.comments_tab, text = "Comments")
 		
@@ -69,6 +71,9 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 		self.comp_part_frame = LabelFrame(self.comp_scroll_frame.inner,text="Comparison by Part Number:")
 		self.comp_part_frame.grid(row=3, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
+		self.bom_frame = LabelFrame(self.bom_scroll_frame.inner,text="BOM:")
+		self.bom_frame.grid(row=3, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
 	def setup_labels(self):
 
@@ -140,6 +145,15 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		
 		self.comp_part_tree.tag_configure('positive', background=self.mainapp.green_color, foreground='black')
 		self.comp_part_tree.tag_configure('negative', background=self.mainapp.red_color, foreground='white')
+
+		self.bom_tree = ttk.Treeview(self.bom_frame,selectmode="extended",columns=("A","B"), height=25)
+		self.bom_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
+		self.bom_tree.heading("#0", text="Part Number")
+		self.bom_tree.column("#0",minwidth=0,width=150, stretch='NO')
+		self.bom_tree.heading("#1", text="Item")
+		self.bom_tree.column("#1",minwidth=0,width=150, stretch='NO')
+		self.bom_tree.heading("#2", text="Qty")
+		self.bom_tree.column("#2",minwidth=0,width=150, stretch='NO')
 		
 	def update_component(self, window, type):
 		self.backend.update_component(window, type)
@@ -170,6 +184,9 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 		self.comp_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.comparison_tab, self.mainapp)
 		self.comp_scroll_frame.pack(fill=tk.BOTH, expand=True)
+
+		self.bom_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.bom_tab, self.mainapp)
+		self.bom_scroll_frame.pack(fill=tk.BOTH, expand=True)
 		
 	def setup_buttons(self):
 		
@@ -203,6 +220,7 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		w = file_menu.Load('EEL Comparison', save_dict)
 		w.layout = {}
 		w.instructions = []
+		w.bom = {}
 		
 		instructions_count = 1
 
@@ -226,7 +244,10 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 						part[0] =instructions_count
 						instructions_count += 1
 						w.instructions.append(part)
-
+					
+					for part in self.w.bom:
+						w.bom[part] = self.w.bom[part]
+						
 		self.update_component(w, 'edit')
 
 	def update_treeviews(self):
@@ -256,7 +277,15 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 					else:
 						tree.item(child,tag='negative')
 				
-		
+		# update BOM table
+		print('@'*20)
+		print(self.backend.bom)
+		data = []
+		for part in self.backend.bom:
+			type = self.mainapp.frames[part].backend.equipment_type
+			data.append([part, type, self.backend.bom[part]])
+			data.append([''])
+
 class Edit_EEL_Comparison_Window_Tk(object):
 	def __init__(self, mainapp, master, mode, parent_page):
 		#self.drawing_dictionary = drawing_dictionary
@@ -664,6 +693,7 @@ class Gen_Layout_Window_Tk(object):
 		qty_tracker = self.go_to_eel.backend.get_total_qty_item_per_location(self.item)
 		self.layout = {}
 		self.instructions = []
+		self.bom = {}
 		
 		instructions_count = 1
 		
@@ -739,6 +769,13 @@ class Gen_Layout_Window_Tk(object):
 						self.layout[loc].append([self.item, part_no, loc, qty_selected, 'New'])	
 						self.instructions.append([instructions_count ,f'Install x{qty_selected} {part_no} ({self.item}) in {loc}'])
 						instructions_count += 1
+						
+						if part_no not in self.bom.keys():
+							self.bom[part_no] = qty_selected
+						else:
+							self.bom[part_no] += qty_selected
+						
+						
 		# Assign any left over parts (both existing and new) to any unfilled positions
 
 		for loc in qty_tracker:
@@ -794,6 +831,15 @@ class Gen_Layout_Window_Tk(object):
 
 						qty_required = 0
 
+						#Add to Instructions
+						self.instructions.append([instructions_count ,f'Install x{qty_required} {part[0]} ({self.item}) in {loc}'])
+						
+						#Add to BOM
+						if part[0] not in self.bom.keys():
+							self.bom[part[0]] = qty_selected
+						else:
+							self.bom[part[0]] += qty_selected
+
 					elif qty_available >0:
 
 						self.layout[loc].append([self.item, part[0], loc, qty_available, 'New'])
@@ -802,4 +848,11 @@ class Gen_Layout_Window_Tk(object):
 
 						qty_required += qty_available*-1
 
-
+						#Add to Instructions
+						self.instructions.append([instructions_count ,f'Install x{qty_available} {part[0]} ({self.item}) in {loc}'])
+						
+						#Add to BOM
+						if part[0] not in self.bom.keys():
+							self.bom[part[0]] = qty_available
+						else:
+							self.bom[part[0]] += qty_available
