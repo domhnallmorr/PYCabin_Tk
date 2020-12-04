@@ -105,8 +105,8 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.14\test.json') as f:
-	#with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
+	#with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.14\test.json') as f:
+	with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
 	# ______ Project _________________
@@ -319,6 +319,7 @@ class Load():
 			self.go_to_eel = component_data["GoTo EEL"]						
 			self.layout = component_data["Layout"]
 			self.instructions = None
+			self.bom = {}
 			self.comments = component_data["Comments"]		
 
 		if type == 'Change':

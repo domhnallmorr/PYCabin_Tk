@@ -244,10 +244,10 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 						part[0] =instructions_count
 						instructions_count += 1
 						w.instructions.append(part)
-					
+
 					for part in self.w.bom:
 						w.bom[part] = self.w.bom[part]
-						
+
 		self.update_component(w, 'edit')
 
 	def update_treeviews(self):
@@ -282,9 +282,16 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		print(self.backend.bom)
 		data = []
 		for part in self.backend.bom:
-			type = self.mainapp.frames[part].backend.equipment_type
-			data.append([part, type, self.backend.bom[part]])
+			part = self.mainapp.frames[part].backend
+			type = part.equipment_type
+			data.append([part.title, type, self.backend.bom[part.title]])
+			
+			for a in part.attaching_hardware:
+				qty = int(a[3])*self.backend.bom[part.title]
+				data.append([a[2], a[1], qty])
 			data.append([''])
+			
+		treeview_functions.write_data_to_treeview(self.bom_tree, 'replace', data)
 
 class Edit_EEL_Comparison_Window_Tk(object):
 	def __init__(self, mainapp, master, mode, parent_page):

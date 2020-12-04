@@ -21,6 +21,7 @@ def update_variables(self, source):
 	#self.locations = copy.deepcopy(source.locations)
 	self.layout = copy.deepcopy(source.layout)
 	self.instructions = copy.deepcopy(source.instructions)
+	self.bom = copy.deepcopy(source.bom)
 
 	#EEL_Backend.gen_summary_dict(self)
 	#EEL_Backend.gen_summary_table(self)
