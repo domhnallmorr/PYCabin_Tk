@@ -1,6 +1,11 @@
 
 import copy
 
+import openpyxl
+import excel_functions
+import treeview_functions
+
+
 def setup_variables(w):
 	w.type = 'EEL Comparison'
 	w.title = None
@@ -69,6 +74,56 @@ class EEL_Comparison_Backend():
 	def gen_bom(self):
 	
 		pass
+		
+	def export_excel(self):
+	
+		wb = openpyxl.Workbook()
+		
+		sheet_styles = excel_functions.setup_styles()
+		#Current EEL
+		
+		wb.create_sheet(index=1, title=('Current EEL'))
+		wb.active = 1
+		sheet = wb.active
+		
+		data = self.mainapp.frames[self.current_eel].backend.compile_data_for_excel()
+		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+		
+		#GoTo EEL
+
+		wb.create_sheet(index=2, title=('Go To EEL'))
+		wb.active = 2
+		sheet = wb.active
+		
+		data = self.mainapp.frames[self.go_to_eel].backend.compile_data_for_excel()
+		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+		
+		#Comparison By Item
+		
+		wb.create_sheet(index=3, title=('Comparison by Item'))
+		wb.active = 3
+		sheet = wb.active		
+		
+		data = treeview_functions.get_all_treeview_items(self.parent_page.comp_item_tree)
+		data.insert(0, ['Item', 'Current Qty', 'Go To Qty', 'Delta'])
+		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+		
+		#Comparison By Part
+		wb.create_sheet(index=4, title=('Comparison by Part No'))
+		wb.active = 4
+		sheet = wb.active		
+		
+		data = treeview_functions.get_all_treeview_items(self.parent_page.comp_part_tree)
+		data.insert(0, ['Part Number', 'Item', 'Current Qty', 'Go To Qty', 'Delta'])
+		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+		
+		#Final Layout
+		
+		#BOM
+		
+		
+		wb.save(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\eel.xlsx')
+		
 class EEL_Comparison_Saved_State():
 	def __init__(self, ohsc):
 

@@ -196,9 +196,16 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.comp_btn = Button(self.main_scroll_frame.inner, text = 'Gen Final Layout', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.gen_final_layout())
 		self.comp_btn.grid(row=1, column=1, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
+		self.excel_btn = Button(self.main_scroll_frame.inner, text = 'Export to Excel', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.export_excel())
+		self.excel_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+		
 	def edit(self):
 
 		pass
+
+	def export_excel(self):
+	
+		self.backend.export_excel()
 
 	def gen_final_layout(self):
 

@@ -273,6 +273,21 @@ class EEL_Backend():
 			parts_comparison.append([item, type, current_qty, goto_qty, delta])
 		
 		return item_comparison, parts_comparison
+
+	def compile_data_for_excel(self):
+	
+		data = [['Location', 'Type', 'Part Number', 'Qty']]
+		
+		for loc in self.layout:
+		
+			for part in self.layout[loc]:
+				item_type = part[0]
+				part_no = part[1]
+				qty = int(part[3])
+
+				data.append([loc, item_type, part_no, qty])
+		
+		return data
 		
 class EEL_Saved_State():
 	def __init__(self, ohsc):
