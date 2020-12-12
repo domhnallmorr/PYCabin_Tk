@@ -118,11 +118,35 @@ class EEL_Comparison_Backend():
 		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
 		
 		#Final Layout
-		
+		wb.create_sheet(index=5, title=('Final Layout'))
+		wb.active = 5
+		sheet = wb.active
+
+
+		data = [['Item', 'Part Number', 'Location', 'Qty', 'Existing/New']]
+
+		for loc in self.layout.keys():
+			for part in self.layout[loc]:
+				data.append(part)
+		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+
 		#BOM
-		
-		
-		wb.save(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\eel.xlsx')
+		print(self.bom)
+
+		wb.create_sheet(index=6, title=('BOM'))
+		wb.active = 6
+		sheet = wb.active
+
+		data = [['Part Number', 'Item', 'Qty']]	
+
+		for part in self.bom.keys():
+			item = self.mainapp.frames[part].backend.equipment_type
+			data.append([part, item, self.bom[part]])
+
+		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+
+		#wb.save(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\eel.xlsx')
+		wb.save(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.14\eel.xlsx')
 		
 class EEL_Comparison_Saved_State():
 	def __init__(self, ohsc):
