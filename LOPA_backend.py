@@ -303,7 +303,24 @@ class LOPA_Backend():
 				
 				count += 1
 		
-		
+	def get_all_row_numbers(self):
+
+		row_numbers = {'LHS': [], 'RHS': []}
+
+		for side in ['LHS', 'RHS']:
+			for row in self.seat_layout[side]:
+				row_numbers[side].append(row[0])
+		return row_numbers
+
+	def get_all_row_stations(self):
+
+		row_stations = {'LHS': [], 'RHS': []}
+
+		for side in ['LHS', 'RHS']:
+			for row in self.seat_layout[side]:
+				row_stations[side].append(float(row[3]))
+		return row_stations
+
 	def gen_parts_table(self):
 	
 		parts = [] #[qty, part_no, description]

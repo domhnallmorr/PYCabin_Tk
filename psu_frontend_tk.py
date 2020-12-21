@@ -90,17 +90,22 @@ class PSU_Page_Tk(tk.Frame):
 
 		self.layout_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.psu_tab, self.mainapp)
 		self.layout_scroll_frame.pack(fill=tk.BOTH, expand=True)
+
+		self.gasper_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.gasper_tab, self.mainapp)
+		self.gasper_scroll_frame.pack(fill=tk.BOTH, expand=True)
 		
 	def setup_notebook(self):
 	
 		self.note = ttk.Notebook(self)
 		self.main_tab = Frame(self.note)
 		self.psu_tab = Frame(self.note)
+		self.gasper_tab = Frame(self.note)
 		self.bom_tab = Frame(self.note)
 		self.comments_tab = Frame(self.note)
 		
 		self.note.add(self.main_tab, text = "Main")
 		self.note.add(self.psu_tab, text = "PSU Layout")
+		self.note.add(self.gasper_tab, text = "Gasper Hoses")
 		self.note.add(self.bom_tab, text = "BOM")
 		self.note.add(self.comments_tab, text = "Comments")
 		
@@ -124,6 +129,13 @@ class PSU_Page_Tk(tk.Frame):
 		self.preview_frame = LabelFrame(self.layout_scroll_frame.inner,text="PSU Layout Preview:")
 		self.preview_frame.grid(row=5, column=0, columnspan = 5, rowspan = 2,sticky='NSEW',padx=5, pady=5, ipadx=2, ipady=5)
 		self.preview_frame.grid_columnconfigure(4, weight=1)
+
+		self.gasper_frame = LabelFrame(self.gasper_scroll_frame.inner,text="Gaspers:")
+		self.gasper_frame.grid(row=2, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
+		self.gasper_preview_frame = LabelFrame(self.gasper_scroll_frame.inner,text="PSU Layout Preview:")
+		self.gasper_preview_frame.grid(row=5, column=0, columnspan = 5, rowspan = 2,sticky='NSEW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.gasper_preview_frame.grid_columnconfigure(4, weight=1)
 
 	def setup_labels(self):
 	
@@ -216,6 +228,38 @@ class PSU_Page_Tk(tk.Frame):
 		RHS_psu_tree_scrollbar.grid(row=1, column=7, sticky='nsew')
 		self.RHS_tree_psu.config(yscrollcommand=RHS_psu_tree_scrollbar.set)
 
+				 #setup LHS Gasper treeview
+		self.LHS_tree_gasper = ttk.Treeview(self.gasper_frame,selectmode="extended",columns=("A","B","C"))
+		self.LHS_tree_gasper.grid(row=1,column=0, sticky="nsew")
+		self.LHS_tree_gasper.heading("#0", text="Row")
+		self.LHS_tree_gasper.column("#0",minwidth=0,width=50, stretch='NO')
+		self.LHS_tree_gasper.heading("A", text="Vent Frame")   
+		self.LHS_tree_gasper.column("A",minwidth=0,width=100, stretch='NO') 
+		self.LHS_tree_gasper.heading("B", text="Vent Station")   
+		self.LHS_tree_gasper.column("B",minwidth=0,width=100)
+		self.LHS_tree_gasper.heading("C", text="Hose Length")   
+		self.LHS_tree_gasper.column("C",minwidth=0,width=100)
+
+		LHS_tree_gasper_scrollbar = Scrollbar(self.gasper_frame, command=self.LHS_tree_gasper.yview)
+		LHS_tree_gasper_scrollbar.grid(row=1, column=1, padx=5, sticky='nsew')
+		self.LHS_tree_gasper.config(yscrollcommand=LHS_tree_gasper_scrollbar.set)
+
+		self.RHS_tree_gasper = ttk.Treeview(self.gasper_frame,selectmode="extended",columns=("A","B","C"))
+		self.RHS_tree_gasper.grid(row=1,column=2, sticky="nsew")
+		self.RHS_tree_gasper.heading("#0", text="Row")
+		self.RHS_tree_gasper.column("#0",minwidth=0,width=50, stretch='NO')
+		self.RHS_tree_gasper.heading("A", text="Vent Frame")   
+		self.RHS_tree_gasper.column("A",minwidth=0,width=100, stretch='NO') 
+		self.RHS_tree_gasper.heading("B", text="Vent Station")   
+		self.RHS_tree_gasper.column("B",minwidth=0,width=100)
+		self.RHS_tree_gasper.heading("C", text="Hose Length")   
+		self.RHS_tree_gasper.column("C",minwidth=0,width=100)
+
+		RHS_tree_gasper_scrollbar = Scrollbar(self.gasper_frame, command=self.RHS_tree_gasper.yview)
+		RHS_tree_gasper_scrollbar.grid(row=1, column=3, sticky='nsew')
+		self.RHS_tree_gasper.config(yscrollcommand=RHS_tree_gasper_scrollbar.set)
+
+
 	def setup_buttons(self):
 
 		self.edit_btn = Button(self.main_scroll_frame.inner, text = 'Edit', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.edit())
@@ -230,6 +274,10 @@ class PSU_Page_Tk(tk.Frame):
 		self.gen_btn = Button(self.layout_scroll_frame.inner, text = 'Generate Layout',
 						command = self.gen_layout)
 		self.gen_btn.grid(row=0,column=0, sticky="nsew")
+
+		self.edit_gasper_btn = Button(self.gasper_frame, text = 'Edit Gasper Layout',
+						command = self.edit_gasper_layout)
+		self.edit_gasper_btn.grid(row=0,column=0, sticky="nsew")
 
 		self.edit_comment_button=Button(self.comments_tab,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
 										command= lambda self=self :comment_box.edit_comments(self))
@@ -250,6 +298,20 @@ class PSU_Page_Tk(tk.Frame):
 		toolbar = NavigationToolbar2Tk(self.canvas, toolbarFrame)
 		toolbar.update()	
 		toolbarFrame.grid(row = 2, column = 0, columnspan=5, pady=2,sticky="nsew")
+
+
+
+		self.gasper_canvas = FigureCanvasTkAgg(self.backend.gasper_figure, self.gasper_preview_frame)
+		self.gasper_canvas.draw()
+		#canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+		self.gasper_canvas.get_tk_widget().grid(row = 3, column = 0, columnspan=8, pady=2,sticky="nsew")	
+
+		toolbarFrame = Frame(master=self.gasper_preview_frame)
+		
+		toolbar = NavigationToolbar2Tk(self.gasper_canvas, toolbarFrame)
+		toolbar.update()	
+		toolbarFrame.grid(row = 2, column = 0, columnspan=5, pady=2,sticky="nsew")
+
 		
 	def update_component(self, window, type, redraw = True):
 		
@@ -284,7 +346,9 @@ class PSU_Page_Tk(tk.Frame):
 			
 		treeview_functions.write_data_to_treeview(self.parts_tree, 'replace', self.backend.parts)
 
-		treeview_functions.write_data_to_treeview(self.LHS_tree_psu, 'replace', self.backend.psu_layout['LHS'])
+		treeview_functions.write_data_to_treeview(self.LHS_tree_gasper, 'replace', self.backend.gasper_layout['LHS'])
+		treeview_functions.write_data_to_treeview(self.RHS_tree_gasper, 'replace', self.backend.gasper_layout['RHS'])	
+
 		treeview_functions.write_data_to_treeview(self.RHS_tree_psu, 'replace', self.backend.psu_layout['RHS'])	
 
 		if self.treeview_iid:
@@ -324,6 +388,14 @@ class PSU_Page_Tk(tk.Frame):
 			self.update_component(self.w, 'edit', True)
 			#psu_draw.draw_psu_layout(self.backend, self.backend.ax3, 'matplotlib', [0,0], 'LHS')
 			#psu_draw.draw_psu_layout(self.backend, self.backend.ax1, 'matplotlib', [0,0], 'RHS')
+
+	def edit_gasper_layout(self):
+
+		self.w= Edit_Gasper_Window_Tk(self.mainapp, self.master, None, 'edit', self)
+		self.master.wait_window(self.w.top)		
+
+		if self.w.button == 'ok':
+			self.update_component(self.w, 'edit')
 
 	def parts_double_click(self, event):
 	
@@ -468,7 +540,169 @@ class Edit_PSU_Window_Tk(object):
 		else:
 			self.top.destroy()
 		
-		
+
+class Edit_Gasper_Window_Tk(object):
+	def __init__(self, mainapp, master, ac, mode, parent_psu):
+		#self.drawing_dictionary = drawing_dictionary
+		top=self.top=Toplevel(master)
+		top.grab_set()
+		self.mainapp = mainapp
+		self.mode = mode
+		self.parent_psu = parent_psu
+
+		#get LOPA row numbers
+		self.row_numbers = self.mainapp.frames[self.parent_psu.backend.lopa].backend.get_all_row_numbers()
+
+		psu_bk.setup_variables(self)
+		psu_bk.PSU_Backend.update_variables(self, self.parent_psu.backend)
+
+		self.setup_label_frames()
+		self.setup_labels()
+		self.setup_entries()
+		self.setup_buttons()
+
+
+	def setup_label_frames(self):
+
+		self.main_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.top, self.mainapp)
+		self.main_scroll_frame.pack(fill=tk.BOTH, expand=True)
+
+		self.lhs_frame = LabelFrame(self.main_scroll_frame.inner, text='LHS')
+		self.lhs_frame.grid(row=2, column=0, columnspan = 16, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.rhs_frame = LabelFrame(self.main_scroll_frame.inner, text='RHS')
+		self.rhs_frame.grid(row=2, column=16, columnspan = 16, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
+		self.label_frames = {'LHS': self.lhs_frame, 'RHS': self.rhs_frame}
+
+	def setup_labels(self):
+
+		for frame in [self.lhs_frame, self.rhs_frame]:
+
+			Label(frame, text='Row').grid(row=0, column=1, sticky='nsew')
+			Label(frame, text='Vent Frame').grid(row=0, column=2, sticky='nsew')
+			Label(frame, text='Vent Station').grid(row=0, column=3, sticky='nsew')
+			Label(frame, text='Hose Length').grid(row=0, column=4, sticky='nsew')
+
+	def setup_entries(self):
+
+		self.vent_station_entries = {'LHS': [], 'RHS': []}
+		self.vent_frame_entries = {'LHS': [], 'RHS': []}
+		self.hose_length_combos = {'LHS': [], 'RHS': []}
+		self.row_combos = {'LHS': [], 'RHS': []}
+
+		for side in self.vent_station_entries.keys():
+			row = 1
+			for v in self.parent_psu.backend.gasper_layout[side]:
+
+				#Assigned Row
+				c = ttk.Combobox(self.label_frames[side], values=self.row_numbers[side])
+				c.grid(row=row, column=1, pady=2, sticky='nsew')
+				c.insert(0, v[0])
+				self.row_combos[side].append(c)
+
+				# vent frames
+				e = Entry(self.label_frames[side])
+				e.grid(row=row, column=2, pady=2, sticky='nsew')
+				e.insert(0, v[1])
+				self.vent_frame_entries[side].append(e)
+
+				# vent stations
+				e = Entry(self.label_frames[side])
+				e.grid(row=row, column=3, pady=2, sticky='nsew')
+				e.insert(0, v[2])
+				e.config(state='disabled')
+				self.vent_station_entries[side].append(e)
+
+				# hose lengths
+				c = ttk.Combobox(self.label_frames[side], values=['400mm', '250mm', '150mm'])
+				c.grid(row=row, column=4, pady=2, sticky='nsew')
+				c.insert(0, v[3])
+				self.hose_length_combos[side].append(c)
+
+				row += 1
+
+	def setup_buttons(self):
+
+		Button(self.main_scroll_frame.inner, text='auto assign', command=self.auto_assign_hoses).grid(row=0, column=0, sticky='nsew')
+
+		# ok button
+		self.ok_button=Button(self.main_scroll_frame.inner,text='OK', command= lambda button = 'ok': self.cleanup(button))
+		self.ok_button.grid(row=11,column=7, pady=5,sticky="nsew")
+
+		# cancel button
+		self.b=Button(self.main_scroll_frame.inner,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
+		self.b.grid(row=11,column=8, pady=5,sticky="nsew")
+
+	def auto_assign_hoses(self):
+
+		#TODO add data checks
+
+		row_stations = copy.deepcopy(self.mainapp.frames[self.parent_psu.backend.lopa].backend.get_all_row_stations())
+		available_stations = copy.deepcopy(row_stations)
+
+		self.assigned_vents = {'LHS': {}, 'RHS': {}}
+		for side in ['LHS', 'RHS']:
+			#get selected vent stations
+			available_vents = []
+			for vent in self.vent_station_entries[side]:
+				available_vents.append(float(vent.get()))
+
+			#loop over each row
+			for idx, row in enumerate(row_stations[side]):
+				closest = min(available_vents, key=lambda x:abs(x-row))
+
+				available_vents.remove(closest)
+
+				distance = abs(closest-row)
+				print(distance)
+				if distance > 10.5:
+					hose = '400mm'
+				elif distance > 4.5 and distance < 10.5:
+					hose = '250mm'
+				else:
+					hose = '150mm'
+				#print()
+				self.assigned_vents[side][self.row_numbers[side][idx]] = [closest, hose]
+
+			#update combos
+			for idx, e in enumerate(self.vent_station_entries[side]):
+				e = float(e.get())
+				#print(f'entry {e}')
+				vent_used = False
+				for row in self.assigned_vents[side].keys():
+					#print(f'Assigned {self.assigned_vents[side][row][0]}')
+					if self.assigned_vents[side][row][0] == e:
+						vent_used = True
+						self.hose_length_combos[side][idx].set(self.assigned_vents[side][row][1])
+						self.row_combos[side][idx].set(row)
+						break
+
+				if not vent_used:
+					self.hose_length_combos[side][idx].set('N/A')
+					self.row_combos[side][idx].set('N/A')
+
+	def cleanup(self, button):
+
+		#TODO Add data checks
+
+		self.button = button
+
+		if self.button == 'ok':
+			self.gasper_layout = {'LHS': [], 'RHS': []}
+
+			for side in self.gasper_layout.keys():
+				
+				for idx, row in enumerate(self.row_combos[side]):
+
+					row = self.row_combos[side][idx].get()
+					f = self.vent_frame_entries[side][idx].get()
+					s = self.vent_station_entries[side][idx].get()
+					h = self.hose_length_combos[side][idx].get()
+
+					self.gasper_layout[side].append([row, f, s, h])
+
+
+			self.top.destroy()
 class Gen_PSU_Window_Tk(object):
 	def __init__(self, mainapp, master, ac, mode, parent_psu):
 		#self.drawing_dictionary = drawing_dictionary

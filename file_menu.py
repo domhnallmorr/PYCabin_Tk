@@ -29,7 +29,7 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.14\test.json'
+	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.15\test.json'
 	#mainapp.save_file = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json'
 	write_save_file(mainapp)
 	
@@ -105,7 +105,7 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.14\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.15\test.json') as f:
 	#with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
@@ -280,7 +280,9 @@ class Load():
 			self.drawing_rev = component_data["Drawing Rev"]
 			self.parts = component_data["Parts"]
 			self.psu_layout = component_data["Layout"]
+			self.gasper_layout = component_data["Gasper Layout"]
 			self.comments = component_data["Comments"]
+
 
 		if type == 'OHSC':
 			self.title = component_data["Title"]

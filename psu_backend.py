@@ -19,6 +19,34 @@ def setup_variables(w):
 	w.drawing_rev = None
 	w.parts = []
 	w.psu_layout = {'LHS': [], 'RHS': []}
+	w.gasper_layout = {'LHS': [['N/A','23.0','353.0' ],['N/A','24.25','379.25' ],['N/A','25.75','410.75' ],
+                       ['N/A','27.0','437.0' ],['N/A','28.25','463.25' ],['N/A','29.75','494.75' ],
+                       ['N/A','31.0','521.0' ],['N/A','32.25','547.25' ],['N/A','33.75','578.75' ],
+                       ['N/A','35.0','605.0' ],['N/A','36.25','631.0' ],['N/A','38.25','662.58' ],
+                       ['N/A','40.25','695.9' ],['N/A','41.5','724.32' ],['N/A','42.75','751.75' ],
+                       ['N/A','44.0','778.0' ],['N/A','45.25','804.25' ],['N/A','46.75','835.75' ],
+                       ['N/A','48.0','862.0' ],['N/A','49.25','888.25' ],['N/A','50.75','919.75' ],
+                       ['N/A','52.0','946.0' ],['N/A','53.25','972.25' ],['N/A','54.75','1003.75' ],
+                       ['N/A','56.0','1030.0' ],['N/A','57.25','1056.25' ],['N/A','58.75','1087.75' ],
+                       ['N/A','60.0','1114.0' ],['N/A','61.25','1140.25'],['N/A','62.75','1171.75' ],
+                       ['N/A','64.0','1198.0' ]],
+                       'RHS': [['N/A','23.0','353.0' ],['N/A','24.25','379.25' ],['N/A','25.75','410.75' ],
+                       ['N/A','27.0','437.0' ],['N/A','28.25','463.25' ],['N/A','29.75','494.75' ],
+                       ['N/A','31.0','521.0' ],['N/A','32.25','547.25' ],['N/A','33.75','578.75' ],
+                       ['N/A','35.0','605.0' ],['N/A','36.25','631.0' ],['N/A','38.25','662.58' ],
+                       ['N/A','40.25','695.9' ],['N/A','41.5','724.32' ],['N/A','42.75','751.75' ],
+                       ['N/A','44.0','778.0' ],['N/A','45.25','804.25' ],['N/A','46.75','835.75' ],
+                       ['N/A','48.0','862.0' ],['N/A','49.25','888.25' ],['N/A','50.75','919.75' ],
+                       ['N/A','52.0','946.0' ],['N/A','53.25','972.25' ],['N/A','54.75','1003.75' ],
+                       ['N/A','56.0','1030.0' ],['N/A','57.25','1056.25' ],['N/A','58.75','1087.75' ],
+                       ['N/A','60.0','1114.0' ],['N/A','61.25','1140.25'],['N/A','62.75','1171.75' ],
+                       ['N/A','64.0','1198.0' ]]
+						}
+
+	#add blank foe gasper length
+	for side in ['LHS', 'RHS']:
+		for idx, g in enumerate(w.gasper_layout[side]):
+				w.gasper_layout[side][idx].append('')
 	
 class PSU_Backend():
 
@@ -41,6 +69,7 @@ class PSU_Backend():
 		self.drawing_rev = source.drawing_rev
 		self.parts = copy.deepcopy(source.parts)
 		self.psu_layout = copy.deepcopy(source.psu_layout)
+		self.gasper_layout = copy.deepcopy(source.gasper_layout)
 		
 		if self.aircraft_type in ['A320', 'A319']:
 			self.treeview_node = 'A320 PSUs'
@@ -68,6 +97,13 @@ class PSU_Backend():
 		
 		self.lopa_figure.subplots_adjust(left=0.05, bottom=0.02, right=0.99, top=0.98, wspace=None, hspace=None)
 
+		self.gasper_figure = Figure(figsize=(5,3), dpi=100)
+		self.ax4 = self.gasper_figure.add_subplot(211, aspect='equal', adjustable='box')
+		#self.ax2 = self.lopa_figure.add_subplot(111, aspect='equal', adjustable='box')
+		self.ax6 = self.gasper_figure.add_subplot(212, aspect='equal', adjustable='box')
+		
+		self.gasper_figure.subplots_adjust(left=0.05, bottom=0.02, right=0.99, top=0.98, wspace=None, hspace=None)
+
 	def gen_save_dict(self, comments_from_text_widget = True, comments = None):
 
 		if comments_from_text_widget:
@@ -83,6 +119,7 @@ class PSU_Backend():
 				'Drawing Rev': self.drawing_rev,
 				'Parts': self.parts,
 				'Layout': self.psu_layout,
+				'Gasper Layout': self.gasper_layout,
 				'Comments': comments}
 
 	def gen_parts_table(self):
