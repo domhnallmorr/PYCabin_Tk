@@ -281,6 +281,8 @@ class Load():
 			self.parts = component_data["Parts"]
 			self.psu_layout = component_data["Layout"]
 			self.gasper_layout = component_data["Gasper Layout"]
+			self.deu_layout = component_data["DEU Layout"]
+			self.vc_layout = component_data["VCC Layout"]
 			self.comments = component_data["Comments"]
 
 

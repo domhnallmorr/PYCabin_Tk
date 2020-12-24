@@ -1,4 +1,4 @@
-# import pandas as pd
+import pandas as pd
 import tkinter as tk
 
 def get_columns_values(treeview, column):
@@ -46,18 +46,18 @@ def get_treeview_headers(treeview):
 	
 	return [treeview.heading(x)['text'] for x in columns]
 	
-# def treeview_to_df(treeview):
-	# treeview_data = {}
+def treeview_to_df(treeview):
+	treeview_data = {}
 	
-	# #Columns
-	# headers = get_treeview_headers(treeview)
+	#Columns
+	headers = get_treeview_headers(treeview)
 
-	# for column, h in enumerate(headers):
-		# treeview_data[h] = get_columns_values(treeview, column)
+	for column, h in enumerate(headers):
+		treeview_data[h] = get_columns_values(treeview, column)
 		
-	# df = pd.DataFrame.from_dict(treeview_data)
+	df = pd.DataFrame.from_dict(treeview_data)
 	
-	# return df
+	return df
 	
 def del_selected_items(treeview, msg = False):
 	selected_item = treeview.selection()
