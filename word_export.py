@@ -37,7 +37,7 @@ class Export_Word_Window(object):
 		self.file_entry = Entry(self.main_frame, width = 80)
 		self.file_entry.grid(row=1, column = 2, ipadx=1, ipady=1, padx=2, pady=2, sticky='NW')
 		
-		self.file_entry.insert(0, r'C:/Users/domhn/Documents/Python/Pycabin_Tkinter/V0.10/test.docx')
+		self.file_entry.insert(0, r'C:/Users/domhn/Documents/Python/Pycabin_Tkinter/V0.16/test.docx')
 		Button(self.main_frame, text='Browse', command=self.browse).grid(row=1, column = 3, ipadx=1, ipady=1, padx=2, pady=2, sticky='NW')
 
 		# ok button

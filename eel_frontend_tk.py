@@ -12,6 +12,7 @@ import double_scrollbar
 import comment_box
 import data_input_checks_tk
 import file_menu
+import components_tk
 # from Pycabin_Backend import lopa_draw_redo
 # from Pycabin_Backend import ohsc_draw
 
@@ -23,6 +24,21 @@ matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import copy
+import collections
+
+def check_eel_used(self):
+	used = False
+	eel_comparisons = []
+	eel_dict = components_tk.get_all_components(self.mainapp, 'EEL Comparisons')
+
+	for e in eel_dict['All']:
+		
+		if self.backend.title in [self.mainapp.frames[e].backend.current_eel, self.mainapp.frames[e].backend.go_to_eel]: 
+
+			used = True
+			eel_comparisons.append(e)
+			
+	return used, eel_comparisons
 
 class EEL_Page_Tk(tk.Frame):
 
@@ -95,6 +111,13 @@ class EEL_Page_Tk(tk.Frame):
 		self.comment_text.grid(row=1, column=0, columnspan = 8, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
 	def update_component(self, window, type):
+
+		if type != 'new':
+			orig_title = self.backend.title
+			used, eel_comparisons = check_eel_used(self)
+		else:
+			used = False
+
 		self.backend.update_component(window, type)
 
 		self.update_label_text()
@@ -104,6 +127,17 @@ class EEL_Page_Tk(tk.Frame):
 			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.title)
 			components_tk.component_renamed(self)
 
+		if used:
+			for eel in eel_comparisons:
+				eel = self.mainapp.frames[eel]
+
+				if eel.backend.current_eel == orig_title:
+					eel.backend.current_eel = self.backend.title
+
+				if eel.backend.go_to_eel == orig_title:
+					eel.backend.go_to_eel = self.backend.title
+
+				eel.update_component(eel.backend, 'ohsc')
 	def update_label_text(self):
 				
 		self.top_label.config(text=f'EEL: {self.backend.title}')
@@ -121,21 +155,39 @@ class EEL_Page_Tk(tk.Frame):
 				data.append(p)
 		
 		treeview_functions.write_data_to_treeview(self.eel_tree, 'replace', data)
+
+		#highlight location change in eel tree
+		last_loc = None
+		odd = False
+		for child in self.eel_tree.get_children():
+			if self.eel_tree.item(child, 'values')[1] != last_loc:
+				if not odd:
+					odd = True
+				else:
+					odd = False
+			if odd:
+				self.eel_tree.item(child,tag='odd_row')
+
+			last_loc = self.eel_tree.item(child, 'values')[1]
+
+
 		treeview_functions.write_data_to_treeview(self.summary_pn_tree, 'replace', self.backend.summary_table)
 		
-		# self.summary_pn_tree.delete(*self.summary_pn_tree.get_children())
-		# for d in self.backend.summary_table:
-			# if d[0] != '':
-				# print('here')
-				# self.summary_pn_tree.insert('', 'end', text=d[0], values=tuple(d[1:]), tags='header_row')
-			# else:
-				# self.summary_pn_tree.insert('', 'end', text=d[0], values=tuple(d[1:]))
-		#add tags
+		#item summary
+		data = []
 		
 		for child in self.summary_pn_tree.get_children():
 			if self.summary_pn_tree.item(child, 'text') != '':
 				
 				self.summary_pn_tree.item(child,tag='header_row')
+
+				item = self.summary_pn_tree.item(child, 'text')
+				q = self.summary_pn_tree.item(child, 'values')[1]
+
+				data.append([item, q])
+
+		treeview_functions.write_data_to_treeview(self.summary_item_tree, 'replace', data)
+
 	def setup_scrollable_frames(self):
 		### Canvas widgets (for vertical scrollbar)
 
@@ -158,35 +210,47 @@ class EEL_Page_Tk(tk.Frame):
 		self.eel_tree = ttk.Treeview(self.parts_frame,selectmode="extended",columns=("A","B",'C'), height=25)
 		self.eel_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
 		self.eel_tree.heading("#0", text="Item")
-		self.eel_tree.column("#0",minwidth=0,width=150, stretch='NO')
+		self.eel_tree.column("#0",minwidth=0,width=250, stretch='NO')
 		self.eel_tree.heading("#1", text="Part Number")
 		self.eel_tree.column("#1",minwidth=0,width=150, stretch='NO')
 		self.eel_tree.heading("#2", text="Location")
 		self.eel_tree.column("#2",minwidth=0,width=150, stretch='NO')
 		self.eel_tree.heading("#3", text="Qty")
-		self.eel_tree.column("#3",minwidth=0,width=150, stretch='NO')
+		self.eel_tree.column("#3",minwidth=0,width=50, stretch='NO')
 
 		self.eel_tree.bind("<Double-1>", lambda event: self.eel_double_click(event))
 		
-		
+		eel_tree_scrollbar = Scrollbar(self.parts_frame, command=self.eel_tree.yview)
+		eel_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
+		self.eel_tree.config(yscrollcommand=eel_tree_scrollbar.set)
+
+		self.eel_tree.tag_configure('odd_row', background='gray65', foreground='black')
 
 		self.summary_pn_tree = ttk.Treeview(self.summary_frame,selectmode="extended",columns=("A","B"))
 		self.summary_pn_tree.grid(row=2,column=0, columnspan=6,sticky="nsew")
 		self.summary_pn_tree.heading("#0", text="Item")
-		self.summary_pn_tree.column("#0",minwidth=0,width=150, stretch='NO')
+		self.summary_pn_tree.column("#0",minwidth=0,width=250, stretch='NO')
 		self.summary_pn_tree.heading("#1", text="Part Number")
 		self.summary_pn_tree.column("#1",minwidth=0,width=150, stretch='NO')
 		self.summary_pn_tree.heading("#2", text="Qty")
-		self.summary_pn_tree.column("#2",minwidth=0,width=150, stretch='NO')
+		self.summary_pn_tree.column("#2",minwidth=0,width=50, stretch='NO')
 
-		self.summary_pn_tree.tag_configure('header_row', background='blue', foreground='white')
-		
+		self.summary_pn_tree.tag_configure('header_row', background='gray24', foreground='white')
+
+		summary_pn_tree_scrollbar = Scrollbar(self.summary_frame, command=self.summary_pn_tree.yview)
+		summary_pn_tree_scrollbar.grid(row=2, column=6, sticky='nsew')
+		self.summary_pn_tree.config(yscrollcommand=summary_pn_tree_scrollbar.set)
+
 		self.summary_item_tree = ttk.Treeview(self.summary_item_frame,selectmode="extended",columns=("A"))
 		self.summary_item_tree.grid(row=2,column=0, columnspan=6,sticky="nsew")
 		self.summary_item_tree.heading("#0", text="Item")
-		self.summary_item_tree.column("#0",minwidth=0,width=150, stretch='NO')
+		self.summary_item_tree.column("#0",minwidth=0,width=250, stretch='NO')
 		self.summary_item_tree.heading("#1", text="Qty")
-		self.summary_item_tree.column("#1",minwidth=0,width=150, stretch='NO')
+		self.summary_item_tree.column("#1",minwidth=0,width=50, stretch='NO')
+
+		summary_item_tree_scrollbar = Scrollbar(self.summary_item_frame, command=self.summary_item_tree.yview)
+		summary_item_tree_scrollbar.grid(row=2, column=6, sticky='nsew')
+		self.summary_item_tree.config(yscrollcommand=summary_item_tree_scrollbar.set)
 
 	def setup_buttons(self):
 
@@ -387,8 +451,20 @@ class Add_Part_Window_Tk(object):
 
 		self.eel_dict = components_tk.get_all_components(self.mainapp, 'Emergency Equipment')
 		
+		#setup equipment type filters
+		self.equipment_filters = {'All': []}
+
+		for p in self.eel_dict['A320 Family']:
+			if self.mainapp.frames[p].backend.equipment_type not in self.equipment_filters.keys():
+				self.equipment_filters[self.mainapp.frames[p].backend.equipment_type] = []
+
+			self.equipment_filters[self.mainapp.frames[p].backend.equipment_type].append(p)
+			self.equipment_filters['All'].append(p)
+		self.equipment_filters = collections.OrderedDict(sorted(self.equipment_filters.items()))
+
 		self.data_checks = {}
 		self.setup_label_frames()
+
 		self.setup_widgets()
 
 		if self.mode == 'edit':
@@ -410,12 +486,14 @@ class Add_Part_Window_Tk(object):
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.main_frame, labels, row, 2, 20, 2, 2)
 		
-		self.location_combo = ttk.Combobox(self.main_frame, values=self.parent_eel.backend.locations)
+		self.location_combo = ttk.Combobox(self.main_frame, values=self.parent_eel.backend.locations, width=80)
 		self.location_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['Location'] = ['combo', self.location_combo, 'not empty', 'Location']
 
-		#self.type_combo = ttk.Combobox(self.main_frame, values=['Crash Axe'])
-		#self.type_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.type_combo = ttk.Combobox(self.main_frame, values=list(self.equipment_filters.keys()), state='readonly')
+		self.type_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.type_combo.current(list(self.equipment_filters.keys()).index('All'))
+		self.type_combo.bind("<<ComboboxSelected>>", self.filter_parts)
 
 		self.part_no_combo = ttk.Combobox(self.main_frame, values=self.eel_dict['A320 Family'], state='readonly')
 		self.part_no_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
@@ -432,6 +510,10 @@ class Add_Part_Window_Tk(object):
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
 		self.b.grid(row=11,column=4, pady=5,sticky="nsew")
+
+	def filter_parts(self, event):
+
+		self.part_no_combo['values'] = self.equipment_filters[self.type_combo.get()]
 
 	def cleanup(self, button):
 		
@@ -452,7 +534,17 @@ class Add_Part_Window_Tk(object):
 				
 				if self.mode != 'edit':
 					if self.location in self.layout.keys():
-						self.layout[self.location].append([self.type, self.part_no, self.location, self.qty])
+
+						#check if part number is already in this location
+						found = False
+						for idx, pn in enumerate(self.layout[self.location]):
+							if pn[1] == self.part_no:
+								found = True
+								self.qty = int(self.qty) + int(pn[3])
+								self.layout[self.location][idx] = [self.type, self.part_no, self.location, self.qty]
+						
+						if not found:
+							self.layout[self.location].append([self.type, self.part_no, self.location, self.qty])
 					else:
 						self.layout[self.location] = [[self.type, self.part_no, self.location, self.qty]]
 
@@ -464,6 +556,7 @@ class Add_Part_Window_Tk(object):
 							
 							if count == self.index:
 								self.layout[loc][idx] = [self.type, self.part_no, self.location, self.qty]
+							count += 1
 
 				self.top.destroy()
 

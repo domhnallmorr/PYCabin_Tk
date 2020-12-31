@@ -69,6 +69,7 @@ class EEL_Comparison_Backend():
 				'GoTo EEL': self.go_to_eel,
 				'Layout': self.layout,
 				'Instructions': self.instructions,
+				'BOM': self.bom,
 				'Comments': comments}
 
 	def gen_bom(self):
@@ -147,7 +148,48 @@ class EEL_Comparison_Backend():
 
 		#wb.save(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\eel.xlsx')
 		wb.save(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.14\eel.xlsx')
-		
+
+	def gen_parts_table(self):
+		parts_table = []
+
+		item_number = 1
+
+		for p in self.bom:
+			parts_table.append([self.bom[p], p, self.mainapp.frames[p].backend.description])
+
+			item_number += 1
+
+			#add attaching hardware
+			part=self.mainapp.frames[p].backend
+			for a in part.attaching_hardware:
+				qty = int(a[3])*self.bom[part.title]
+
+				parts_table.append([qty, a[2], a[1]])
+				item_number += 1
+
+		return parts_table
+
+
+	def gen_ipc_table(self):
+
+		ipc_table = []
+
+		item_number = 1
+
+		for p in self.bom:
+			ipc_table.append([item_number, p, self.mainapp.frames[p].backend.description, '', self.bom[p]])
+
+			item_number += 1
+
+			#add attaching hardware
+			part=self.mainapp.frames[p].backend
+			for a in part.attaching_hardware:
+				qty = int(a[3])*self.bom[part.title]
+
+				ipc_table.append([item_number, a[2], a[1], '', qty])
+				item_number += 1
+
+		return ipc_table		
 class EEL_Comparison_Saved_State():
 	def __init__(self, ohsc):
 

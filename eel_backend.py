@@ -6,6 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 
 import copy
+import collections
 
 def setup_variables(w):
 	w.type = 'EEL'
@@ -27,6 +28,7 @@ def update_variables(self, source):
 	self.ohsc = source.ohsc
 	self.locations = copy.deepcopy(source.locations)
 	self.layout = copy.deepcopy(source.layout)
+	self.layout = collections.OrderedDict(sorted(self.layout.items()))#sort by location
 	self.summary = copy.deepcopy(source.summary)
 	self.summary_table = copy.deepcopy(source.summary_table)
 
@@ -35,7 +37,8 @@ def update_variables(self, source):
 
 	if source.aircraft_type in ['A320']:
 		self.treeview_node = 'A320 EELs'
-		
+	
+
 class EEL_Backend():
 
 	def __init__(self, parent_page, controller):
@@ -56,6 +59,7 @@ class EEL_Backend():
 			self.controller.states.component_updated(type, self, EEL_Saved_State, reset_redo)
 			
 		update_variables(self, source)
+		self.update_locations()
 
 	def gen_save_dict(self, comments_from_text_widget = True, comments = None):
 
@@ -288,7 +292,38 @@ class EEL_Backend():
 				data.append([loc, item_type, part_no, qty])
 		
 		return data
-		
+	
+	def update_locations(self):
+
+		locations = ['Cockpit', 'Each Seat']
+
+		if self.lopa != None:
+			lopa = self.mainapp.frames[self.lopa].backend
+
+			#check lavs
+			for l in lopa.lavs:
+				if l[1] == 'Yes':
+					if l[3] == 'Yes':
+						locations.append(f'{l[0]} CAS')
+					if l[4] == 'Yes':
+						locations.append(f'{l[0]} Doghouse')
+						
+					locations.append(f'{l[0]} Bulkhead')
+
+
+			for g in lopa.galleys:
+				if g[1] == 'Yes':
+					locations.append(g[0])
+
+		if self.ohsc != None:
+			o = self.mainapp.frames[self.ohsc].backend
+
+			for side in ['LHS', 'RHS']:
+				for ohsc_bin in o.layout[side]:
+					locations.append(f'OHSC {side} {ohsc_bin[2]} - {ohsc_bin[3]}')
+
+		self.locations = sorted(locations)
+
 class EEL_Saved_State():
 	def __init__(self, ohsc):
 

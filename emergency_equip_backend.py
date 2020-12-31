@@ -11,8 +11,9 @@ def setup_variables(w):
 	w.attaching_hardware = []
 	w.weight= 0
 
-	w.available_equipment= ['Crash Axe', 'ELT', 'Fire Extinguisher', 'Flashlight', 'Life Vest', 'Life Vest Crew', 'Life Vest Infant',
-							'Manual Release Tool', 'Megaphone', 'PBE']	
+	w.available_equipment= ['Crash Axe', 'Defibrillator', 'ELT', 'Fire Extinguisher', 'First Aid Kit', 'Flashlight', 'Life Line', 
+							'Life Raft', 'Life Vest', 'Life Vest Crew', 'Life Vest Infant',
+							'Manual Release Tool', 'Medical Kit', 'Megaphone', 'PBE', 'Seat Belt', 'Seat Belt Infant', 'Survival Kit']	
 
 def update_variables(w, source):
 
@@ -26,7 +27,8 @@ def update_variables(w, source):
 
 	if w.aircraft_type in ['A320', 'A319']:
 		w.treeview_node = 'A320 EE'
-	
+
+
 class Emergency_Equip_Backend():
 
 	def __init__(self, parent_page, controller):

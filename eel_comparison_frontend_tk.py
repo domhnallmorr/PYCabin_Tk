@@ -8,13 +8,17 @@ import gui_styles_tk
 import components_tk
 
 import eel_comparison_backend as eel_comp_bk
+import eel_draw
 import double_scrollbar
 import comment_box
 import data_input_checks_tk
 import file_menu
+import word_export
+
 
 import copy
 import treeview_functions
+import time
 
 class EEL_Comparison_Page_Tk(tk.Frame):
 
@@ -43,12 +47,14 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.instructions_tab = Frame(self.note)
 		self.bom_tab = Frame(self.note)
 		self.comparison_tab = Frame(self.note)
+		self.weight_tab = Frame(self.note)
 		self.comments_tab = Frame(self.note)
 		
 		self.note.add(self.main_tab, text = "Main")
 		self.note.add(self.instructions_tab, text = "Instructions")
 		self.note.add(self.bom_tab, text = "BOM")
 		self.note.add(self.comparison_tab, text = "Comparisons")
+		self.note.add(self.weight_tab, text = "OHSC Weight")
 		self.note.add(self.comments_tab, text = "Comments")
 		
 		#self.note.grid(row=1,column=0,sticky='NSEW')
@@ -61,8 +67,9 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text="EEL Details:")
 		self.main_frame.grid(row=2, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)		
 
-		self.parts_frame = LabelFrame(self.main_scroll_frame.inner,text="EEL Details:")
-		self.parts_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)		
+		self.parts_frame = LabelFrame(self.main_scroll_frame.inner,text="EEL Parts:")
+		self.parts_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
+
 		self.instr_frame = LabelFrame(self.inst_scroll_frame.inner,text="Instructions:")
 		self.instr_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
 
@@ -74,7 +81,10 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 		self.bom_frame = LabelFrame(self.bom_scroll_frame.inner,text="BOM:")
 		self.bom_frame.grid(row=3, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
-		
+
+		self.ohsc_frame = LabelFrame(self.ohsc_scroll_frame.inner,text="OHSCs:")
+		self.ohsc_frame.grid(row=3, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
 	def setup_labels(self):
 
 		#self.top_label = tk.Label(self, text=('EEL Layout: '),font=self.mainapp.title_font)
@@ -98,15 +108,19 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.eel_tree = ttk.Treeview(self.parts_frame,selectmode="extended",columns=("A","B",'C','D'), height=25)
 		self.eel_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
 		self.eel_tree.heading("#0", text="Item")
-		self.eel_tree.column("#0",minwidth=0,width=150, stretch='NO')
+		self.eel_tree.column("#0",minwidth=0,width=250, stretch='NO')
 		self.eel_tree.heading("#1", text="Part Number")
 		self.eel_tree.column("#1",minwidth=0,width=150, stretch='NO')
 		self.eel_tree.heading("#2", text="Location")
 		self.eel_tree.column("#2",minwidth=0,width=150, stretch='NO')
 		self.eel_tree.heading("#3", text="Qty")
-		self.eel_tree.column("#3",minwidth=0,width=150, stretch='NO')
+		self.eel_tree.column("#3",minwidth=0,width=50, stretch='NO')
 		self.eel_tree.heading("#4", text="Existing/New")
 		self.eel_tree.column("#4",minwidth=0,width=150, stretch='NO')
+
+		eel_tree_scrollbar = Scrollbar(self.parts_frame, command=self.eel_tree.yview)
+		eel_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
+		self.eel_tree.config(yscrollcommand=eel_tree_scrollbar.set)
 
 		self.instructions_tree = ttk.Treeview(self.instr_frame,selectmode="extended",columns=("A","B"), height=25)
 		self.instructions_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
@@ -114,6 +128,10 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.instructions_tree.column("#0",minwidth=0,width=50, stretch='NO')
 		self.instructions_tree.heading("#1", text="Instruction")
 		self.instructions_tree.column("#1",minwidth=0,width=550, stretch='NO')
+
+		instructions_tree_scrollbar = Scrollbar(self.instr_frame, command=self.instructions_tree.yview)
+		instructions_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
+		self.instructions_tree.config(yscrollcommand=instructions_tree_scrollbar.set)
 
 		self.comp_item_tree = ttk.Treeview(self.comp_item_frame,selectmode="extended",columns=("A","B",'C'), height=25)
 		self.comp_item_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
@@ -125,7 +143,11 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.comp_item_tree.column("#2",minwidth=0,width=150, stretch='NO')
 		self.comp_item_tree.heading("#3", text="Delta")
 		self.comp_item_tree.column("#3",minwidth=0,width=150, stretch='NO')
-		
+
+		comp_item_tree_scrollbar = Scrollbar(self.comp_item_frame, command=self.comp_item_tree.yview)
+		comp_item_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
+		self.comp_item_tree.config(yscrollcommand=comp_item_tree_scrollbar.set)
+
 		self.comp_item_tree.tag_configure('positive', background=self.mainapp.green_color, foreground='black')
 		self.comp_item_tree.tag_configure('negative', background=self.mainapp.red_color, foreground='white')
 		self.comp_item_tree.tag_configure('none', background=self.mainapp.grey_color, foreground='white')
@@ -146,6 +168,10 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.comp_part_tree.tag_configure('positive', background=self.mainapp.green_color, foreground='black')
 		self.comp_part_tree.tag_configure('negative', background=self.mainapp.red_color, foreground='white')
 
+		comp_part_tree_scrollbar = Scrollbar(self.comp_part_frame, command=self.comp_part_tree.yview)
+		comp_part_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
+		self.comp_part_tree.config(yscrollcommand=comp_part_tree_scrollbar.set)
+
 		self.bom_tree = ttk.Treeview(self.bom_frame,selectmode="extended",columns=("A","B"), height=25)
 		self.bom_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
 		self.bom_tree.heading("#0", text="Part Number")
@@ -154,7 +180,61 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.bom_tree.column("#1",minwidth=0,width=150, stretch='NO')
 		self.bom_tree.heading("#2", text="Qty")
 		self.bom_tree.column("#2",minwidth=0,width=150, stretch='NO')
-		
+
+		bom_tree_scrollbar = Scrollbar(self.bom_frame, command=self.bom_tree.yview)
+		bom_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
+		self.bom_tree.config(yscrollcommand=bom_tree_scrollbar.set)
+
+		tree_height = 15
+		self.LHS_ohsc_tree = ttk.Treeview(self.ohsc_frame,selectmode="extended",columns=("A","B",'C','D','E','F'),height = tree_height)
+		self.LHS_ohsc_tree.grid(row=1,column=0, sticky="nsew")
+		self.LHS_ohsc_tree.heading("#0", text="#")
+		self.LHS_ohsc_tree.column("#0",minwidth=0,width=50, stretch='NO')
+		self.LHS_ohsc_tree.heading("A", text="Part Number")   
+		self.LHS_ohsc_tree.column("A",minwidth=0,width=250, stretch='NO') 
+		self.LHS_ohsc_tree.heading("B", text="Start Frame")  
+		self.LHS_ohsc_tree.column("B",minwidth=0,width=100, stretch='NO')
+		self.LHS_ohsc_tree.heading("C", text="End Frame")   
+		self.LHS_ohsc_tree.column("C",minwidth=0,width=100, stretch='NO')
+		self.LHS_ohsc_tree.heading("D", text="Weight Limit (lbs)")   
+		self.LHS_ohsc_tree.column("D",minwidth=0,width=120, stretch='NO')
+		self.LHS_ohsc_tree.heading("E", text="Installed Weight (lbs)")   
+		self.LHS_ohsc_tree.column("E",minwidth=0,width=120, stretch='NO')
+		self.LHS_ohsc_tree.heading("F", text="Delta (lbs)")   
+		self.LHS_ohsc_tree.column("F",minwidth=0,width=120, stretch='NO')
+
+		self.LHS_ohsc_tree.tag_configure('negative', background=self.mainapp.green_color, foreground='black')#limit greater than installed
+		self.LHS_ohsc_tree.tag_configure('positive', background=self.mainapp.red_color, foreground='white')
+
+		LHS_ohsc_tree_scrollbar = Scrollbar(self.ohsc_frame, command=self.LHS_ohsc_tree.yview)
+		LHS_ohsc_tree_scrollbar.grid(row=1, column=1, sticky='nsew')
+		self.LHS_ohsc_tree.config(yscrollcommand=LHS_ohsc_tree_scrollbar.set)
+
+
+		self.RHS_ohsc_tree = ttk.Treeview(self.ohsc_frame,selectmode="extended",columns=("A","B",'C','D','E','F'),height = tree_height)
+		self.RHS_ohsc_tree.grid(row=1,column=2, sticky="nsew")
+		self.RHS_ohsc_tree.heading("#0", text="#")
+		self.RHS_ohsc_tree.column("#0",minwidth=0,width=50, stretch='NO')
+		self.RHS_ohsc_tree.heading("A", text="Part Number")   
+		self.RHS_ohsc_tree.column("A",minwidth=0,width=250, stretch='NO') 
+		self.RHS_ohsc_tree.heading("B", text="Start Frame")  
+		self.RHS_ohsc_tree.column("B",minwidth=0,width=100, stretch='NO')
+		self.RHS_ohsc_tree.heading("C", text="End Frame")   
+		self.RHS_ohsc_tree.column("C",minwidth=0,width=100, stretch='NO')
+		self.RHS_ohsc_tree.heading("D", text="Weight Limit (lbs)")   
+		self.RHS_ohsc_tree.column("D",minwidth=0,width=120, stretch='NO')
+		self.RHS_ohsc_tree.heading("E", text="Installed Weight (lbs)")   
+		self.RHS_ohsc_tree.column("E",minwidth=0,width=120, stretch='NO')
+		self.RHS_ohsc_tree.heading("F", text="Delta (lbs)")   
+		self.RHS_ohsc_tree.column("F",minwidth=0,width=120, stretch='NO')
+
+		self.RHS_ohsc_tree.tag_configure('negative', background=self.mainapp.green_color, foreground='black')#limit greater than installed
+		self.RHS_ohsc_tree.tag_configure('positive', background=self.mainapp.red_color, foreground='white')
+
+		LHS_ohsc_tree_scrollbar = Scrollbar(self.ohsc_frame, command=self.RHS_ohsc_tree.yview)
+		LHS_ohsc_tree_scrollbar.grid(row=1, column=3, sticky='nsew')
+		self.RHS_ohsc_tree.config(yscrollcommand=LHS_ohsc_tree_scrollbar.set)
+
 	def update_component(self, window, type):
 		self.backend.update_component(window, type)
 
@@ -170,8 +250,8 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		self.top_label.config(text=f'EEL Comparison: {self.backend.title}')
 		self.ac_type_label.config(text=f' Aircraft Type: {self.backend.aircraft_type}')
 		self.description_label.config(text=f' Description: {self.backend.description}')
-		self.current_label.config(text=f' LOPA: {self.backend.current_eel}')
-		self.goto_label.config(text=f' OHSC: {self.backend.go_to_eel}')
+		self.current_label.config(text=f' Current EEL: {self.backend.current_eel}')
+		self.goto_label.config(text=f' Go-To EEL: {self.backend.go_to_eel}')
 
 	def setup_scrollable_frames(self):
 		### Canvas widgets (for vertical scrollbar)
@@ -187,18 +267,31 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 		self.bom_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.bom_tab, self.mainapp)
 		self.bom_scroll_frame.pack(fill=tk.BOTH, expand=True)
-		
+
+		self.ohsc_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.weight_tab, self.mainapp)
+		self.ohsc_scroll_frame.pack(fill=tk.BOTH, expand=True)
+
 	def setup_buttons(self):
 		
 		self.edit_btn = Button(self.main_scroll_frame.inner, text = 'Edit', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.edit())
 		self.edit_btn.grid(row=1, column=0, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
-		self.comp_btn = Button(self.main_scroll_frame.inner, text = 'Gen Final Layout', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.gen_final_layout())
+		self.comp_btn = Button(self.main_scroll_frame.inner, text = 'Gen Final Layout', image = self.mainapp.mag_icon2, compound = LEFT, width = 30, command= lambda: self.gen_final_layout())
 		self.comp_btn.grid(row=1, column=1, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
-		self.excel_btn = Button(self.main_scroll_frame.inner, text = 'Export to Excel', image = self.mainapp.edit_icon2, compound = LEFT, width = 30, command= lambda: self.export_excel())
-		self.excel_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
-		
+		self.dxf_btn = Button(self.main_scroll_frame.inner, text = 'Export to DXF', image = self.mainapp.cad_icon2, compound = LEFT, width = 30, command= lambda: self.export_dxf())
+		self.dxf_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+
+		self.word_btn = Button(self.main_scroll_frame.inner, text = 'Export to Word', image = self.mainapp.word_icon2, compound = LEFT, width = 30, command= lambda: self.export_word())
+		self.word_btn.grid(row=1, column=3, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+
+		self.excel_btn = Button(self.main_scroll_frame.inner, text = 'Export to Excel', image = self.mainapp.excel_icon2, compound = LEFT, width = 30, command= lambda: self.export_excel())
+		self.excel_btn.grid(row=1, column=4, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+
+		self.edit_comment_button=Button(self.comments_tab,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
+										command= lambda self=self :comment_box.edit_comments(self))
+		self.edit_comment_button.grid(row=0,column=0, pady=5,sticky="nsew", ipadx=2, ipady=2)
+
 	def edit(self):
 
 		pass
@@ -213,7 +306,11 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 		# identify item types
 		go_to = self.mainapp.frames[self.backend.go_to_eel]
-		current = self.mainapp.frames[self.backend.current_eel]
+
+		if self.backend.current_eel != None:
+			current = self.mainapp.frames[self.backend.current_eel]
+		else:
+			current = None
 		go_to.backend.gen_summary_dict()
 
 		# loop through each item, track user input
@@ -232,9 +329,12 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		instructions_count = 1
 
 		for item in go_to.backend.summary:
-			print(item)
+			
 			self.w=Gen_Layout_Window_Tk(self.mainapp, self.master, self, item)
-			self.master.wait_window(self.w.top)
+			if self.w.current_parts_avail:
+				self.master.wait_window(self.w.top)
+			else:
+				self.w.cleanup('ok')
 
 			if self.w.button == 'cancel':
 				canceled = True
@@ -247,13 +347,13 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 					for part in self.w.layout[loc]:
 						w.layout[loc].append(part)
 
-					for idx, part in enumerate(self.w.instructions):
-						part[0] =instructions_count
-						instructions_count += 1
-						w.instructions.append(part)
+				for idx, part in enumerate(self.w.instructions):
+					part[0] =instructions_count
+					instructions_count += 1
+					w.instructions.append(part)
 
-					for part in self.w.bom:
-						w.bom[part] = self.w.bom[part]
+				for part in self.w.bom:
+					w.bom[part] = self.w.bom[part]
 
 		self.update_component(w, 'edit')
 
@@ -269,10 +369,12 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 			treeview_functions.write_data_to_treeview(self.instructions_tree, 'replace', self.backend.instructions)
 		
 		go_to_eel = self.mainapp.frames[self.backend.go_to_eel]
-		item_comparison, parts_comparison = go_to_eel.backend.compare_eels(self.mainapp.frames[self.backend.current_eel].backend)
+
+		if self.backend.current_eel != None:
+			item_comparison, parts_comparison = go_to_eel.backend.compare_eels(self.mainapp.frames[self.backend.current_eel].backend)
 		
-		treeview_functions.write_data_to_treeview(self.comp_item_tree, 'replace', item_comparison)
-		treeview_functions.write_data_to_treeview(self.comp_part_tree, 'replace', parts_comparison)
+			treeview_functions.write_data_to_treeview(self.comp_item_tree, 'replace', item_comparison)
+			treeview_functions.write_data_to_treeview(self.comp_part_tree, 'replace', parts_comparison)
 
 		for tree in [self.comp_item_tree, self.comp_part_tree]:
 			for child in tree.get_children():
@@ -285,8 +387,7 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 						tree.item(child,tag='negative')
 				
 		# update BOM table
-		print('@'*20)
-		print(self.backend.bom)
+
 		data = []
 		for part in self.backend.bom:
 			part = self.mainapp.frames[part].backend
@@ -300,6 +401,56 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 			
 		treeview_functions.write_data_to_treeview(self.bom_tree, 'replace', data)
 
+		# update OHSC Table
+
+		
+		go_to = self.mainapp.frames[self.backend.go_to_eel]
+		ohsc = self.mainapp.frames[go_to.backend.ohsc].backend
+
+		trees = {'LHS': self.LHS_ohsc_tree, 'RHS': self.RHS_ohsc_tree}
+		for side in ['LHS', 'RHS']:
+			data = []
+			for o in ohsc.layout[side]:
+
+				data.append(copy.deepcopy(o))
+
+				bin_frame = f'OHSC {side} {o[2]} - {o[3]}'
+
+				limit = float(o[4])
+				bin_weight = 0
+
+				if bin_frame in self.backend.layout:
+
+					for p in self.backend.layout[bin_frame]:
+						part = self.mainapp.frames[p[1]].backend
+
+						weight = float(part.weight)
+
+						bin_weight += weight
+						
+				delta = bin_weight - limit
+				data[-1].append(bin_weight)
+				data[-1].append(delta)
+
+			treeview_functions.write_data_to_treeview(trees[side], 'replace', data)
+
+			for child in trees[side].get_children():
+				if float(trees[side].item(child, 'values')[-1]) <= 0:
+					trees[side].item(child,tag='negative')
+				else:
+					trees[side].item(child,tag='positive')
+
+	def export_dxf(self):
+
+		eel_draw.gen_dxf(self)
+
+	def export_word(self):
+
+		mode = 'edit'
+		
+		self.w=word_export.Export_Word_Window(self.mainapp, self.master, mode, self)
+		self.master.wait_window(self.w.top)
+		
 class Edit_EEL_Comparison_Window_Tk(object):
 	def __init__(self, mainapp, master, mode, parent_page):
 		#self.drawing_dictionary = drawing_dictionary
@@ -345,6 +496,7 @@ class Edit_EEL_Comparison_Window_Tk(object):
 		self.ac_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.ac_combo.set('A320')
 
+		self.eel_dict['A320'].insert(0, '')
 		self.current_combo= ttk.Combobox(self.details_frame, values=self.eel_dict['A320'], state='readonly')
 		self.current_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 
@@ -369,6 +521,10 @@ class Edit_EEL_Comparison_Window_Tk(object):
 			self.aircraft_type = self.ac_combo.get()
 			self.description = self.description_entry.get()
 			self.current_eel = self.current_combo.get()
+
+			if self.current_eel == '':
+				self.current_eel = None
+
 			self.go_to_eel = self.goto_combo.get()
 			self.top.destroy()
 
@@ -388,11 +544,16 @@ class Gen_Layout_Window_Tk(object):
 		self.total_required = 0
 		self.total_selected = 0
 
-		self.current_eel = self.mainapp.frames[self.parent_page.backend.current_eel]
-		self.go_to_eel = self.mainapp.frames[self.parent_page.backend.go_to_eel]
+		if self.parent_page.backend.current_eel != None:
+			self.current_eel = self.mainapp.frames[self.parent_page.backend.current_eel]
+			self.current_eel.backend.gen_summary_dict()
+		else:
+			self.current_eel = None
 
-		self.current_eel.backend.gen_summary_dict()
+		self.go_to_eel = self.mainapp.frames[self.parent_page.backend.go_to_eel]
 		self.go_to_eel.backend.gen_summary_dict()
+
+		self.check_if_current_parts_available()
 
 		self.combos = {'Current': {}, 'Go To': {}}
 		self.setup_scrollable_frames()
@@ -410,11 +571,25 @@ class Gen_Layout_Window_Tk(object):
 		self.top.geometry("1300x600")
 
 		self.button = 'cancel'
+
+		self.combo_callback(None)
 	def setup_scrollable_frames(self):
 		### Canvas widgets (for vertical scrollbar)
 
 		self.main_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.top, self.mainapp)
 		self.main_scroll_frame.pack(fill=tk.BOTH, expand=True)
+
+	def check_if_current_parts_available(self):
+
+		if self.parent_page.backend.current_eel == None:
+			self.current_parts_avail = False
+		else:
+			current_locations = self.current_eel.backend.get_item_locations(self.item)
+
+			if len(current_locations) == 0:
+				self.current_parts_avail = False
+			else:
+				self.current_parts_avail = True
 
 	def setup_label_frames(self):
 
@@ -433,17 +608,18 @@ class Gen_Layout_Window_Tk(object):
 		#setup label frame for each location to be process
 		self.locations = self.go_to_eel.backend.get_item_locations(self.item)
 		
-		current_locations = self.current_eel.backend.get_item_locations(self.item)
-		
-		for loc in current_locations:
-			if loc not in self.locations:
-				self.locations.append(loc)
+		if self.current_eel:
+			current_locations = self.current_eel.backend.get_item_locations(self.item)
+			
+			for loc in current_locations:
+				if loc not in self.locations:
+					self.locations.append(loc)
 		
 		self.locations_frames = {}
 		for loc in self.locations:
 			lf = LabelFrame(self.main_scroll_frame.inner,text=loc)
 			self.locations_frames[loc] = lf
-			lf.grid(row=self.label_frame_row, column=0, columnspan = 3, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+			lf.grid(row=self.label_frame_row, column=0, columnspan = 3, rowspan = 1,sticky='NW',padx=5, pady=25, ipadx=2, ipady=5)
 			self.label_frame_row += 1
 
 
@@ -467,20 +643,22 @@ class Gen_Layout_Window_Tk(object):
 		ttk.Label(self.current_frame, text="Selected Qty").grid(row = 0, column = 3, columnspan=1, padx=10)
 
 		row = 1
-		if self.item in self.current_eel.backend.summary.keys():
-			for part_no in self.current_eel.backend.summary[self.item]:
 
-				tk.Label(self.current_frame,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
+		if self.current_eel:
+			if self.item in self.current_eel.backend.summary.keys():
+				for part_no in self.current_eel.backend.summary[self.item]:
 
-				qty = self.current_eel.backend.summary[self.item][part_no]
+					tk.Label(self.current_frame,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
 
-				tk.Label(self.current_frame,text=qty,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 2, sticky = 'W')
+					qty = self.current_eel.backend.summary[self.item][part_no]
 
-				label = tk.Label(self.current_frame,text='0',bg="white",borderwidth=2, relief="groove",width=20)
-				label.grid(row = row, column = 3, sticky = 'W')
+					tk.Label(self.current_frame,text=qty,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 2, sticky = 'W')
 
-				self.total_labels['Current'][part_no] = {'Available': qty, 'Label': label}
-				row += 1
+					label = tk.Label(self.current_frame,text='0',bg="white",borderwidth=2, relief="groove",width=20)
+					label.grid(row = row, column = 3, sticky = 'W')
+
+					self.total_labels['Current'][part_no] = {'Available': qty, 'Label': label}
+					row += 1
 		# Go To
 		ttk.Label(self.goto_frame, text="Part Number").grid(row = 0, column = 1, columnspan=1, padx=10)
 		ttk.Label(self.goto_frame, text="Selected Qty").grid(row = 0, column = 2, columnspan=1, padx=10)
@@ -528,37 +706,39 @@ class Gen_Layout_Window_Tk(object):
 			label.grid(row = 0, column = 1, columnspan=2, padx=10)
 
 			label = ttk.Label(lf, text="New Items")
-			label.grid(row = 0, column = 3, columnspan=2, padx=10)
+			label.grid(row = 0, column = 4, columnspan=2, padx=10)
 
 			label = ttk.Label(lf, text="Total Required Qty")
-			label.grid(row = 0, column = 5, padx=10)
+			label.grid(row = 0, column = 7, padx=10)
 
 			label = ttk.Label(lf, text="Total Selected Qty")
-			label.grid(row = 0, column = 6, padx=10)
+			label.grid(row = 0, column = 8, padx=10)
 
 			# Add Current Parts
 			
-			item_part_nos = self.current_eel.backend.get_item_part_no_by_location(self.item)
-			
-			row = 1
-
-			if loc in item_part_nos.keys():
-				for part_no in item_part_nos[loc]:
+			if self.current_eel:
+				item_part_nos = self.current_eel.backend.get_item_part_no_by_location(self.item)
 				
-		#	for part_no in self.current_eel.backend.summary[self.item]:
+				row = 1
 
-					tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
+				if loc in item_part_nos.keys():
+					for part_no in item_part_nos[loc]:
 
-					q = self.current_eel.backend.summary[self.item][part_no]
-					c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
-					c.grid(row = row, column = 2, sticky = 'W', padx=10)
-					c.set(0)
+						tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
 
-					c.bind('<<ComboboxSelected>>',
-							lambda event: self.combo_callback(event))
+						for p in self.current_eel.backend.layout[loc]:
+							if p[1] == part_no:
+								q = int(p[3])
+						#q = self.current_eel.backend.summary[self.item][part_no]
+						c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
+						c.grid(row = row, column = 2, sticky = 'W', padx=15)
+						c.set(0)
 
-					self.combos[loc]['Current'][part_no] = c
-					row += 1
+						c.bind('<<ComboboxSelected>>',
+								lambda event: self.combo_callback(event))
+
+						self.combos[loc]['Current'][part_no] = c
+						row += 1
 
 			#Add Go To Parts
 
@@ -567,17 +747,23 @@ class Gen_Layout_Window_Tk(object):
 
 			item_part_nos = self.go_to_eel.backend.get_item_part_no_by_location(self.item)
 			
+			tk.Label(lf,width=15).grid(row = 1, column = 3, sticky = 'W') #dummy  label to add blank space
+
 			if loc in item_part_nos.keys():
 				for part_no in item_part_nos[loc]:
 
-					tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 3, sticky = 'W')
+					tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 4, sticky = 'W')
 
 					q = item_part_nos[loc][part_no]
 
 					total_qty += q
 					c = ttk.Combobox(lf, values=[q for q in range(q+1)], state='readonly')
-					c.grid(row = row, column = 4, sticky = 'W', padx=10)
+					c.grid(row = row, column = 5, sticky = 'W', padx=15)
+
 					c.set(0)
+
+					if not self.current_parts_avail:
+						c.set(q)
 
 					c.bind('<<ComboboxSelected>>',
 							lambda event: self.combo_callback(event))
@@ -586,13 +772,16 @@ class Gen_Layout_Window_Tk(object):
 					row += 1
 
 			# Add Total 
+
+			tk.Label(lf,width=15).grid(row = 1, column = 6, sticky = 'W') #dummy  label to add blank space
+
 			self.combos[loc]['Total Required'] = total_qty
 			#Total Required
-			tk.Label(lf,text=total_qty,bg="white",borderwidth=2, relief="groove",width=20).grid(row = 1, column = 5, sticky = 'W')
+			tk.Label(lf,text=total_qty,bg="white",borderwidth=2, relief="groove",width=20).grid(row = 1, column = 7, sticky = 'W')
 
 			# Total Selected
 			label = tk.Label(lf, text="0",bg='SteelBlue1',borderwidth=2, relief="groove",width=20)
-			label.grid(row = 1, column = 6, padx=10)
+			label.grid(row = 1, column = 8, padx=15)
 
 			self.combos[loc]['Total Selected Label'] = label
 
@@ -673,26 +862,6 @@ class Gen_Layout_Window_Tk(object):
 				data_ok = False
 				msg = f'Total Selected Parts Must be Equal to {required}.\n Current Selected Qty is {selected}'
 
-			# # Check total selected for each location is correct
-			# for loc in self.combos:
-				# required = int(self.combos[loc]['Total Required'])
-				# selected = int(self.combos[loc]['Total Selected Label'].cget('text'))
-				# if required != selected:
-					# data_ok = False	
-					# msg = f'Total Selected Parts for {loc} Must be Equal to {required}.\n Current Selected Qty is {selected}'
-					# break
-
-			# # Check not to many current parts selected
-			# if data_ok:
-
-				# for part_no in self.total_labels['Current']:
-					# available = int(self.total_labels['Current'][part_no]['Available'])
-					# selected = int(self.total_labels['Current'][part_no]['Label'].cget('text'))
-
-					# if selected > available:
-						# data_ok = False	
-						# msg = f'Total Selected Current Parts for {part_no} Must not be greater than {available}.\n Current Selected Qty is {selected}'
-						# break
 
 			if not data_ok:
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
@@ -742,6 +911,7 @@ class Gen_Layout_Window_Tk(object):
 						
 					self.layout[loc].append([self.item, part_no, loc, qty_selected, 'Existing'])
 					self.instructions.append([instructions_count ,f'x{qty_selected} {part_no} ({self.item}) Remains Installed in {loc}'])
+
 					instructions_count += 1
 		# For locations in Current EEL, not present in the Go To EEL, Add those parts to the leftovers
 
@@ -782,6 +952,7 @@ class Gen_Layout_Window_Tk(object):
 					if qty_required > 0:
 						self.layout[loc].append([self.item, part_no, loc, qty_selected, 'New'])	
 						self.instructions.append([instructions_count ,f'Install x{qty_selected} {part_no} ({self.item}) in {loc}'])
+	
 						instructions_count += 1
 						
 						if part_no not in self.bom.keys():
@@ -808,6 +979,7 @@ class Gen_Layout_Window_Tk(object):
 						self.layout[loc].append([self.item, part[0], loc, qty_required, 'Existing'])
 						
 						self.instructions.append([instructions_count ,f'Relocate x{qty_required} {part[0]} ({self.item}) from {part[1]} to {loc}'])
+						
 						instructions_count += 1
 						
 						current_leftovers[idx][2] += qty_required*-1
@@ -818,6 +990,7 @@ class Gen_Layout_Window_Tk(object):
 
 						self.layout[loc].append([self.item, part[0], loc, qty_available, 'Existing'])
 						self.instructions.append([instructions_count ,f'Relocate x{qty_available} {part[0]} ({self.item}) from {part[1]} to {loc}'])
+					
 						instructions_count += 1
 						
 						current_leftovers[idx][2] += qty_available*-1
@@ -847,6 +1020,7 @@ class Gen_Layout_Window_Tk(object):
 
 						#Add to Instructions
 						self.instructions.append([instructions_count ,f'Install x{qty_required} {part[0]} ({self.item}) in {loc}'])
+						
 						
 						#Add to BOM
 						if part[0] not in self.bom.keys():

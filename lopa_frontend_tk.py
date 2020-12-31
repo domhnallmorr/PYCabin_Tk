@@ -37,7 +37,7 @@ def check_lopa_used(self):
 	eels = []
 	psu_dict = components_tk.get_all_components(self.mainapp, 'PSUs')
 	eel_dict = components_tk.get_all_components(self.mainapp, 'EELs')
-	
+	print(eel_dict)
 	for p in psu_dict['All']:
 		
 		if self.backend.title == self.mainapp.frames[p].backend.lopa:

@@ -29,7 +29,7 @@ def save(event=None, mainapp=None):
 
 def save_as(mainapp):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.15\test.json'
+	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.16\test.json'
 	#mainapp.save_file = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json'
 	write_save_file(mainapp)
 	
@@ -105,7 +105,7 @@ def write_save_file(mainapp):
 		
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.15\test.json') as f:
+	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.16\test.json') as f:
 	#with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
@@ -322,8 +322,8 @@ class Load():
 			self.current_eel = component_data["Current EEL"]			
 			self.go_to_eel = component_data["GoTo EEL"]						
 			self.layout = component_data["Layout"]
-			self.instructions = None
-			self.bom = {}
+			self.instructions = component_data["Instructions"]
+			self.bom = component_data['BOM']
 			self.comments = component_data["Comments"]		
 
 		if type == 'Change':

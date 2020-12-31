@@ -320,7 +320,39 @@ def delete_component(mainapp):
 			if used:
 				delete_ok = False
 				message = f'Cannot Delete {component.backend.type}\n Ensure it is not Installed in any existing LOPAs'
-				
+			
+		if component.backend.type == 'LOPA':
+
+			used, psus, eels = lopa_tk.check_lopa_used(component)
+			if used:
+				delete_ok = False
+
+				if len(psus) >0:
+					message = f'Cannot Delete {component.backend.type}\nEnsure it is not Installed in any existing PSU Layouts'
+				elif len(eels):
+					message = f'Cannot Delete {component.backend.type}\nEnsure it is not Installed in any existing Emergency Equipment Layouts'
+
+		if component.backend.type == 'OHSC':
+
+			used, eels = ohsc_tk.check_ohsc_used(component)
+			if used:
+				delete_ok = False
+				message = f'Cannot Delete {component.backend.type}\nEnsure it is not Installed in any existing Emergency Equipment Layouts'
+
+		if component.backend.type == 'Emergency Equipment':
+
+			used, eels = ee_tk.check_ee_used(component)
+			if used:
+				delete_ok = False
+				message = f'Cannot Delete {component.backend.type}\nEnsure it is not Installed in any existing Emergency Equipment Layouts'
+
+		if component.backend.type == 'EEL':
+
+			used, eels = eel_tk.check_eel_used(component)
+			if used:
+				delete_ok = False
+				message = f'Cannot Delete {component.backend.type}\nEnsure it is not Installed in any existing Emergency Equipment Layout Comparisons'
+
 		if delete_ok:
 			index = mainapp.main_treeview.index(component.treeview_iid)
 			delete_item_from_main_treeview(mainapp, component.backend.title, component.backend)
@@ -415,3 +447,4 @@ def get_treeview_node(backend):
 def update_treeview_iid(mainapp, component_frontend):
 
 	pass
+

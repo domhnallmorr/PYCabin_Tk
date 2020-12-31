@@ -6,7 +6,7 @@
         "Client": "4",
         "Current Operator": "5",
         "Go To Operator": "6",
-        "Comments": " Schw\u00e4bisch \n\n<b>\u0633\u064f\u0648\u06e1\u0631\u064e\u0629\u064f \u0627\u0644\u0641\u064e\u0627\u062a\u0650\u062d\u064e\u0629\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+        "Comments": " Schw\u00e4bisch \n\n<b>\u0633\u064f\u0648\u06e1\u0631\u064e\u0629\u064f \u0627\u0644\u0641\u064e\u0627\u062a\u0650\u062d\u064e\u0629\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
     },
     "Aircraft": [],
     "Seats": [
@@ -36,7 +36,7 @@
             "CMM Version": "1",
             "CMM Date": "Jan 1, 1900",
             "CMM Install": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "A320 Seat 2",
@@ -64,7 +64,7 @@
             "CMM Version": "",
             "CMM Date": "",
             "CMM Install": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         }
     ],
     "Windbreakers": [
@@ -89,7 +89,7 @@
             "CMM Date": "",
             "CMM Install": "",
             "CMM Remove": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "A320 WB RHS",
@@ -112,7 +112,7 @@
             "CMM Date": "",
             "CMM Install": "",
             "CMM Remove": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         }
     ],
     "LOPAs": [
@@ -1066,7 +1066,7 @@
                     "320"
                 ]
             ],
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         }
     ],
     "PSUs": [
@@ -3901,7 +3901,7 @@
                     ]
                 ]
             },
-            "Comments": "\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "Test",
@@ -6734,7 +6734,7 @@
                     ]
                 ]
             },
-            "Comments": "\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n"
         }
     ],
     "OHSCs": [
@@ -6930,7 +6930,7 @@
                     ]
                 ]
             },
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         }
     ],
     "Emergency Equipment": [
@@ -6942,17 +6942,17 @@
             "Attaching Hardware": [],
             "Weight": "0",
             "Manufacturer": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
-            "Title": "74-20",
+            "Title": "74-20 Rename",
             "Description": "Portable Halon Fire Extinguisher",
             "Aircraft Type": "A320 Family",
             "Equipment Type": "Fire Extinguisher - Halon",
             "Attaching Hardware": [],
             "Weight": "0",
             "Manufacturer": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "P0723E105PWF",
@@ -6962,7 +6962,7 @@
             "Attaching Hardware": [],
             "Weight": "0",
             "Manufacturer": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "802300-14",
@@ -6972,7 +6972,7 @@
             "Attaching Hardware": [],
             "Weight": "0",
             "Manufacturer": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "680-0040-000",
@@ -6982,7 +6982,7 @@
             "Attaching Hardware": [],
             "Weight": "0",
             "Manufacturer": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "FKK8-35KL",
@@ -6992,7 +6992,7 @@
             "Attaching Hardware": [],
             "Weight": "0",
             "Manufacturer": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "Current Crash Axe",
@@ -7002,7 +7002,7 @@
             "Attaching Hardware": [],
             "Weight": "0",
             "Manufacturer": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "Go To Crash Axe",
@@ -7012,7 +7012,174 @@
             "Attaching Hardware": [],
             "Weight": "0",
             "Manufacturer": "",
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "9700-C1A-BF23A",
+            "Description": "Portable Oxygen Cylinder",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Portable Oxygen Cylinder",
+            "Attaching Hardware": [],
+            "Weight": "10",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "E28180-10",
+            "Description": "Protective Breathing Equipment",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "PBE",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "52001-25",
+            "Description": "First Aid Kit",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "First Aid Kit",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "A12SA Rename",
+            "Description": "Megaphone",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Megaphone",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "P2-07-0001-214",
+            "Description": "Flashlight",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Flashlight",
+            "Attaching Hardware": [
+                [
+                    1,
+                    "Bracket",
+                    "a_bracket",
+                    "2"
+                ]
+            ],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "E60100-00",
+            "Description": "Manual Release Tool",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Manual Release Tool",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "289-1001",
+            "Description": "Demo First Aid Oxygen Mask",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Demo Oxygen Mask",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "P0640-101",
+            "Description": "Life Vest for Infant",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Life Vest Infant",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "2090-2-012-0585",
+            "Description": "Extension Seat Belt",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Extension Seat Belt",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "2090-5-012-0585",
+            "Description": "Infant Seat Belt",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Infant Seat Belt",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "52001-37",
+            "Description": "Medical Kit",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Medical Kit",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "9300E-201",
+            "Description": "Defibrillator",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Defibrillator",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "505256-401",
+            "Description": "Life Line",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Life Line",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "01N65920",
+            "Description": "ELT",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "ELT",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "R0372A301",
+            "Description": "Additional Life Raft",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Additional Life Raft",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "60128-103",
+            "Description": "Survival Kit",
+            "Aircraft Type": "A320 Family",
+            "Equipment Type": "Survival Kit",
+            "Attaching Hardware": [],
+            "Weight": "0",
+            "Manufacturer": "",
+            "Comments": "\n\n\n\n\n\n\n\n"
         }
     ],
     "EELs": [
@@ -7023,7 +7190,42 @@
             "LOPA": "A320 LOPA",
             "OHSC": "Std A320 OHSC Layout",
             "Locations": [
-                "Cockpit"
+                "Cockpit",
+                "Each Seat",
+                "Galley 1",
+                "Galley 5",
+                "Lav A Bulkhead",
+                "Lav A CAS",
+                "Lav D Bulkhead",
+                "Lav D CAS",
+                "Lav E Bulkhead",
+                "Lav E CAS",
+                "OHSC LHS 20 - 21",
+                "OHSC LHS 21 - 26",
+                "OHSC LHS 26 - 30",
+                "OHSC LHS 30 - 35",
+                "OHSC LHS 35 - 36",
+                "OHSC LHS 36 - OW_FWD",
+                "OHSC LHS 43 - 51",
+                "OHSC LHS 51 - 55",
+                "OHSC LHS 55 - 59",
+                "OHSC LHS 59 - 63",
+                "OHSC LHS 63 - 64",
+                "OHSC LHS OW_AFT - 43",
+                "OHSC LHS OW_FWD - OW_AFT",
+                "OHSC RHS 20 - 21",
+                "OHSC RHS 21 - 26",
+                "OHSC RHS 26 - 30",
+                "OHSC RHS 30 - 35",
+                "OHSC RHS 35 - 36",
+                "OHSC RHS 36 - OW_FWD",
+                "OHSC RHS 43 - 51",
+                "OHSC RHS 51 - 55",
+                "OHSC RHS 55 - 59",
+                "OHSC RHS 59 - 63",
+                "OHSC RHS 63 - 64",
+                "OHSC RHS OW_AFT - 43",
+                "OHSC RHS OW_FWD - OW_AFT"
             ],
             "Layout": {
                 "Cockpit": [
@@ -7085,7 +7287,7 @@
                     10
                 ]
             ],
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "Current Layout",
@@ -7094,7 +7296,42 @@
             "LOPA": "A320 LOPA",
             "OHSC": "Std A320 OHSC Layout",
             "Locations": [
-                "Cockpit"
+                "Cockpit",
+                "Each Seat",
+                "Galley 1",
+                "Galley 5",
+                "Lav A Bulkhead",
+                "Lav A CAS",
+                "Lav D Bulkhead",
+                "Lav D CAS",
+                "Lav E Bulkhead",
+                "Lav E CAS",
+                "OHSC LHS 20 - 21",
+                "OHSC LHS 21 - 26",
+                "OHSC LHS 26 - 30",
+                "OHSC LHS 30 - 35",
+                "OHSC LHS 35 - 36",
+                "OHSC LHS 36 - OW_FWD",
+                "OHSC LHS 43 - 51",
+                "OHSC LHS 51 - 55",
+                "OHSC LHS 55 - 59",
+                "OHSC LHS 59 - 63",
+                "OHSC LHS 63 - 64",
+                "OHSC LHS OW_AFT - 43",
+                "OHSC LHS OW_FWD - OW_AFT",
+                "OHSC RHS 20 - 21",
+                "OHSC RHS 21 - 26",
+                "OHSC RHS 26 - 30",
+                "OHSC RHS 30 - 35",
+                "OHSC RHS 35 - 36",
+                "OHSC RHS 36 - OW_FWD",
+                "OHSC RHS 43 - 51",
+                "OHSC RHS 51 - 55",
+                "OHSC RHS 55 - 59",
+                "OHSC RHS 59 - 63",
+                "OHSC RHS 63 - 64",
+                "OHSC RHS OW_AFT - 43",
+                "OHSC RHS OW_FWD - OW_AFT"
             ],
             "Layout": {
                 "Cockpit": [
@@ -7137,7 +7374,7 @@
                     4
                 ]
             ],
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         },
         {
             "Title": "Go To Layout",
@@ -7146,7 +7383,42 @@
             "LOPA": "A320 LOPA",
             "OHSC": "Std A320 OHSC Layout",
             "Locations": [
-                "Cockpit"
+                "Cockpit",
+                "Each Seat",
+                "Galley 1",
+                "Galley 5",
+                "Lav A Bulkhead",
+                "Lav A CAS",
+                "Lav D Bulkhead",
+                "Lav D CAS",
+                "Lav E Bulkhead",
+                "Lav E CAS",
+                "OHSC LHS 20 - 21",
+                "OHSC LHS 21 - 26",
+                "OHSC LHS 26 - 30",
+                "OHSC LHS 30 - 35",
+                "OHSC LHS 35 - 36",
+                "OHSC LHS 36 - OW_FWD",
+                "OHSC LHS 43 - 51",
+                "OHSC LHS 51 - 55",
+                "OHSC LHS 55 - 59",
+                "OHSC LHS 59 - 63",
+                "OHSC LHS 63 - 64",
+                "OHSC LHS OW_AFT - 43",
+                "OHSC LHS OW_FWD - OW_AFT",
+                "OHSC RHS 20 - 21",
+                "OHSC RHS 21 - 26",
+                "OHSC RHS 26 - 30",
+                "OHSC RHS 30 - 35",
+                "OHSC RHS 35 - 36",
+                "OHSC RHS 36 - OW_FWD",
+                "OHSC RHS 43 - 51",
+                "OHSC RHS 51 - 55",
+                "OHSC RHS 55 - 59",
+                "OHSC RHS 59 - 63",
+                "OHSC RHS 63 - 64",
+                "OHSC RHS OW_AFT - 43",
+                "OHSC RHS OW_FWD - OW_AFT"
             ],
             "Layout": {
                 "Cockpit": [
@@ -7175,7 +7447,568 @@
                     2
                 ]
             ],
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "Air Deccan",
+            "Description": "",
+            "Aircraft Type": "A320",
+            "LOPA": "A320 LOPA",
+            "OHSC": "Std A320 OHSC Layout",
+            "Locations": [
+                "Cockpit",
+                "Each Seat",
+                "Galley 1",
+                "Galley 5",
+                "Lav A Bulkhead",
+                "Lav A CAS",
+                "Lav D Bulkhead",
+                "Lav D CAS",
+                "Lav E Bulkhead",
+                "Lav E CAS",
+                "OHSC LHS 20 - 21",
+                "OHSC LHS 21 - 26",
+                "OHSC LHS 26 - 30",
+                "OHSC LHS 30 - 35",
+                "OHSC LHS 35 - 36",
+                "OHSC LHS 36 - OW_FWD",
+                "OHSC LHS 43 - 51",
+                "OHSC LHS 51 - 55",
+                "OHSC LHS 55 - 59",
+                "OHSC LHS 59 - 63",
+                "OHSC LHS 63 - 64",
+                "OHSC LHS OW_AFT - 43",
+                "OHSC LHS OW_FWD - OW_AFT",
+                "OHSC RHS 20 - 21",
+                "OHSC RHS 21 - 26",
+                "OHSC RHS 26 - 30",
+                "OHSC RHS 30 - 35",
+                "OHSC RHS 35 - 36",
+                "OHSC RHS 36 - OW_FWD",
+                "OHSC RHS 43 - 51",
+                "OHSC RHS 51 - 55",
+                "OHSC RHS 55 - 59",
+                "OHSC RHS 59 - 63",
+                "OHSC RHS 63 - 64",
+                "OHSC RHS OW_AFT - 43",
+                "OHSC RHS OW_FWD - OW_AFT"
+            ],
+            "Layout": {
+                "Cockpit": [],
+                "Lav A": [
+                    [
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav A",
+                        "2"
+                    ]
+                ],
+                "Lav A CAS": [
+                    [
+                        "Flashlight",
+                        "P2-07-0001-214",
+                        "Lav A CAS",
+                        "2"
+                    ],
+                    [
+                        "Manual Release Tool",
+                        "E60100-00",
+                        "Lav A CAS",
+                        "2"
+                    ]
+                ],
+                "Lav D": [
+                    [
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav D",
+                        "1"
+                    ]
+                ],
+                "Lav D Bulkhead": [
+                    [
+                        "Portable Oxygen Cylinder",
+                        "9700-C1A-BF23A",
+                        "Lav D Bulkhead",
+                        "2"
+                    ]
+                ],
+                "Lav D CAS": [
+                    [
+                        "Flashlight",
+                        "P2-07-0001-214",
+                        "Lav D CAS",
+                        "1"
+                    ],
+                    [
+                        "Manual Release Tool",
+                        "E60100-00",
+                        "Lav D CAS",
+                        "1"
+                    ]
+                ],
+                "Lav E": [
+                    [
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav E",
+                        "2"
+                    ]
+                ],
+                "Lav E Bulkhead": [
+                    [
+                        "Portable Oxygen Cylinder",
+                        "9700-C1A-BF23A",
+                        "Lav E Bulkhead",
+                        "2"
+                    ]
+                ],
+                "Lav E CAS": [
+                    [
+                        "Flashlight",
+                        "P2-07-0001-214",
+                        "Lav E CAS",
+                        "3"
+                    ],
+                    [
+                        "Manual Release Tool",
+                        "E60100-00",
+                        "Lav E CAS",
+                        "3"
+                    ]
+                ],
+                "OHSC LHS 21 - 26": [
+                    [
+                        "Portable Oxygen Cylinder",
+                        "9700-C1A-BF23A",
+                        "OHSC LHS 21 - 26",
+                        "2"
+                    ],
+                    [
+                        "Megaphone",
+                        "A12SA Rename",
+                        "OHSC LHS 21 - 26",
+                        "1"
+                    ],
+                    [
+                        "Life Vest Infant",
+                        "P0640-101",
+                        "OHSC LHS 21 - 26",
+                        "5"
+                    ],
+                    [
+                        "Life Vest Crew",
+                        "P0723E105PWF",
+                        "OHSC LHS 21 - 26",
+                        "5"
+                    ],
+                    [
+                        "Extension Seat Belt",
+                        "2090-2-012-0585",
+                        "OHSC LHS 21 - 26",
+                        "3"
+                    ],
+                    [
+                        "Infant Seat Belt",
+                        "2090-5-012-0585",
+                        "OHSC LHS 21 - 26",
+                        "5"
+                    ],
+                    [
+                        "Medical Kit",
+                        "52001-37",
+                        "OHSC LHS 21 - 26",
+                        "1"
+                    ]
+                ],
+                "OHSC LHS 59 - 63": [
+                    [
+                        "Demo Oxygen Mask",
+                        "289-1001",
+                        "OHSC LHS 59 - 63",
+                        "1"
+                    ],
+                    [
+                        "Life Vest Infant",
+                        "P0640-101",
+                        "OHSC LHS 59 - 63",
+                        "5"
+                    ],
+                    [
+                        "Life Vest Crew",
+                        "P0723E105PWF",
+                        "OHSC LHS 59 - 63",
+                        "5"
+                    ]
+                ],
+                "OHSC LHS 63 - 64": [
+                    [
+                        "Megaphone",
+                        "A12SA Rename",
+                        "OHSC LHS 63 - 64",
+                        "1"
+                    ]
+                ],
+                "OHSC LHS OW_FWD - OW_AFT": [
+                    [
+                        "Life Line",
+                        "505256-401",
+                        "OHSC LHS OW_FWD - OW_AFT",
+                        "2"
+                    ]
+                ],
+                "OHSC RHS 20 - 21": [
+                    [
+                        "Demo Oxygen Mask",
+                        "289-1001",
+                        "OHSC RHS 20 - 21",
+                        "2"
+                    ]
+                ],
+                "OHSC RHS 21 - 26": [
+                    [
+                        "First Aid Kit",
+                        "52001-25",
+                        "OHSC RHS 21 - 26",
+                        "1"
+                    ],
+                    [
+                        "Defibrillator",
+                        "9300E-201",
+                        "OHSC RHS 21 - 26",
+                        "1"
+                    ]
+                ],
+                "OHSC RHS 43 - 51": [],
+                "OHSC RHS 59 - 63": [
+                    [
+                        "Infant Seat Belt",
+                        "2090-5-012-0585",
+                        "OHSC RHS 59 - 63",
+                        "5"
+                    ]
+                ],
+                "OHSC RHS 63 - 64": [
+                    [
+                        "First Aid Kit",
+                        "52001-25",
+                        "OHSC RHS 63 - 64",
+                        "1"
+                    ]
+                ],
+                "OHSC RHS OW_AFT - 43": [
+                    [
+                        "First Aid Kit",
+                        "52001-25",
+                        "OHSC RHS OW_AFT - 43",
+                        "2"
+                    ]
+                ],
+                "OHSC RHS OW_FWD - OW_AFT": [
+                    [
+                        "Life Line",
+                        "505256-401",
+                        "OHSC RHS OW_FWD - OW_AFT",
+                        "2"
+                    ]
+                ]
+            },
+            "Summary": {
+                "Fire Extinguisher - Halon": {
+                    "74-20 Rename": 5
+                },
+                "Flashlight": {
+                    "P2-07-0001-214": 6
+                },
+                "Manual Release Tool": {
+                    "E60100-00": 6
+                },
+                "Portable Oxygen Cylinder": {
+                    "9700-C1A-BF23A": 6
+                },
+                "Megaphone": {
+                    "A12SA Rename": 2
+                },
+                "Life Vest Infant": {
+                    "P0640-101": 10
+                },
+                "Life Vest Crew": {
+                    "P0723E105PWF": 10
+                },
+                "Extension Seat Belt": {
+                    "2090-2-012-0585": 3
+                },
+                "Infant Seat Belt": {
+                    "2090-5-012-0585": 10
+                },
+                "Medical Kit": {
+                    "52001-37": 1
+                },
+                "Demo Oxygen Mask": {
+                    "289-1001": 3
+                },
+                "Life Line": {
+                    "505256-401": 4
+                },
+                "First Aid Kit": {
+                    "52001-25": 4
+                },
+                "Defibrillator": {
+                    "9300E-201": 1
+                }
+            },
+            "Summary Table": [
+                [
+                    "Fire Extinguisher - Halon",
+                    "",
+                    5
+                ],
+                [
+                    "",
+                    "74-20 Rename",
+                    5
+                ],
+                [
+                    "Flashlight",
+                    "",
+                    6
+                ],
+                [
+                    "",
+                    "P2-07-0001-214",
+                    6
+                ],
+                [
+                    "Manual Release Tool",
+                    "",
+                    6
+                ],
+                [
+                    "",
+                    "E60100-00",
+                    6
+                ],
+                [
+                    "Portable Oxygen Cylinder",
+                    "",
+                    6
+                ],
+                [
+                    "",
+                    "9700-C1A-BF23A",
+                    6
+                ],
+                [
+                    "Megaphone",
+                    "",
+                    2
+                ],
+                [
+                    "",
+                    "A12SA Rename",
+                    2
+                ],
+                [
+                    "Life Vest Infant",
+                    "",
+                    10
+                ],
+                [
+                    "",
+                    "P0640-101",
+                    10
+                ],
+                [
+                    "Life Vest Crew",
+                    "",
+                    10
+                ],
+                [
+                    "",
+                    "P0723E105PWF",
+                    10
+                ],
+                [
+                    "Extension Seat Belt",
+                    "",
+                    3
+                ],
+                [
+                    "",
+                    "2090-2-012-0585",
+                    3
+                ],
+                [
+                    "Infant Seat Belt",
+                    "",
+                    10
+                ],
+                [
+                    "",
+                    "2090-5-012-0585",
+                    10
+                ],
+                [
+                    "Medical Kit",
+                    "",
+                    1
+                ],
+                [
+                    "",
+                    "52001-37",
+                    1
+                ],
+                [
+                    "Demo Oxygen Mask",
+                    "",
+                    3
+                ],
+                [
+                    "",
+                    "289-1001",
+                    3
+                ],
+                [
+                    "Life Line",
+                    "",
+                    4
+                ],
+                [
+                    "",
+                    "505256-401",
+                    4
+                ],
+                [
+                    "First Aid Kit",
+                    "",
+                    4
+                ],
+                [
+                    "",
+                    "52001-25",
+                    4
+                ],
+                [
+                    "Defibrillator",
+                    "",
+                    1
+                ],
+                [
+                    "",
+                    "9300E-201",
+                    1
+                ]
+            ],
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "Qatar",
+            "Description": "",
+            "Aircraft Type": "A320",
+            "LOPA": "A320 LOPA",
+            "OHSC": "Std A320 OHSC Layout",
+            "Locations": [
+                "Cockpit",
+                "Each Seat",
+                "Galley 1",
+                "Galley 5",
+                "Lav A Bulkhead",
+                "Lav A CAS",
+                "Lav D Bulkhead",
+                "Lav D CAS",
+                "Lav E Bulkhead",
+                "Lav E CAS",
+                "OHSC LHS 20 - 21",
+                "OHSC LHS 21 - 26",
+                "OHSC LHS 26 - 30",
+                "OHSC LHS 30 - 35",
+                "OHSC LHS 35 - 36",
+                "OHSC LHS 36 - OW_FWD",
+                "OHSC LHS 43 - 51",
+                "OHSC LHS 51 - 55",
+                "OHSC LHS 55 - 59",
+                "OHSC LHS 59 - 63",
+                "OHSC LHS 63 - 64",
+                "OHSC LHS OW_AFT - 43",
+                "OHSC LHS OW_FWD - OW_AFT",
+                "OHSC RHS 20 - 21",
+                "OHSC RHS 21 - 26",
+                "OHSC RHS 26 - 30",
+                "OHSC RHS 30 - 35",
+                "OHSC RHS 35 - 36",
+                "OHSC RHS 36 - OW_FWD",
+                "OHSC RHS 43 - 51",
+                "OHSC RHS 51 - 55",
+                "OHSC RHS 55 - 59",
+                "OHSC RHS 59 - 63",
+                "OHSC RHS 63 - 64",
+                "OHSC RHS OW_AFT - 43",
+                "OHSC RHS OW_FWD - OW_AFT"
+            ],
+            "Layout": {
+                "Cockpit": [],
+                "Lav A CAS": [
+                    [
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav A CAS",
+                        "2"
+                    ],
+                    [
+                        "Flashlight",
+                        "P2-07-0001-214",
+                        "Lav A CAS",
+                        "1"
+                    ]
+                ],
+                "Lav D CAS": [
+                    [
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav D CAS",
+                        "1"
+                    ]
+                ],
+                "Lav E CAS": [
+                    [
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav E CAS",
+                        "2"
+                    ]
+                ]
+            },
+            "Summary": {
+                "Fire Extinguisher - Halon": {
+                    "74-20 Rename": 5
+                },
+                "Flashlight": {
+                    "P2-07-0001-214": 1
+                }
+            },
+            "Summary Table": [
+                [
+                    "Fire Extinguisher - Halon",
+                    "",
+                    5
+                ],
+                [
+                    "",
+                    "74-20 Rename",
+                    5
+                ],
+                [
+                    "Flashlight",
+                    "",
+                    1
+                ],
+                [
+                    "",
+                    "P2-07-0001-214",
+                    1
+                ]
+            ],
+            "Comments": "\n\n\n\n\n"
         }
     ],
     "EEL Comparisons": [
@@ -7185,19 +8018,414 @@
             "Aircraft Type": "A320",
             "Current EEL": "Current Layout",
             "GoTo EEL": "Go To Layout",
+            "Layout": {},
+            "Instructions": null,
+            "BOM": {},
+            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+        },
+        {
+            "Title": "Q to D",
+            "Description": "",
+            "Aircraft Type": "A320",
+            "Current EEL": "Qatar",
+            "GoTo EEL": "Air Deccan",
             "Layout": {
-                "Cockpit": [
+                "Lav A": [
                     [
-                        "Crash Axe",
-                        "Current Crash Axe",
-                        "Cockpit",
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav A",
+                        2,
+                        "Existing"
+                    ]
+                ],
+                "Lav D": [
+                    [
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav D",
                         1,
                         "Existing"
                     ]
+                ],
+                "Lav E": [
+                    [
+                        "Fire Extinguisher - Halon",
+                        "74-20 Rename",
+                        "Lav E",
+                        2,
+                        "Existing"
+                    ]
+                ],
+                "Lav A CAS": [
+                    [
+                        "Flashlight",
+                        "P2-07-0001-214",
+                        "Lav A CAS",
+                        1,
+                        "Existing"
+                    ],
+                    [
+                        "Flashlight",
+                        "P2-07-0001-214",
+                        "Lav A CAS",
+                        1,
+                        "New"
+                    ],
+                    [
+                        "Manual Release Tool",
+                        "E60100-00",
+                        "Lav A CAS",
+                        2,
+                        "New"
+                    ]
+                ],
+                "Lav D CAS": [
+                    [
+                        "Flashlight",
+                        "P2-07-0001-214",
+                        "Lav D CAS",
+                        1,
+                        "New"
+                    ],
+                    [
+                        "Manual Release Tool",
+                        "E60100-00",
+                        "Lav D CAS",
+                        1,
+                        "New"
+                    ]
+                ],
+                "Lav E CAS": [
+                    [
+                        "Flashlight",
+                        "P2-07-0001-214",
+                        "Lav E CAS",
+                        3,
+                        "New"
+                    ],
+                    [
+                        "Manual Release Tool",
+                        "E60100-00",
+                        "Lav E CAS",
+                        3,
+                        "New"
+                    ]
+                ],
+                "Lav D Bulkhead": [
+                    [
+                        "Portable Oxygen Cylinder",
+                        "9700-C1A-BF23A",
+                        "Lav D Bulkhead",
+                        2,
+                        "New"
+                    ]
+                ],
+                "Lav E Bulkhead": [
+                    [
+                        "Portable Oxygen Cylinder",
+                        "9700-C1A-BF23A",
+                        "Lav E Bulkhead",
+                        2,
+                        "New"
+                    ]
+                ],
+                "OHSC LHS 21 - 26": [
+                    [
+                        "Portable Oxygen Cylinder",
+                        "9700-C1A-BF23A",
+                        "OHSC LHS 21 - 26",
+                        2,
+                        "New"
+                    ],
+                    [
+                        "Megaphone",
+                        "A12SA Rename",
+                        "OHSC LHS 21 - 26",
+                        1,
+                        "New"
+                    ],
+                    [
+                        "Life Vest Infant",
+                        "P0640-101",
+                        "OHSC LHS 21 - 26",
+                        5,
+                        "New"
+                    ],
+                    [
+                        "Life Vest Crew",
+                        "P0723E105PWF",
+                        "OHSC LHS 21 - 26",
+                        5,
+                        "New"
+                    ],
+                    [
+                        "Extension Seat Belt",
+                        "2090-2-012-0585",
+                        "OHSC LHS 21 - 26",
+                        3,
+                        "New"
+                    ],
+                    [
+                        "Infant Seat Belt",
+                        "2090-5-012-0585",
+                        "OHSC LHS 21 - 26",
+                        5,
+                        "New"
+                    ],
+                    [
+                        "Medical Kit",
+                        "52001-37",
+                        "OHSC LHS 21 - 26",
+                        1,
+                        "New"
+                    ]
+                ],
+                "OHSC LHS 63 - 64": [
+                    [
+                        "Megaphone",
+                        "A12SA Rename",
+                        "OHSC LHS 63 - 64",
+                        1,
+                        "New"
+                    ]
+                ],
+                "OHSC LHS 59 - 63": [
+                    [
+                        "Life Vest Infant",
+                        "P0640-101",
+                        "OHSC LHS 59 - 63",
+                        5,
+                        "New"
+                    ],
+                    [
+                        "Life Vest Crew",
+                        "P0723E105PWF",
+                        "OHSC LHS 59 - 63",
+                        5,
+                        "New"
+                    ],
+                    [
+                        "Demo Oxygen Mask",
+                        "289-1001",
+                        "OHSC LHS 59 - 63",
+                        1,
+                        "New"
+                    ]
+                ],
+                "OHSC RHS 59 - 63": [
+                    [
+                        "Infant Seat Belt",
+                        "2090-5-012-0585",
+                        "OHSC RHS 59 - 63",
+                        5,
+                        "New"
+                    ]
+                ],
+                "OHSC RHS 20 - 21": [
+                    [
+                        "Demo Oxygen Mask",
+                        "289-1001",
+                        "OHSC RHS 20 - 21",
+                        2,
+                        "New"
+                    ]
+                ],
+                "OHSC LHS OW_FWD - OW_AFT": [
+                    [
+                        "Life Line",
+                        "505256-401",
+                        "OHSC LHS OW_FWD - OW_AFT",
+                        2,
+                        "New"
+                    ]
+                ],
+                "OHSC RHS OW_FWD - OW_AFT": [
+                    [
+                        "Life Line",
+                        "505256-401",
+                        "OHSC RHS OW_FWD - OW_AFT",
+                        2,
+                        "New"
+                    ]
+                ],
+                "OHSC RHS 21 - 26": [
+                    [
+                        "First Aid Kit",
+                        "52001-25",
+                        "OHSC RHS 21 - 26",
+                        1,
+                        "New"
+                    ],
+                    [
+                        "Defibrillator",
+                        "9300E-201",
+                        "OHSC RHS 21 - 26",
+                        1,
+                        "New"
+                    ]
+                ],
+                "OHSC RHS 63 - 64": [
+                    [
+                        "First Aid Kit",
+                        "52001-25",
+                        "OHSC RHS 63 - 64",
+                        1,
+                        "New"
+                    ]
+                ],
+                "OHSC RHS OW_AFT - 43": [
+                    [
+                        "First Aid Kit",
+                        "52001-25",
+                        "OHSC RHS OW_AFT - 43",
+                        2,
+                        "New"
+                    ]
                 ]
             },
-            "Instructions": null,
-            "Comments": "\n\n\n\n\n\n\n\n\n\n\n\n\n"
+            "Instructions": [
+                [
+                    1,
+                    "Relocate x2 74-20 Rename (Fire Extinguisher - Halon) from Lav A CAS to Lav A"
+                ],
+                [
+                    2,
+                    "Relocate x1 74-20 Rename (Fire Extinguisher - Halon) from Lav D CAS to Lav D"
+                ],
+                [
+                    3,
+                    "Relocate x2 74-20 Rename (Fire Extinguisher - Halon) from Lav E CAS to Lav E"
+                ],
+                [
+                    4,
+                    "x1 P2-07-0001-214 (Flashlight) Remains Installed in Lav A CAS"
+                ],
+                [
+                    5,
+                    "Install x1 P2-07-0001-214 (Flashlight) in Lav A CAS"
+                ],
+                [
+                    6,
+                    "Install x1 P2-07-0001-214 (Flashlight) in Lav D CAS"
+                ],
+                [
+                    7,
+                    "Install x3 P2-07-0001-214 (Flashlight) in Lav E CAS"
+                ],
+                [
+                    8,
+                    "Install x2 E60100-00 (Manual Release Tool) in Lav A CAS"
+                ],
+                [
+                    9,
+                    "Install x1 E60100-00 (Manual Release Tool) in Lav D CAS"
+                ],
+                [
+                    10,
+                    "Install x3 E60100-00 (Manual Release Tool) in Lav E CAS"
+                ],
+                [
+                    11,
+                    "Install x2 9700-C1A-BF23A (Portable Oxygen Cylinder) in Lav D Bulkhead"
+                ],
+                [
+                    12,
+                    "Install x2 9700-C1A-BF23A (Portable Oxygen Cylinder) in Lav E Bulkhead"
+                ],
+                [
+                    13,
+                    "Install x2 9700-C1A-BF23A (Portable Oxygen Cylinder) in OHSC LHS 21 - 26"
+                ],
+                [
+                    14,
+                    "Install x1 A12SA Rename (Megaphone) in OHSC LHS 21 - 26"
+                ],
+                [
+                    15,
+                    "Install x1 A12SA Rename (Megaphone) in OHSC LHS 63 - 64"
+                ],
+                [
+                    16,
+                    "Install x5 P0640-101 (Life Vest Infant) in OHSC LHS 21 - 26"
+                ],
+                [
+                    17,
+                    "Install x5 P0640-101 (Life Vest Infant) in OHSC LHS 59 - 63"
+                ],
+                [
+                    18,
+                    "Install x5 P0723E105PWF (Life Vest Crew) in OHSC LHS 21 - 26"
+                ],
+                [
+                    19,
+                    "Install x5 P0723E105PWF (Life Vest Crew) in OHSC LHS 59 - 63"
+                ],
+                [
+                    20,
+                    "Install x3 2090-2-012-0585 (Extension Seat Belt) in OHSC LHS 21 - 26"
+                ],
+                [
+                    21,
+                    "Install x5 2090-5-012-0585 (Infant Seat Belt) in OHSC LHS 21 - 26"
+                ],
+                [
+                    22,
+                    "Install x5 2090-5-012-0585 (Infant Seat Belt) in OHSC RHS 59 - 63"
+                ],
+                [
+                    23,
+                    "Install x1 52001-37 (Medical Kit) in OHSC LHS 21 - 26"
+                ],
+                [
+                    24,
+                    "Install x1 289-1001 (Demo Oxygen Mask) in OHSC LHS 59 - 63"
+                ],
+                [
+                    25,
+                    "Install x2 289-1001 (Demo Oxygen Mask) in OHSC RHS 20 - 21"
+                ],
+                [
+                    26,
+                    "Install x2 505256-401 (Life Line) in OHSC LHS OW_FWD - OW_AFT"
+                ],
+                [
+                    27,
+                    "Install x2 505256-401 (Life Line) in OHSC RHS OW_FWD - OW_AFT"
+                ],
+                [
+                    28,
+                    "Install x1 52001-25 (First Aid Kit) in OHSC RHS 21 - 26"
+                ],
+                [
+                    29,
+                    "Install x1 52001-25 (First Aid Kit) in OHSC RHS 63 - 64"
+                ],
+                [
+                    30,
+                    "Install x2 52001-25 (First Aid Kit) in OHSC RHS OW_AFT - 43"
+                ],
+                [
+                    31,
+                    "Install x1 9300E-201 (Defibrillator) in OHSC RHS 21 - 26"
+                ]
+            ],
+            "BOM": {
+                "P2-07-0001-214": 5,
+                "E60100-00": 6,
+                "9700-C1A-BF23A": 6,
+                "A12SA Rename": 2,
+                "P0640-101": 10,
+                "P0723E105PWF": 10,
+                "2090-2-012-0585": 3,
+                "2090-5-012-0585": 10,
+                "52001-37": 1,
+                "289-1001": 3,
+                "505256-401": 4,
+                "52001-25": 4,
+                "9300E-201": 1
+            },
+            "Comments": "\n\n\nA Comment\n\n\n\n"
         }
     ]
 }

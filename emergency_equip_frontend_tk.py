@@ -14,6 +14,42 @@ import treeview_functions
 import comment_box
 import file_menu
 import copy
+
+
+def check_ee_used(self):
+	used = False
+	eels = []
+	eel_comparisons = []
+
+	eel_dict = components_tk.get_all_components(self.mainapp, 'EELs')
+
+	for e in eel_dict['All']:
+		
+		for loc in self.mainapp.frames[e].backend.layout.keys():
+			for p in self.mainapp.frames[e].backend.layout[loc]:
+
+				if p[1] == self.backend.title:
+					used = True
+					eels.append(e)
+	
+	eel_dict = components_tk.get_all_components(self.mainapp, 'EEL Comparisons')
+
+	for e in eel_dict['All']:
+		
+		for loc in self.mainapp.frames[e].backend.layout.keys():
+			for p in self.mainapp.frames[e].backend.layout[loc]:
+
+				if p[1] == self.backend.title:
+					used = True
+					eel_comparisons.append(e)
+					break
+			if e in eel_comparisons:
+				break
+
+
+	return used, eels, eel_comparisons
+
+
 class Emergency_Equipment_Page_Tk(tk.Frame):
 
 	def __init__(self, container, mainapp):
@@ -126,7 +162,14 @@ class Emergency_Equipment_Page_Tk(tk.Frame):
 
 
 	def update_component(self, window, type, redraw = True):
-		
+
+		if type != 'new':
+			orig_title = self.backend.title
+			orig_weight = self.backend.weight
+			used, eels, eel_comparisons = check_ee_used(self)
+		else:
+			used = False
+
 		self.backend.update_component(window, type)
 		self.update_label_text()
 		self.update_parts_tree()
@@ -134,6 +177,62 @@ class Emergency_Equipment_Page_Tk(tk.Frame):
 		if self.treeview_iid:
 			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.title)
 			components_tk.component_renamed(self)
+
+
+		if used:
+
+			if orig_title != self.backend.title or orig_weight != self.backend:
+				for e in eels:
+					e = self.mainapp.frames[e]
+					for loc in e.backend.layout.keys():
+						for idx, p in enumerate(e.backend.layout[loc]):
+							if p[1] == orig_title:
+								
+								e.backend.layout[loc][idx][1] = self.backend.title
+
+					e.update_component(e.backend, 'ohsc')
+
+				#update tables in eel comparisons
+				for e in eel_comparisons:
+					e = self.mainapp.frames[e]
+					for loc in e.backend.layout.keys():
+						for idx, p in enumerate(e.backend.layout[loc]):
+							if p[1] == orig_title:
+								
+								e.backend.layout[loc][idx][1] = self.backend.title
+
+					for idx, p in enumerate(e.backend.instructions):
+						#parse part from instruction
+						part = p[1].split('(')[0]
+
+						instruc = f"({p[1].split('(')[1]}"
+
+						if part[0:9] == 'Install x' or part[0:10] == 'Relocate x':
+
+							if part[0:9] == 'Install x':
+								action = part[:9]
+								part = part[9:]
+							elif part[0:10] == 'Relocate x':
+								action = part[:10]
+								part = part[10:]								
+
+							qty = part.split()[0]
+
+							part = part[len(qty):].strip()
+							print(part)
+							if orig_title == part:
+								e.backend.instructions[idx][1] = f'{action}{qty} {self.backend.title} {instruc}'
+
+						else: #remains installed in
+
+							qty = part.split()[0]
+							part = part[len(qty):].strip()
+
+							if orig_title == part:
+								e.backend.instructions[idx][1] = f'{qty} {self.backend.title} {instruc}'							
+
+
+					e.update_component(e.backend, 'ohsc')
 
 	def update_parts_tree(self):
 

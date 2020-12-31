@@ -324,7 +324,7 @@ def gen_dxf(self):
 					modelspace.add_lwpolyline(points,dxfattribs={'color': 50})
 
 
-	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.15\psu.dxf')
+	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.16\psu.dxf')
 	
 
 def setup_psu_blocks(self, dxf):

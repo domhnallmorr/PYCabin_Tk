@@ -404,7 +404,7 @@ def gen_dxf(self):
 					 #override={'dimtxt': p[1],})
 			dim.render()
 			#modelspace.add_text(p[1], dxfattribs={'height': 5.35}).set_pos((p[0], y),align='CENTER')
-	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\lopa.dxf')
+	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.16\lopa.dxf')
 	
 def add_seats_to_dxf(self, dxf, modelspace, draw_top, draw_side):
 
@@ -457,16 +457,24 @@ class LOPA_Drawing():
 		else:
 			self.floor_coords = [0, 0]
 
-	def draw_all(self, psu=False):
+	def draw_all(self, psu=False, eel=False):
 
-		if not psu:
+		if not psu and not eel:
 			self.draw_top_down_view()
-		self.draw_side_view()
-		self.draw_lavs_side()
+
+		if not eel:
+			self.draw_side_view()
+
+		if not eel:
+			self.draw_lavs_side()
+			
 		self.draw_lavs_top()
 		self.draw_galleys_top()
-		self.draw_galleys_side()
-		self.draw_wb_side()
+
+		if not eel:
+			self.draw_galleys_side()
+			self.draw_wb_side()
+
 		self.draw_wb_top()
 
 		if self.canvas_type == 'dxf':

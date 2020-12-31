@@ -51,7 +51,7 @@ class MainApplication(tk.Frame):
 
 	def setup_variables(self):
 		
-		self.version = '0.15.0'
+		self.version = '0.16.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		
@@ -251,7 +251,7 @@ class MainApplication(tk.Frame):
 		
 		ids_to_ignore = ['A320 Aircraft', '737 Aircraft', 'A320 Seats', '737 Seats',
 						'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'A320 PSUs', 'A320 OHSCs', 'A320 EE',
-						'A320 EELs']
+						'A320 EELs', 'A320 EEL Comparisons']
 
 		if parent_iid:
 			if item_iid not in ids_to_ignore:
