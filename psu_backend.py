@@ -224,7 +224,7 @@ class PSU_Backend():
 			end = end_stations[side]
 			
 		# 1. Get LOPA layout
-			seat_layout = self.lopa_page.backend.seat_layout[side]
+			seat_layout = copy.deepcopy(self.lopa_page.backend.seat_layout[side])
 
 			for index, row in enumerate(seat_layout):
 				row_number = row[0]
@@ -421,7 +421,7 @@ class PSU_Backend():
 		
 		# 1. Get LOPA layout
 		self.lopa_page = self.mainapp.frames[self.lopa]
-		psiu_layout = self.lopa_page.backend.seat_layout[side]
+		psiu_layout = copy.deepcopy(self.lopa_page.backend.seat_layout[side])
 		
 		for index, row in enumerate(psiu_layout):
 			psiu_layout[index].append(None)

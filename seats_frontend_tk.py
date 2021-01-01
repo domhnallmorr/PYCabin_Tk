@@ -73,7 +73,7 @@ class Seat_Page_Tk(tk.Frame):
 		self.comments_tab = Frame(self.note)
 		
 		self.note.add(self.main_tab, text = "Main")
-		self.note.add(self.docs_tab, text = "Documentation")
+		#self.note.add(self.docs_tab, text = "Documentation")
 		self.note.add(self.comments_tab, text = "Comments")
 		
 		#self.note.grid(row=1,column=0,sticky='NSEW')

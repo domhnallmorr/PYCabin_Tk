@@ -444,6 +444,7 @@ class PSU_Page_Tk(tk.Frame):
 		psu_draw.draw_deus(self.backend, self.backend.ax7, 'matplotlib', [0,0], 'LHS', 'top_down')
 		psu_draw.draw_deus(self.backend, self.backend.ax7, 'matplotlib', [0,0], 'RHS', 'top_down')
 
+
 		self.canvas.draw()
 		self.gasper_canvas.draw()
 		self.deu_canvas.draw()

@@ -5,6 +5,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 import copy
 
+import treeview_functions
+
 
 def setup_variables(w):
 	w.type = 'LOPA'
@@ -42,13 +44,13 @@ def set_default_monumnets(aircraft):
 
 	default_lavs = {'A320': 
 						[['Lav A', 'Yes', 278.6, 'Yes', 'No'],
-						['Lav D', 'Yes', 1207, 'Yes', 'No'],
-						['Lav E', 'Yes', 1207, 'Yes', 'No']],
+						['Lav D', 'Yes', 1207.0, 'Yes', 'No'],
+						['Lav E', 'Yes', 1207.0, 'Yes', 'No']],
 					}
 	
 	default_galleys = {'A320':
 							[['Galley 1', 'Yes', 278.6],
-							['Galley 5', 'Yes', 300]]
+							['Galley 5', 'Yes', 1285.0]]
 						}
 	return default_lavs[aircraft], default_galleys[aircraft]
 	
@@ -381,6 +383,33 @@ class LOPA_Backend():
 					x.append([start[1],1250.52])
 			
 			return x, lav_d, lav_e, wb_installed
+
+	def gen_excel_data(self):
+
+		excel_data = {'type': 'list', 'data': {}}
+
+		#lopa layout
+
+		data = []
+
+		for row in self.seat_layout['LHS']:
+
+			data.append(row)
+
+		for idx, row in enumerate(self.seat_layout['RHS']):
+
+			if idx >= len(data):
+
+				data.append(['', '', '', ''])
+
+			for r in row:
+				data[idx].append(r)
+
+
+		excel_data['data']['Seat Layout'] = data
+
+		return excel_data
+
 class LOPA_Saved_State():
 	def __init__(self, lopa):
 	

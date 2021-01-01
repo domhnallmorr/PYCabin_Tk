@@ -51,7 +51,7 @@ class MainApplication(tk.Frame):
 
 	def setup_variables(self):
 		
-		self.version = '0.16.0'
+		self.version = '0.17.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		

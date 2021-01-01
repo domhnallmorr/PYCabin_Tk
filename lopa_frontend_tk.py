@@ -29,6 +29,8 @@ import comment_box
 
 from docx import Document
 from docx.enum.text import WD_BREAK
+
+import word_export
 #from ezdxf.tools.standards import linetypes  # some predefined line types
 
 def check_lopa_used(self):
@@ -74,7 +76,8 @@ class LOPA_Page_Tk(tk.Frame):
 		self.mainapp = mainapp
 
 		self.top_label = tk.Label(self, text=('LOPA: '),font=self.mainapp.title_font, anchor="w")
-		self.top_label.pack(fill=tk.BOTH, expand=True)
+		#self.top_label.pack(fill=tk.BOTH, expand=True)
+		self.top_label.pack(fill=tk.BOTH)
 		
 		self.backend = lopa_bk.LOPA_Backend(self, mainapp)
 		
@@ -87,6 +90,7 @@ class LOPA_Page_Tk(tk.Frame):
 		self.setup_buttons()
 		self.add_lopa_plot()
 		self.add_overwing_plot()
+		self.add_comments_text()
 		self.set_grid_configures()
 		
 	def setup_scrollable_frames(self):
@@ -102,22 +106,19 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		self.overwing_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.overwing_tab, self.mainapp)
 		self.overwing_scroll_frame.pack(fill=tk.BOTH, expand=True)
-		# '''
-		# self.frame = scrollable_frame.ScrollableFrame(self.seat_tab)
-		# self.frame.grid(row=0,column=0,stick='nsew')
-		# self.lopa_frame = self.frame.scrollable_frame
-		# self.seat_tab.grid_columnconfigure(0, weight=1)
-		# self.seat_tab.grid_rowconfigure(0, weight=1)
-		# #self.lopa_frame.grid_columnconfigure(4, weight=1)
-		# '''
+
+		self.comments_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.comments_tab, self.mainapp)
+		self.comments_scroll_frame.pack(fill=tk.BOTH, expand=True)
+
 	def set_grid_configures(self):
 	
 		self.lopa_scroll_frame.inner.grid_columnconfigure(4, weight=1)
 		self.overwing_scroll_frame.inner.grid_columnconfigure(0, weight=1)
 		self.overwing_frame.grid_columnconfigure(7, weight=1)
 		self.overwing_frame.grid_rowconfigure(3, weight=1)
-		#self.weight_scroll_frame.frame.grid_columnconfigure(7, weight=1)
-		pass
+
+		self.weight_scroll_frame.inner.grid_columnconfigure(3, weight=1)
+		
 	def onFrameConfigure(self, canvas):
 		'''Reset the scroll region to encompass the inner frame'''
 		canvas.configure(scrollregion=canvas.bbox("all"))
@@ -143,8 +144,10 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		#self.note.grid(row=1,column=0,sticky='NSEW')
 		self.note.pack(fill=tk.BOTH, expand=True)
+
+	def add_comments_text(self):
 		# ####### COMMENTS TEXT ######################################
-		self.comment_text = tk.Text(self.comments_tab, width = 110, height = 50, state='disabled')
+		self.comment_text = tk.Text(self.comments_scroll_frame.inner, width = 110, height = 50, state='disabled')
 		self.comment_text.grid(row=1, column=0, columnspan = 8, sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
 	def setup_label_frames(self):
@@ -153,16 +156,16 @@ class LOPA_Page_Tk(tk.Frame):
 		self.main_frame.grid(row=2, column=0, columnspan = 16, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
 		self.lav_frame = LabelFrame(self.main_scroll_frame.inner,text="Lavs:")
-		self.lav_frame.grid(row=4, column=0, columnspan = 8, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.lav_frame.grid(row=4, column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
 		self.galley_frame = LabelFrame(self.main_scroll_frame.inner,text="Galleys:")
-		self.galley_frame.grid(row=5, column=0, columnspan = 8, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.galley_frame.grid(row=5, column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 
 		self.wb_frame = LabelFrame(self.main_scroll_frame.inner,text="Windbreakers:")
-		self.wb_frame.grid(row=6, column=0, columnspan = 8, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.wb_frame.grid(row=6, column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
 		self.items_frame = LabelFrame(self.main_scroll_frame.inner,text="Seat Item Numbers:")
-		self.items_frame.grid(row=4, column=8, columnspan = 8, rowspan = 3,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.items_frame.grid(row=4, column=4, columnspan = 8, rowspan = 3,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
 		
 		self.seats_frame = LabelFrame(self.lopa_scroll_frame.inner,text="Seats:")
 		self.seats_frame.grid(row=3, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
@@ -173,7 +176,7 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		weight_frame = self.weight_scroll_frame.inner
 		self.weight_frame = LabelFrame(weight_frame,text="Seat Weights:")
-		self.weight_frame.grid(row=3, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+		self.weight_frame.grid(row=3, column=0, columnspan = 4, rowspan = 2,sticky='NSEW',padx=5, pady=5, ipadx=2, ipady=5)
 
 		self.overwing_frame = LabelFrame(self.overwing_scroll_frame.inner, text='Overwing Exit Plot')
 		self.overwing_frame.pack(fill=tk.BOTH, expand=True)
@@ -203,19 +206,6 @@ class LOPA_Page_Tk(tk.Frame):
 		
 	def setup_treeviews(self):
 	
-		# self.monument_tree = ttk.Treeview(self.lav_frame, selectmode="extended",columns=("A","B",'C'),height = 10)
-		# #self.monument_tree.grid(row=1,column=0, columnspan= 6,sticky="nsew")
-		# self.monument_tree.heading("#0", text="#")
-		# self.monument_tree.column("#0",minwidth=0,width=60, stretch='NO')
-		# self.monument_tree.heading("A", text="Monument")	  
-		# self.monument_tree.column("A",minwidth=0,width=200, stretch='NO') 
-		# self.monument_tree.heading("B", text="Type")	  
-		# self.monument_tree.column("B",minwidth=0,width=150, stretch='NO')
-		# self.monument_tree.heading("C", text="Station (in)")	  
-		# self.monument_tree.column("C",minwidth=0,width=130, stretch='NO')	
-
-		# self.monument_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
-
 		self.lav_tree = ttk.Treeview(self.lav_frame, selectmode="extended",columns=("A","B","C", "D"),height = 3)
 		self.lav_tree.heading("#0", text="Lav")
 		self.lav_tree.column("#0",minwidth=0,width=80, stretch='NO')
@@ -297,7 +287,7 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		# ___ WEIGHTS ____
 		self.LHS_weight_tree = ttk.Treeview(self.weight_frame,selectmode="extended",columns=("A","B",'C','D','E'),height=30)
-		self.LHS_weight_tree.grid(row=0,rowspan = 16,column=0,columnspan = 2, sticky="nsew")
+		self.LHS_weight_tree.grid(row=0,rowspan = 32,column=0,columnspan = 2, sticky="nsew")
 		self.LHS_weight_tree.heading("#0", text="Row")
 		self.LHS_weight_tree.column("#0",minwidth=0,width=50, stretch='NO')
 		self.LHS_weight_tree.heading("A", text="Seat")   
@@ -312,12 +302,12 @@ class LOPA_Page_Tk(tk.Frame):
 		self.LHS_weight_tree.column("E",minwidth=0,width=80)     
 
 		LHS_weight_tree_scrollbar = Scrollbar(self.weight_frame, command=self.LHS_weight_tree.yview)
-		LHS_weight_tree_scrollbar.grid(row=0, column=2, rowspan = 16,sticky='nsew')
+		LHS_weight_tree_scrollbar.grid(row=0, column=2, rowspan = 32,sticky='nsew')
 		self.LHS_weight_tree.config(yscrollcommand=LHS_weight_tree_scrollbar.set)
 		
 		#setup RHS treeview
 		self.RHS_weight_tree = ttk.Treeview(self.weight_frame,selectmode="extended",columns=("A","B",'C','D','E'),height=30)
-		self.RHS_weight_tree.grid(row=0,rowspan = 16,column=3,columnspan = 3 , sticky="nsew")
+		self.RHS_weight_tree.grid(row=0,rowspan = 32,column=3,columnspan = 3 , sticky="nsew")
 		self.RHS_weight_tree.heading("#0", text="Row")
 		self.RHS_weight_tree.column("#0",minwidth=0,width=50, stretch='NO')
 		self.RHS_weight_tree.heading("A", text="Seat")   
@@ -332,26 +322,35 @@ class LOPA_Page_Tk(tk.Frame):
 		self.RHS_weight_tree.column("E",minwidth=0,width=80)    		
 
 		RHS_weight_tree_scrollbar = Scrollbar(self.weight_frame, command=self.RHS_weight_tree.yview)
-		RHS_weight_tree_scrollbar.grid(row=0, column=6, rowspan = 16,sticky='nsew')
+		RHS_weight_tree_scrollbar.grid(row=0, column=6, rowspan = 32,sticky='nsew')
 		self.RHS_weight_tree.config(yscrollcommand=RHS_weight_tree_scrollbar.set)
 		
+		#Remove allowable column for now
+		for tree in [self.LHS_weight_tree, self.RHS_weight_tree]:
+			exclusionlist=['D', 'E']
+			displaycolumns=[]
+			for col in tree["columns"]:
+				if col not in exclusionlist:
+					displaycolumns.append(col)
+			tree["displaycolumns"]=displaycolumns
+
 		#add in entries for life vest and literature weights
-		self.weight_description=Label(self.weight_frame,text="Weights below are per Passenger",width=25)
-		self.weight_description.grid(row=0,column=7, sticky="nsew")
+		self.weight_description=Label(self.weight_frame,text="Weights below are per Passenger")
+		self.weight_description.grid(row=0,column=7, columnspan=2, sticky="nsew")
 		
 		self.life_vest_weight = tk.StringVar()
-		self.life_vest_weight_label=Label(self.weight_frame,text="Life Vest Weight (lbs)",width=25)
-		self.life_vest_weight_label.grid(row=2,column=7, sticky="nsew")
+		self.life_vest_weight_label=Label(self.weight_frame,text="Life Vest Weight (lbs):",width=25)
+		self.life_vest_weight_label.grid(row=2,column=7, sticky="nw")
 		self.life_vest_weight_entry=Entry(self.weight_frame, width=20, textvariable=self.life_vest_weight)
 		self.life_vest_weight_entry.insert(END, '2')
-		self.life_vest_weight_entry.grid(row=3,column=7, sticky="nsew")
+		self.life_vest_weight_entry.grid(row=2,column=8, sticky="nw")
 
 		self.literature_weight = tk.StringVar()
-		self.literature_weight_label=Label(self.weight_frame,text="Literature Weight (lbs)",width=25)
-		self.literature_weight_label.grid(row=4,column=7, sticky="nsew")
+		self.literature_weight_label=Label(self.weight_frame,text="Literature Weight (lbs):",width=25)
+		self.literature_weight_label.grid(row=3,column=7, sticky="nw", pady=1)
 		self.literature_weight_entry=Entry(self.weight_frame, width=20, textvariable=self.literature_weight)
 		self.literature_weight_entry.insert(END, '3')
-		self.literature_weight_entry.grid(row=5,column=7, sticky="nsew")		
+		self.literature_weight_entry.grid(row=3,column=8, sticky="nw", pady=1)		
 
 		#configure tags to color treeview
 		self.LHS_weight_tree.tag_configure('bad', background='orange')
@@ -361,8 +360,8 @@ class LOPA_Page_Tk(tk.Frame):
 		
 
 		# Update button
-		self.u=Button(self.weight_frame,text='Update Table', command= lambda: self.update_weight_table())
-		self.u.grid(row=6,column=7, sticky="nsew")
+		self.u=Button(self.weight_frame,text='Update Table', image = self.mainapp.ref_icon2, width = 30, compound = LEFT, command= lambda: self.update_weight_table())
+		self.u.grid(row=4,column=7, columnspan=2, sticky="nw", pady=1, ipadx=2, ipady=2)
 		
 	def setup_buttons(self):
 
@@ -373,11 +372,14 @@ class LOPA_Page_Tk(tk.Frame):
 		# self.dxf_btn.grid(row=1, column=1, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 
 		self.ms_word_btn = Button(self.main_scroll_frame.inner, text = 'Export to Word', image = self.mainapp.word_icon2, compound = LEFT, width = 30, command= lambda: self.export_word())
-		self.ms_word_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+		self.ms_word_btn.grid(row=1, column=3, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 		
 		self.dxf_btn = Button(self.main_scroll_frame.inner, text = 'Export to DXF', image = self.mainapp.cad_icon2, compound = LEFT, width = 30, command= lambda: self.export_dxf())
-		self.dxf_btn.grid(row=1, column=3, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
-		
+		self.dxf_btn.grid(row=1, column=2, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+
+		self.excel_btn = Button(self.main_scroll_frame.inner, text = 'Export to Excel', image = self.mainapp.excel_icon2, compound = LEFT, width = 30, command= lambda: self.export_excel())
+		self.excel_btn.grid(row=1, column=4, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
+
 		self.add_wb_btn = Button(self.wb_frame, text = 'Add', image = self.mainapp.add_icon2, compound = LEFT,
 								command =  lambda event=None, type='Windbreaker', mode='new': self.add_monument(event, type, mode))
 		self.add_wb_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
@@ -390,18 +392,18 @@ class LOPA_Page_Tk(tk.Frame):
 								command = self.edit_seat_item_nos)
 		self.edit_item_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
 		
-		self.expand_lopa_tree_btn = Button(self.lopa_scroll_frame.inner, text = "Expand Trees",
+		self.expand_lopa_tree_btn = Button(self.lopa_scroll_frame.inner, text = "Expand Tables", width=30, image = self.mainapp.expand_icon2, compound = LEFT,
 							  command = lambda height=30, trees = [self.LHS_lopa_tree,self.RHS_lopa_tree]: self.expand_tree(trees,height))
-		self.expand_lopa_tree_btn.grid(row=0, column=0, columnspan=4, sticky='nsew')
+		self.expand_lopa_tree_btn.grid(row=0, column=0, columnspan=1, sticky='nw', padx=5, pady=2, ipadx=2, ipady=2)
 
-		self.overwing_plot_btn = Button(self.overwing_frame, text = "Update Plot",
+		self.overwing_plot_btn = Button(self.overwing_frame, text = "Update Plot", image = self.mainapp.ref_icon2, width = 30, compound = LEFT,
 									command= self.update_overwing_plot)
-		self.overwing_plot_btn.grid(row=2, column=0, sticky='nsew', padx=2)
+		self.overwing_plot_btn.grid(row=2, column=0, sticky='nsew', padx=2, ipadx=2, ipady=2)
 
 		self.overwing_combo = ttk.Combobox(self.overwing_frame, values=['LHS', 'RHS'], state='readonly')
 		self.overwing_combo.grid(row=2, column=1, sticky='nsew', padx=2)
 		
-		self.edit_comment_button=Button(self.comments_tab,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
+		self.edit_comment_button=Button(self.comments_scroll_frame.inner,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
 										command= lambda self=self :comment_box.edit_comments(self))
 		self.edit_comment_button.grid(row=0,column=0, pady=5,sticky="nsew", ipadx=2, ipady=2)
 		
@@ -460,7 +462,15 @@ class LOPA_Page_Tk(tk.Frame):
 			lopa_used, psus, eels = check_lopa_used(self)
 		else:
 			lopa_used = False
-			
+
+		#create row number map
+		row_numbers = {'LHS': {}, 'RHS': {}}
+		
+		for side in ['LHS', 'RHS']:
+			for idx, r in enumerate(self.backend.seat_layout[side]):
+				old = str(r[0])
+				row_numbers[side][old] = str(window.seat_layout[side][idx][0])
+
 		self.backend.update_component(window, type)
 		self.update_label_text()
 		self.update_monuments_tree()
@@ -478,6 +488,23 @@ class LOPA_Page_Tk(tk.Frame):
 			for p in psus:
 				p = self.mainapp.frames[p]
 				p.backend.lopa = self.backend.title
+
+				#update row numbers on psu layout
+				for side in ['LHS', 'RHS']:
+					for idx, part in enumerate(p.backend.psu_layout[side]):
+						if str(part[0]) in row_numbers[side].keys():
+							p.backend.psu_layout[side][idx][0] = row_numbers[side][str(part[0])]
+
+					# update row numbres in gasper
+					for idx, part in enumerate(p.backend.gasper_layout[side]):
+						if str(part[0]) in row_numbers[side].keys():
+							p.backend.gasper_layout[side][idx][0] = row_numbers[side][str(part[0])]
+
+					#update row numbers in deu 
+					for idx, part in enumerate(p.backend.vc_layout[side]):
+						if str(part[4]) in row_numbers[side].keys():
+							p.backend.vc_layout[side][idx][4] = row_numbers[side][str(part[4])]
+
 				p.update_component(p.backend, 'lopa')
 				
 			for e in eels:
@@ -513,6 +540,18 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		lopa_draw.draw_galleys_top_down(self.backend, self.backend.ax2, 'matplotlib', [0,0])
 		lopa_draw.draw_galleys_side(self.backend, [self.backend.ax1, self.backend.ax3], 'matplotlib', [0,0,0,0])
+
+		#add overwing exits
+		s = [668.15, 701.5]
+		w = 24.3/2
+
+		for side in ['LHS', 'RHS']:
+			for sta in s:
+				if side == 'LHS':
+					self.backend.ax2.plot([sta-w, sta-w, sta+w, sta+w, sta-w], [75, 72, 72, 75, 75], color='black')
+				else:
+					self.backend.ax2.plot([sta-w, sta-w, sta+w, sta+w, sta-w], [-75, -72, -72, -75, -75], color='black')
+
 		self.canvas.draw()
 
 	def add_overwing_plot(self):
@@ -576,6 +615,7 @@ class LOPA_Page_Tk(tk.Frame):
 			annotate_stations = {'Rear': [], 'Front': [], 'Top': []}
 			for i, indx in enumerate(ow_rows[side]):
 				seat = self.mainapp.frames[self.backend.seat_layout[side][indx][1]].backend
+				row = self.backend.seat_layout[side][indx][0]
 				canvas = sides[side]
 				canvas_type = 'matplotlib'
 				station = self.backend.seat_layout[side][indx][3]
@@ -586,7 +626,8 @@ class LOPA_Page_Tk(tk.Frame):
 				annotate_stations['Front'].append(station - float(seat.length_fwd))
 				annotate_stations['Rear'].append(station + float(seat.length_aft))
 				annotate_stations['Top'].append(float(seat.height))
-					
+				
+				canvas.text(station+10, 30, f'Row {row}', ha='center')
 			#add annotations
 			for i, r in enumerate(annotate_stations['Rear']):
 				if r != annotate_stations['Rear'][-1]:
@@ -603,6 +644,9 @@ class LOPA_Page_Tk(tk.Frame):
 			#add floor
 			x1,x2,y1,y2 = canvas.axis()
 			canvas.plot([x1, x2],[0, 0], color='black')
+
+			canvas.set_xlabel('Station (in)')
+			canvas.set_ylabel('Height Above Floor (in)')
 			self.overwing_canvas.draw()
 		
 	def seat_double_click(self, event, side):
@@ -618,7 +662,7 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		index = tree.index(item)
 		
-		self.w=Double_Click_Seat_Window_Tk(self, self.mainapp, self.master, side, row_data)
+		self.w=Double_Click_Seat_Window_Tk(self, self.mainapp, self.master, side, row_data, index)
 		self.master.wait_window(self.w.top)
 		
 		if self.w.button == 'ok':
@@ -627,6 +671,7 @@ class LOPA_Page_Tk(tk.Frame):
 			
 			if self.w.row_no_changed:
 				lopa_bk.LOPA_Backend.update_row_numbers(self.w, index, side, self.w.row_no)
+
 			#lopa_bk.LOPA_Backend.recalculate_stations(self.w)
 
 			#if side == 'LHS':
@@ -651,7 +696,7 @@ class LOPA_Page_Tk(tk.Frame):
 
 		mode = 'edit'
 		
-		self.w=Export_Word_Window(self.mainapp, self.master, mode, self)
+		self.w=Export_Word_Excel_Window(self.mainapp, self.master, mode, self)
 		self.master.wait_window(self.w.top)	
 		# document = Document()
 		
@@ -730,7 +775,13 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		if self.w.button == 'ok':
 			treeview_functions.write_data_to_treeview(self.item_tree, 'replace',self.w.data) 
+
+	def export_excel(self):
+		mode = 'edit'
 		
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self, 'excel')
+		self.master.wait_window(self.w.top)
+
 class Edit_LOPA_Window_Tk(object):
 	def __init__(self, mainapp, master, ac, mode, parent_lopa):
 		#self.drawing_dictionary = drawing_dictionary
@@ -957,7 +1008,7 @@ class Edit_LOPA_Window_Tk(object):
 			self.top.destroy()
 			
 class Double_Click_Seat_Window_Tk(object):			
-	def __init__(self, lopa, mainapp, master, side, row_data):
+	def __init__(self, lopa, mainapp, master, side, row_data, index):
 		top=self.top=Toplevel(master)
 		top.grab_set()
 		
@@ -965,14 +1016,22 @@ class Double_Click_Seat_Window_Tk(object):
 		self.side = side
 		self.lopa = lopa
 		self.row_data = row_data
+		self.index = index
+
 		
 		lopa_bk.setup_variables(self)
 		lopa_bk.update_variables(self, self.lopa.backend)
 		
+		if index != 0:
+			self.min_row_number = int(self.seat_layout[side][index-1][0]) + 1
+		else:
+			self.min_row_number = 1
 		#self.seats, self.seats_dict = components_tk.get_all_seats(mainapp)
 		self.seats_dict = components_tk.get_all_components(mainapp, 'Seats')
 		self.setup_label_frames()
 		self.setup_widgets()
+
+		self.row_no_changed = False
 	
 	def setup_label_frames(self):
 	
@@ -1027,12 +1086,64 @@ class Double_Click_Seat_Window_Tk(object):
 			self.row_no = int(self.row_entry.get())
 			self.seat = self.seat_combo.get()
 			self.pitch = self.pitch_combo.get()
-			self.top.destroy()
-			
-			if self.row_no != self.row_data[0]:
-				self.row_no_changed = True
+
+			msg = None
+
+			if self.index == 0: 
+				if float(self.pitch) < 320: #first row pitch must be greater than 320
+					msg = 'As this is the first row, the pitch (first station) must be >= 320"'
+				
+				if not msg: #cheeck the seat is aft of WB
+
+					#first check if WB installed
+					for wb in self.lopa.backend.windbreakers:
+						side = self.mainapp.frames[wb[0]].backend.side
+						if side == self.side:
+							sta = float(wb[1])
+
+							if sta >= float(self.pitch):
+								 msg = f'As this is the first row, the pitch (first station) must be aft of WB station {sta}'
+
+			if not msg: #check last seat is not in Lav and is forward of 1240
+				self.seat_layout[self.side][self.index] = [self.row_no, self.seat, self.pitch, None]
+				lopa_bk.LOPA_Backend.recalculate_stations(self)
+
+				#check if lav installed
+
+				lavs = {'LHS': 'Lav D', 'RHS': 'Lav E'}
+
+				for l in self.lavs:
+					if l[0] == lavs[self.side] and l[1] == 'Yes':
+
+						sta = float(l[2])
+
+						last_seat = self.seat_layout[self.side][-1][1]
+
+						last_sta = float(self.seat_layout[self.side][-1][3])
+
+						last_sta += float(self.mainapp.frames[last_seat].backend.length_aft)
+						
+						if last_sta > sta:
+							msg = f'The last seat aft edge is located at {last_sta}", it must be forward of {lavs[self.side]} station {sta}"'
+				if not msg:
+					if float(self.seat_layout[self.side][-1][3]) > 1240:
+						msg = 'Last seat must be forward of station 1240"'
+
+			if not msg:
+				if self.row_no < self.min_row_number:
+					msg = f'Row number must not be less than {self.min_row_number}'
+
+			if not msg:
+				if self.row_no != self.row_data[0]:
+					self.row_no_changed = True
+				else:
+					self.row_no_changed = False
+
+				self.top.destroy()
+
 			else:
-				self.row_no_changed = False
+
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 		else:
 			self.top.destroy()
 			
@@ -1189,13 +1300,33 @@ class Add_Monument_Window():
 				
 
 				if self.monument_type == 'Windbreaker':
-					data = [monument, station]
+
+					wb = self.mainapp.frames[monument].backend
+					side = wb.side
+
+					#check we don't already have a WB installed on that side
+					wb_msg = None
 					
-					if self.mode == 'new':
-						self.windbreakers.append(data)
-					elif self.mode == 'edit':
+					for i, w in enumerate(self.windbreakers):
+						if self.mainapp.frames[w[0]].backend.side == side and i != self.tree_index:
+							wb_msg = f'At this time, only one Windbreaker per side is supported'
+							break
+
+					if not wb_msg:
+						#check WB is forward of first seat
+						first_sta = float(self.seat_layout[side][0][3])
+
+						if float(station) > first_sta:
+							wb_msg = 'At this time, Windbreakers must be positioned in front of all seats'
+
+					if not wb_msg:
+						data = [monument, station]
 						
-						self.windbreakers[self.tree_index] = data
+						if self.mode == 'new':
+							self.windbreakers.append(data)
+						elif self.mode == 'edit':
+							
+							self.windbreakers[self.tree_index] = data
 				
 				if self.monument_type == 'Lav':
 					installed = self.installed_combo.get()
@@ -1206,7 +1337,15 @@ class Add_Monument_Window():
 					
 					if self.mode == 'edit':
 						self.lavs[self.tree_index] = data
-				self.top.destroy()
+
+				if self.monument_type == 'Windbreaker':
+
+					if wb_msg:
+						tkinter.messagebox.showerror(master=self.top, title='Error', message=wb_msg)
+					else:
+						self.top.destroy()
+				else:
+					self.top.destroy()
 				
 			else:
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)

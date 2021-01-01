@@ -448,7 +448,7 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 		mode = 'edit'
 		
-		self.w=word_export.Export_Word_Window(self.mainapp, self.master, mode, self)
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self)
 		self.master.wait_window(self.w.top)
 		
 class Edit_EEL_Comparison_Window_Tk(object):

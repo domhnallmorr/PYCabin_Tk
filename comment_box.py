@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import *
 
+import double_scrollbar
+
 def edit_comments(component):
 	mainapp = component.mainapp
 	w=Edit_Comments_Window(mainapp, mainapp.master, component)
@@ -25,8 +27,12 @@ class Edit_Comments_Window():
 		
 		self.mainapp = mainapp
 		self.component = component
+
+		self.main_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.top, self.mainapp)
+		self.main_scroll_frame.pack(fill=tk.BOTH, expand=True)
+
 		#create text box
-		self.text = tk.Text(self.top, width = 110, height = 40)
+		self.text = tk.Text(self.main_scroll_frame.inner, width = 110, height = 40)
 		self.text.pack()
 		
 		#get existing text and add
@@ -34,8 +40,10 @@ class Edit_Comments_Window():
 		self.text.insert("1.0", self.orig_text)
 		
 		
-		Button(self.top, text = 'ok', command = lambda button = 'ok': self.cleanup(button)).pack()
-		Button(self.top, text = 'cancel', command = lambda button = 'cancel': self.cleanup(button)).pack()
+		Button(self.main_scroll_frame.inner, text = 'ok', command = lambda button = 'ok': self.cleanup(button)).pack()
+		Button(self.main_scroll_frame.inner, text = 'cancel', command = lambda button = 'cancel': self.cleanup(button)).pack()
+
+		self.top.geometry("1100x750")
 	def cleanup(self, button):
 	
 		self.button = button
