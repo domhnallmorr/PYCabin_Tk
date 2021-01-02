@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import *
 
+import tkinter.messagebox
+
 import docx_functions
 
 from docx import Document
@@ -41,7 +43,11 @@ class Export_Word_Excel_Window(object):
 		self.file_entry = Entry(self.main_frame, width = 80)
 		self.file_entry.grid(row=1, column = 2, ipadx=1, ipady=1, padx=2, pady=2, sticky='NW')
 		
-		self.file_entry.insert(0, r'C:/Users/domhn/Documents/Python/Pycabin_Tkinter/V0.17/test.docx')
+		if self.type == 'word':
+			self.file_entry.insert(0, r'C:/Users/domhn/Documents/Python/Pycabin_Tkinter/V0.18/test.docx')
+		else:
+			self.file_entry.insert(0, r'C:/Users/domhn/Documents/Python/Pycabin_Tkinter/V0.18/test.xlsx')
+
 		Button(self.main_frame, text='Browse', command=self.browse).grid(row=1, column = 3, ipadx=1, ipady=1, padx=2, pady=2, sticky='NW')
 
 		# ok button
@@ -97,8 +103,13 @@ class Export_Word_Excel_Window(object):
 					
 					docx_functions.write_table(self.document, ['ITEM NO.', 'PART NUMBER', 'DESCRIPTION', 'FROMTO', 'QTY'],ipc_table)
 					
-					self.document.save(self.filename)
+					try:
+						self.document.save(self.filename)
+						saved = True
+					except PermissionError:
 
+						tkinter.messagebox.showerror(master=self.top, title='Error', message='Could not save file, permission denied')
+						saved = False
 				else:
 
 					wb = openpyxl.Workbook()
@@ -120,10 +131,17 @@ class Export_Word_Excel_Window(object):
 							excel_functions.add_data_to_sheet(wb, sheet, excel_data['data'][table], 1, 1, sheet_styles['Normal'])
 
 							count += 1
-					wb.save(self.filename)
+				
+					try:
+						wb.save(self.filename)
+						saved = True
+					except PermissionError:
 
+						tkinter.messagebox.showerror(master=self.top, title='Error', message='Could not save file, permission denied')
+						saved = False
 
-				self.top.destroy()
+				if saved:
+					self.top.destroy()
 			
 		else:
 			

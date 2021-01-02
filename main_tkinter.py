@@ -51,7 +51,7 @@ class MainApplication(tk.Frame):
 
 	def setup_variables(self):
 		
-		self.version = '0.17.0'
+		self.version = '0.18.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		
@@ -220,15 +220,18 @@ class MainApplication(tk.Frame):
 		insert_component_menu.add_command(label = 'Multiple Seats', command = lambda self=self, type='Seats - Multiple': components_tk.new_component(self, type))
 		insert_component_menu.add_command(label = 'Windbreaker', command = lambda self=self, type='Windbreaker': components_tk.new_component(self, type))
 		insert_component_menu.add_command(label = 'Emergency Equipment', command = lambda self=self, type='Emergency Equipment': components_tk.new_component(self, type))
-		
-		insert_menu.add_command(label = 'LOPA', command = lambda self=self, type='LOPA': components_tk.new_component(self, type))
-		
-		insert_menu.add_command(label = 'PSU Layout', command = lambda self=self, type='PSU': components_tk.new_component(self, type))
 
-		insert_menu.add_command(label = 'OHSC Layout', command = lambda self=self, type='OHSC': components_tk.new_component(self, type))
+		insert_layout_menu = tk.Menu(menu, tearoff = 0)
+		insert_menu.add_cascade(label = 'Layouts',menu = insert_layout_menu)
 
-		insert_menu.add_command(label = 'Emergency Equipment Layout', command = lambda self=self, type='EEL': components_tk.new_component(self, type))
-		insert_menu.add_command(label = 'EEL Comparison', command = lambda self=self, type='EEL Comparison': components_tk.new_component(self, type))
+		insert_layout_menu.add_command(label = 'LOPA', command = lambda self=self, type='LOPA': components_tk.new_component(self, type))
+		
+		insert_layout_menu.add_command(label = 'PSU Layout', command = lambda self=self, type='PSU': components_tk.new_component(self, type))
+
+		insert_layout_menu.add_command(label = 'OHSC Layout', command = lambda self=self, type='OHSC': components_tk.new_component(self, type))
+
+		insert_layout_menu.add_command(label = 'Emergency Equipment Layout', command = lambda self=self, type='EEL': components_tk.new_component(self, type))
+		insert_layout_menu.add_command(label = 'EEL Comparison', command = lambda self=self, type='EEL Comparison': components_tk.new_component(self, type))
 
 		# insert_menu.add_command(label = 'Change', command = lambda self=self, type='Change': components_tk.new_component(self, type))
 		

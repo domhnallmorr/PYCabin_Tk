@@ -227,7 +227,7 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas.add_lwpolyline(points)
+				canvas[1].add_lwpolyline(points)
 				
 		if lav[0] == 'Lav E':
 			
@@ -249,7 +249,7 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas.add_lwpolyline(points)
+				canvas[1].add_lwpolyline(points)
 				
 		if lav[0] == 'Lav D':
 			
@@ -271,7 +271,7 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas.add_lwpolyline(points)
+				canvas[1].add_lwpolyline(points)
 				
 		if lav[4] == 'Yes': #doghouse
 			
@@ -288,4 +288,4 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 				y = [y_datum, y_datum+24, y_datum+24, y_datum, y_datum]
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas.add_lwpolyline(points)			
+				canvas[1].add_lwpolyline(points)			

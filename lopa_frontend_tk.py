@@ -478,7 +478,9 @@ class LOPA_Page_Tk(tk.Frame):
 		if self.treeview_iid:
 			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.title)
 			components_tk.component_renamed(self)
-			
+		
+		treeview_functions.write_data_to_treeview(self.item_tree, 'replace', self.backend.seat_item_nos)
+
 		treeview_functions.write_data_to_treeview(self.LHS_lopa_tree, 'replace', self.backend.seat_layout['LHS'])
 		treeview_functions.write_data_to_treeview(self.RHS_lopa_tree, 'replace', self.backend.seat_layout['RHS'])
 		
@@ -696,7 +698,7 @@ class LOPA_Page_Tk(tk.Frame):
 
 		mode = 'edit'
 		
-		self.w=Export_Word_Excel_Window(self.mainapp, self.master, mode, self)
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self)
 		self.master.wait_window(self.w.top)	
 		# document = Document()
 		
@@ -774,8 +776,9 @@ class LOPA_Page_Tk(tk.Frame):
 		self.master.wait_window(self.w.top)	
 		
 		if self.w.button == 'ok':
-			treeview_functions.write_data_to_treeview(self.item_tree, 'replace',self.w.data) 
-
+			#treeview_functions.write_data_to_treeview(self.item_tree, 'replace',self.w.data) 
+			self.update_component(self.w, 'edit')
+			
 	def export_excel(self):
 		mode = 'edit'
 		
@@ -1362,18 +1365,20 @@ class Edit_Item_Window(object):
 		self.mode = mode
 		self.parent_lopa = parent_lopa
 
+		lopa_bk.update_variables(self, self.parent_lopa.backend)
+
 		self.setup_label_frames()
 		
 		self.seats = {'LHS': {}, 'RHS': {}}
 		
-		current_items = treeview_functions.get_all_treeview_items(self.parent_lopa.item_tree)
+		#current_items = treeview_functions.get_all_treeview_items(self.parent_lopa.item_tree)
 		for side in self.seats:
 			for row in self.parent_lopa.backend.seat_layout[side]:
 				if row[1] not in self.seats[side]:
 					self.seats[side][row[1]] = Entry(self.items_frame)
 					
 					#insert current number in tree
-					for c in current_items:
+					for c in self.seat_item_nos:
 						if c[1] == row[1]:
 							self.seats[side][row[1]].insert(0, c[2])
 
@@ -1430,7 +1435,7 @@ class Edit_Item_Window(object):
 		if self.button == 'ok':
 			
 			count = 1
-			self.data = []
+			self.seat_item_nos = []
 			for side in self.seats:
 				for seat in self.seats[side]:
 					#get qty of installed seats
@@ -1438,7 +1443,8 @@ class Edit_Item_Window(object):
 					for row in self.parent_lopa.backend.seat_layout[side]:
 						if row[1] == seat:
 							qty += 1
-					self.data.append([count, seat, self.seats[side][seat].get(), qty])
+
+					self.seat_item_nos.append([count, seat, self.seats[side][seat].get(), qty])
 					count += 1
 					
 			self.top.destroy()

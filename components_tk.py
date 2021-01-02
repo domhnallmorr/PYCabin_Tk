@@ -211,8 +211,10 @@ def insert_new_item_into_side_treeview(mainapp, parent_node, item_name, componen
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.ohsc_icon2)
 	elif ' EE' in parent_node and 'EEL' not in parent_node:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.ee_icon2)
-	elif 'EEL' in parent_node:
+	elif 'EEL' in parent_node and 'Comparisons' not in parent_node:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.eel_icon2)
+	elif 'EEL Comparisons' in parent_node:
+		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name, image = mainapp.mag_icon2)
 	else:
 		iid = mainapp.main_treeview.insert(parent_node,'end', text=item_name)	
 	return iid

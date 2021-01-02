@@ -159,8 +159,7 @@ class Seat_Backend():
 		self.ax1 = self.seat_figure.add_subplot(121, aspect='equal', adjustable='box')
 		self.ax2 = self.seat_figure.add_subplot(122, aspect='equal', adjustable='box')
 		
-		self.ax1.title.set_text('Top-Down View')
-		self.ax2.title.set_text('Side Profile')
+		self.seat_figure.subplots_adjust(left=0.05, bottom=0.15, right=0.99, top=0.94, wspace=None, hspace=None)
 	
 	def get_top_down_y_datum(self, station=None):
 	
@@ -348,7 +347,11 @@ class Seat_Backend():
 		xmin,xmax = ax.get_xlim()
 		line, = canvas[1].plot([xmin, xmax],[0, 0], color='dimgrey' )
 
+		self.ax1.set_title('Top-Down View')
+		self.ax2.title.set_text('Side Profile')
 		
+		self.ax1.set(ylabel = 'Distance From Centerline (")', xlabel='Distance Forward/Aft of Rear Face (")')
+		self.ax2.set(ylabel = 'Height Above Floor (")', xlabel='Distance Forward/Aft of Rear Face (")')
 class Seat_Saved_State():
 	def __init__(self, seat):
 	

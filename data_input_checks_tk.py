@@ -97,11 +97,13 @@ def check_entry_input(entry_data):
 	# If data good to this point, check if it is the right range
 	if entry_good:
 	
+
 		if 'float positive' in entry_data[2] or 'int positive' in entry_data[2]:
 		
 			if user_input <= 0:
 				
 				entry_good = False
+
 		elif 'float greater equal zero' in entry_data[2]:
 
 			if user_input < 0:
@@ -148,10 +150,10 @@ def check_title_input(entry_data, mainapp):
 	# Illegal characters
 	if title_good:
 		
-		for c in [',', ':']:
+		for c in [',', ':', '(', ')']:
 			if c in user_input:
 				title_good = False
-				title_msg = 'Title must not contain any of the following characters:\n      ,:'
+				title_msg = 'Title must not contain any of the following characters:\n      , : ( )'
 	if title_good:
 		if user_input != entry_data[2]: # entry_data[2] is the original title, before user editted it
 			# Check Component Does not exits already

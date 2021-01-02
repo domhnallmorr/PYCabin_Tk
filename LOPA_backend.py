@@ -22,6 +22,7 @@ def setup_variables(w):
 	w.lavs = []
 	w.windbreakers = []
 	w.galleys = []
+	w.seat_item_nos = []
 	
 def update_variables(w, source):
 	w.title = source.title
@@ -36,6 +37,7 @@ def update_variables(w, source):
 	w.windbreakers = copy.deepcopy(source.windbreakers)
 	w.lavs = copy.deepcopy(source.lavs)
 	w.galleys = copy.deepcopy(source.galleys)
+	w.seat_item_nos = copy.deepcopy(source.seat_item_nos)
 	
 	if w.aircraft_type == 'A320' or w.aircraft_type == 'A319':
 		w.treeview_node = 'A320 LOPAs'
@@ -209,6 +211,7 @@ class LOPA_Backend():
 				'Lavs': self.lavs,
 				'Galleys': self.galleys,
 				'Windbreakers': self.windbreakers,
+				'Seat Item Numbers': self.seat_item_nos,
 				'Comments': comments
 				}
 
@@ -341,6 +344,44 @@ class LOPA_Backend():
 					parts.append([1, seat, self.mainapp.frames[seat].backend.description])
 		
 		return parts
+
+	def gen_ipc_table(self):
+
+		ipc_table = []
+		item_numbers = {}
+		no_item_numbers = []
+		processed_seats = []
+		qtys = {}
+
+		for side in ['LHS', 'RHS']:
+			for row in self.seat_layout[side]:
+				seat = row[1]
+
+				if seat not in processed_seats:
+
+					qtys[seat] = 1
+					#try to find the item number for this seat
+					found = False
+					for s in self.seat_item_nos:
+						if s[1] == seat:
+							item_numbers[seat] = s[2]
+							found = True
+							
+					if not found:
+						no_item_numbers.append(seat)
+
+					processed_seats.append(seat)
+				else:
+					qtys[seat] += 1
+		#stitch all the data together
+		for seat in item_numbers.keys():
+
+			ipc_table.append([item_numbers[seat], seat, self.mainapp.frames[seat].backend.description, '', qtys[seat]])
+
+		for seat in no_item_numbers:
+			ipc_table.append(['', seat, self.mainapp.frames[seat].backend.description, '', qtys[seat]])
+
+		return ipc_table
 		
 	def get_psu_rail_start_end(self):
 		

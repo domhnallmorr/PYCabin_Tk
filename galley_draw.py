@@ -80,7 +80,7 @@ def draw_galley_side(lopa_bk, galley, canvas, canvas_type, side_datum):
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas.add_lwpolyline(points)
+				canvas[1].add_lwpolyline(points)
 				
 		if galley[0] == 'Galley 5':
 			s = 1280
@@ -100,5 +100,5 @@ def draw_galley_side(lopa_bk, galley, canvas, canvas_type, side_datum):
 					points = []
 					for index, v in enumerate(x):
 						points.append((v, y[index]))
-					canvas.add_lwpolyline(points)					
+					canvas[1].add_lwpolyline(points)					
 			
