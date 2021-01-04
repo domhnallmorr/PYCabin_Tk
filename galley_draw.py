@@ -27,11 +27,15 @@ def draw_galley_top_down(lopa_bk, galley, canvas, canvas_type, top_down_datum):
 
 			elif canvas_type == 'dxf':
 				
+				y = [cl, cl, cl + (w*0.8), cl+(w*0.8), cl]
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
 				canvas.add_lwpolyline(points)
-			
+				
+				canvas.add_line((-b*0.25, cl + (w*0.8)), (-b*0.25, w*1.1))
+				canvas.add_line((-b, cl + (w*0.8)), (-b, w*1.08))
+
 		if galley[0] == 'Galley 5':
 
 			s = 1280
@@ -80,7 +84,7 @@ def draw_galley_side(lopa_bk, galley, canvas, canvas_type, side_datum):
 				points = []
 				for index, v in enumerate(x):
 					points.append((v, y[index]))
-				canvas[1].add_lwpolyline(points)
+				canvas.add_lwpolyline(points)
 				
 		if galley[0] == 'Galley 5':
 			s = 1280
@@ -100,5 +104,5 @@ def draw_galley_side(lopa_bk, galley, canvas, canvas_type, side_datum):
 					points = []
 					for index, v in enumerate(x):
 						points.append((v, y[index]))
-					canvas[1].add_lwpolyline(points)					
+					canvas.add_lwpolyline(points)					
 			

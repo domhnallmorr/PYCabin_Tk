@@ -1147,6 +1147,7 @@ class Double_Click_Seat_Window_Tk(object):
 			else:
 
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
+				self.button = 'cancel'
 		else:
 			self.top.destroy()
 			

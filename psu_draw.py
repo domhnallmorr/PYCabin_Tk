@@ -201,7 +201,7 @@ def gen_dxf(self):
 	ac_block = dxf.blocks.new(name='aircaft model')
 
 	if self.backend.aircraft_type == 'A320':
-		ac_model = Default_AC_Models.A320_Family_Model('A320', canvas_type, ac_block, ac_block, ac_block)
+		ac_model = Default_AC_Models.A320_Family_Model('A320', canvas_type, ac_block, ac_block, ac_block, dxf)
 
 	ac_model.draw_all()
 
@@ -219,11 +219,14 @@ def gen_dxf(self):
 		for i, part in enumerate(self.backend.psu_layout[side]):
 			if part[1] in ['Oxygen Box LHS', 'Oxygen Box RHS', 'Partition Panel LHS', 'Adjustment Panel LHS']:
 				name = part[1]
+				block_name = part[1]
 			else:
+				
 				name = f'{part[1]} {side}'
-			
+				block_name = name.replace('"', '')
+
 			if name in blocks.blocks:
-				modelspace.add_blockref(name, (float(part[3]), 0))
+				modelspace.add_blockref(block_name, (float(part[3]), 0))
 
 			elif 'Adjustment Panel' in part[1]:
 
@@ -324,7 +327,7 @@ def gen_dxf(self):
 					modelspace.add_lwpolyline(points,dxfattribs={'color': 50})
 
 
-	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.16\psu.dxf')
+	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.19\psu.dxf')
 	
 
 def setup_psu_blocks(self, dxf):
@@ -456,7 +459,8 @@ class PSU_Blocks:
 			
 			color = self.colors[part]
 			for side in ['LHS', 'RHS']:
-				block = dxf.blocks.new(name=f'{part} {side}')
+				block_name = part.replace('"', '')
+				block = dxf.blocks.new(name=f'{block_name} {side}')
 				self.blocks[f'{part} {side}'] = block
 				w = self.widths[part]
 							

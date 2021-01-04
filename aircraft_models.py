@@ -7,7 +7,10 @@ def gen_aircraft_offsets():
 			'B737-800': 0}
 
 
-def draw_a320_family_model(self, canvas, canvas_type, datum):
+def draw_a320_family_model(self, canvas, canvas_type, datum, dxf=None):
+
+	if dxf:
+		iml_block = dxf.blocks.new(name='IML')
 
 	if self.aircraft_type == 'A320':
 		offset = 0
@@ -15,6 +18,8 @@ def draw_a320_family_model(self, canvas, canvas_type, datum):
 		offset = -147
 		
 	if self.aircraft_type == 'A320' or self.aircraft_type == 'A319':
+
+		#IML
 		x=[105.4137,105.9721,110.56,117.8845,125.2459,137.8717,169.2054,223.2479,244.57,279.0,285.7,
 			314.0,320.0,320.0,1156.5+offset,1156.5+offset,1207.0+offset,1242.85+offset,1250.45+offset,1278.62+offset,1322.52+offset,1322.52+offset,1322.52+offset,
 			1278.62+offset,1250.45+offset,1242.85+offset,1207.0+offset,1156.5+offset,320.0,314.0,285.7,279.0,244.57,223.2479,169.2054,
@@ -33,10 +38,55 @@ def draw_a320_family_model(self, canvas, canvas_type, datum):
 			points = []
 			for index, v in enumerate(x):
 				points.append((v, y[index]))
-			canvas.add_lwpolyline(points)
-	
+			iml_block.add_lwpolyline(points)
+		
+		if dxf:
+			canvas.add_blockref('IML', (0, 0))
+			canvas.add_blockref('IML', (-5.4, 0), dxfattribs={
+        		'xscale': 1.007,
+        		'yscale': 79/73.6,}) #OML
 
-					
+		#create window blocks
+
+		if dxf:
+			block = dxf.blocks.new(name='Window')		
+			
+			points = [(-12.3/2, 0), (-7.5/2, -5.4)]
+			block.add_lwpolyline(points)
+
+			points = [(12.3/2, 0), (7.5/2, -5.4)]
+			block.add_lwpolyline(points)
+
+			
+			window_sta = [342]
+
+			# add windows forward of OW exits
+			for i in range(15):
+				window_sta.append(window_sta[-1]+20)
+
+			#add window aft of OW exits
+			window_sta.append(window_sta[0]+383.7)
+			for i in range(24):
+				window_sta.append(window_sta[-1]+20)
+
+			for s in window_sta:
+
+				if s < 1204 and s < 1182:
+					canvas.add_blockref('Window', (s+12.3/2, -73.6))
+
+					canvas.add_blockref('Window', (s+12.3/2, 73.6), dxfattribs={'rotation': 180})
+
+				if s < 1204 and s > 1182:
+					canvas.add_blockref('Window', (s+12.3/2, -73.4), dxfattribs={'rotation': 1})
+
+					canvas.add_blockref('Window', (s+12.3/2, 73.4), dxfattribs={'rotation': 179})
+
+				if s > 1204:
+					canvas.add_blockref('Window', (s+12.3/2, -73.0), dxfattribs={'rotation': 4})
+
+					canvas.add_blockref('Window', (s+12.3/2, 73.0), dxfattribs={'rotation': 176})
+
+
 		#Centerline
 		x = [105.4137,1322.52+offset]
 		y = [0.0, 0.0]

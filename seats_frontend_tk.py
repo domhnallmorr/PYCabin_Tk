@@ -504,13 +504,25 @@ class Edit_Seat_Window_Tk(object):
 
 			if data_good: # additional checks to make sure dimensions entered are reasonable
 
-				if float(self.l_aft_entry.get()) > 27:
-					data_good = False
-					msg = 'Seat Length Aft of Front Stud greater than 27" is not supported yet'
+				if self.mode != 'edit multiple':
+					if float(self.l_aft_entry.get()) > 27:
+						data_good = False
+						msg = 'Seat Length Aft of Front Stud greater than 27" is not supported yet'
 
-				if float(self.srp_x_entry.get()) > float(self.l_aft_entry.get()):
-					data_good = False
-					msg = 'SRP X must be less than the Seat Length Aft of Front Stud'
+					if float(self.srp_x_entry.get()) > float(self.l_aft_entry.get()):
+						data_good = False
+						msg = 'SRP X must be less than the Seat Length Aft of Front Stud'
+
+				if self.mode == 'edit multiple':
+					if self.l_aft_entry.get() != '':
+						if float(self.l_aft_entry.get()) > 27:
+							data_good = False
+							msg = 'Seat Length Aft of Front Stud greater than 27" is not supported yet'
+
+					if self.srp_x_entry.get() != '':
+						if float(self.srp_x_entry.get()) > float(self.l_aft_entry.get()):
+							data_good = False
+							msg = 'SRP X must be less than the Seat Length Aft of Front Stud'
 
 			if not data_good:
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)

@@ -4,6 +4,7 @@ import windbreaker_draw
 import lav_draw
 import galley_draw
 import aircraft_models
+import Default_AC_Models
 import LOPA_backend as lopa_bk
 
 import lopa_frontend_tk
@@ -112,12 +113,12 @@ def draw_lopa(self, canvas, canvas_type, datum, draw_top_down):
 				# #windbreaker_draw.windbreaker_top_down_view(canvas, canvas_type, datum, lav.backend)
 				# lav_draw.draw_lav_top_down(lav.backend, canvas, canvas_type, datum)
 		self.canvas.draw()
-def draw_aircraft(self, canvas, canvas_type, datum):
+def draw_aircraft(self, canvas, canvas_type, datum, dxf=None):
 
 	if self.aircraft_type in ['A320', 'A319']:
-		aircraft_models.draw_a320_family_model(self, canvas, canvas_type, datum)
+		aircraft_models.draw_a320_family_model(self, canvas, canvas_type, datum, dxf)
 	elif self.aircraft_type in ['B737-800']:
-		aircraft_models.draw_b737_family_model(self, canvas, canvas_type, datum)
+		aircraft_models.draw_b737_family_model(self, canvas, canvas_type, datum, dxf)
 
 def draw_seat_tracks(self, canvas, canvas_type, datum):
 
@@ -286,13 +287,19 @@ def draw_windbreakers_side(self, canvas, canvas_type, datum):
 		windbreaker_draw.windbreaker_side_view(side_canvas, canvas_type, m_datum, c)
 		
 		
-def draw_lavs_top_down(lopa_bk, canvas, canvas_type, datum,):
+def draw_lavs_top_down(lopa_bk, canvas, canvas_type, datum,dxf=None):
 
 	for lav in lopa_bk.lavs:
 		
 		if lav[1] == 'Yes':
 
-			lav_draw.draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, datum)
+			if canvas_type == 'dxf':
+				block = dxf.blocks.new(name=lav[0])
+
+				lav_draw.draw_lav_top_down(lopa_bk, lav, block, canvas_type, datum)
+			
+			else:
+				lav_draw.draw_lav_top_down(lopa_bk, lav, canvas, canvas_type, datum)
 
 def draw_lavs_side(lopa_bk, canvas, canvas_type, datum):
 
@@ -362,24 +369,32 @@ def gen_dxf(self):
 	#lopa_draw_redo.draw_lopa(self, canvas, canvas_type, datum, True)
 	# Aircraft Block
 	ac_block = dxf.blocks.new(name='aircaft model')
-	draw_aircraft(self.backend, ac_block, 'dxf', [0,0])
+	#draw_aircraft(self.backend, ac_block, 'dxf', [0,0], dxf)
+	#modelspace.add_blockref('aircaft model', (0, 0))
 	modelspace.add_blockref('aircaft model', (0, 0))
-	
-	add_seats_to_dxf(self, dxf, modelspace, True, True)
-	
-	# Add floor
-	draw_floor(self.backend, modelspace, 'dxf', [0,-180-0.12])
-	draw_floor(self.backend, modelspace, 'dxf', [0,130+0.12])
-	
-	# Monuments
-	draw_windbreakers_top_down(self.backend, modelspace, 'dxf', [0,0])
-	draw_windbreakers_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
-	
-	draw_lavs_top_down(self.backend, modelspace, 'dxf', [0,0])
-	draw_lavs_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
 
-	draw_galleys_top_down(self.backend, modelspace, 'dxf', [0,0])
-	draw_galleys_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
+	if self.backend.aircraft_type == 'A320':
+		ac_model = Default_AC_Models.A320_Family_Model('A320', canvas_type, ac_block, ac_block, ac_block, dxf)
+
+	ac_model.draw_all()	
+
+	lopa_model = LOPA_Drawing(self.backend, 'dxf', modelspace, modelspace, modelspace, dxf)
+	lopa_model.draw_all()
+	# add_seats_to_dxf(self, dxf, modelspace, True, True)
+	
+	# # Add floor
+	# draw_floor(self.backend, modelspace, 'dxf', [0,-180-0.12])
+	# draw_floor(self.backend, modelspace, 'dxf', [0,130+0.12])
+	
+	# # Monuments
+	# draw_windbreakers_top_down(self.backend, modelspace, 'dxf', [0,0])
+	# draw_windbreakers_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
+	
+	# draw_lavs_top_down(self.backend, modelspace, 'dxf', [0,0], dxf)
+	# draw_lavs_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
+
+	# draw_galleys_top_down(self.backend, modelspace, 'dxf', [0,0])
+	# draw_galleys_side(self.backend, [modelspace, modelspace], 'dxf', [0, 130+0.12, 0, -180-0.12])
 		
 	# Insert Stations for seats
 	stations, pitches = lopa_bk.process_seat_stations_for_drawing(self.backend.seat_layout)
@@ -404,7 +419,7 @@ def gen_dxf(self):
 					 #override={'dimtxt': p[1],})
 			dim.render()
 			#modelspace.add_text(p[1], dxfattribs={'height': 5.35}).set_pos((p[0], y),align='CENTER')
-	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.18\lopa.dxf')
+	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.19\lopa.dxf')
 	
 def add_seats_to_dxf(self, dxf, modelspace, draw_top, draw_side):
 
