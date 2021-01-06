@@ -51,7 +51,7 @@ class MainApplication(tk.Frame):
 
 	def setup_variables(self):
 		
-		self.version = '0.19.0'
+		self.version = '0.20.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		
@@ -172,7 +172,8 @@ class MainApplication(tk.Frame):
 
 		self.ids_not_allowed = ['Project', 'Aircraft', 'A320 Aircraft', '737 Aircraft', 'Aircraft', 'Seats', 'A320 Seats',
 								'737 Seats', 'Monuments', 'A320 Monuments', 'A320 Windbreakers', 'A320 LOPAs', 'Windbreaker'
-									'Windbreakers', 'A320 PSUs', 'PSUs', 'OHSCs', 'A320 OHSCs', 'EELs', 'A320 EELs']		
+									'Windbreakers', 'A320 PSUs', 'PSUs', 'OHSCs', 'A320 OHSCs', 'EELs', 'A320 EELs',
+									]		
 		
 		# self.treeview_nodes = {'Aircraft': ['A320 Aircraft', '737 Aircraft'], 'Seats': ['A320 Seats', '737 Seats'], 'Monuments': ['A320 Windbreakers'],
 								# 'Windbreakers': ['A320 Windbreakers'],

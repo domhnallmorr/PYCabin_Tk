@@ -355,7 +355,8 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 				for part in self.w.bom:
 					w.bom[part] = self.w.bom[part]
 
-		self.update_component(w, 'edit')
+		if not canceled:
+			self.update_component(w, 'edit')
 
 	def update_treeviews(self):
 

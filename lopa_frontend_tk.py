@@ -813,16 +813,19 @@ class Edit_LOPA_Window_Tk(object):
 
 		if self.mode == 'edit':
 			self.set_default_values()
+
+		else:
+			self.aircraft_selected(None)
 		
-		if self.mode == 'new':
-			self.title_entry.insert(0, 'A320 LOPA')
-			#self.aircraft_combo.set('A320')
-			self.lhs_pitch_combo.set(28)
-			self.rhs_pitch_combo.set(28)
-			self.lhs_rows_combo.set(30)
-			self.rhs_rows_combo.set(30)
-			self.lhs_seat_combo.set('A320 Seat 1')
-			self.rhs_seat_combo.set('A320 Seat 2')
+		# if self.mode == 'new':
+		# 	self.title_entry.insert(0, 'A320 LOPA')
+		# 	#self.aircraft_combo.set('A320')
+		# 	self.lhs_pitch_combo.set(28)
+		# 	self.rhs_pitch_combo.set(28)
+		# 	self.lhs_rows_combo.set(30)
+		# 	self.rhs_rows_combo.set(30)
+		# 	self.lhs_seat_combo.set('A320 Seat 1')
+		# 	self.rhs_seat_combo.set('A320 Seat 2')
 	def setup_label_frames(self):
 		self.details_frame = LabelFrame(self.top,text="LOPA Details:")
 		self.details_frame.grid(row=2, column=0, columnspan = 8, rowspan = 4,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
@@ -838,8 +841,8 @@ class Edit_LOPA_Window_Tk(object):
 		if self.mode == 'edit':
 			state = 'disabled'
 		else:
-			state = 'normal'
-		labels = ['Title:', 'Description:', 'Drawing Number:', 'Revision', 'Aircraft:', 'Row 13 Included:']
+			state = 'readonly'
+		labels = ['Title:', 'Description:', 'Drawing Number:', 'Revision', 'Aircraft:',]# 'Row 13 Included:']
 		row = 1
 		gui_styles_tk.create_multiple_labels(self.details_frame, labels, row, 2, 20, 2, 2)
 
@@ -861,22 +864,25 @@ class Edit_LOPA_Window_Tk(object):
 		#if self.mode != 'edit':
 			
 		#self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320', 'A319', 'B737-800'],state='readonly')
-		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320'],state='readonly')
+		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320'])
 		self.aircraft_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.aircraft_combo.bind("<<ComboboxSelected>>", self.aircraft_selected)
+
 		if self.mode == 'edit':
 			self.aircraft_combo.set(self.parent_lopa.backend.aircraft_type)
 			self.aircraft_combo.config(state='disabled')
 		else:
-			self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values', 'Aircraft Type']
-		
+		#	self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values', 'Aircraft Type']
+			self.aircraft_combo.set('A320')
+			self.aircraft_combo.config(state='disabled')
+
 		self.economy_entry=Entry(self.details_frame, width=20)		
 		#self.economy_entry.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')		
 
-		self.row13_ckbx = Checkbutton(self.details_frame, text="")
-		self.row13_ckbx.grid(row=7,column=3,padx=2, pady=2,sticky = 'NSEW')
+		#self.row13_ckbx = Checkbutton(self.details_frame, text="")
+		#self.row13_ckbx.grid(row=7,column=3,padx=2, pady=2,sticky = 'NSEW')
 		
-		labels = ['Number Rows LHS:', 'Default Seat LHS:', 'Default Pitch LHS (in):']
+		labels = ['Number Rows LHS:', 'Default Seat LHS:',]# 'Default Pitch LHS (in):']
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.seats_frame, labels, row, 2, 20, 2, 2)
 
@@ -891,11 +897,11 @@ class Edit_LOPA_Window_Tk(object):
 			self.data_checks['LHS Default Seat'] = ['combo', self.lhs_seat_combo, 'in values', 'LHS Seat']
 		
 		self.lhs_pitch_combo= ttk.Combobox(self.seats_frame, values=[28, 29, 30, 31, 32, 33],state=state)
-		self.lhs_pitch_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
-		if self.mode != 'edit':
-			self.data_checks['LHS Default Pitch'] = ['combo', self.lhs_pitch_combo, 'int greater than 27', 'LHS Pitch']
+		#self.lhs_pitch_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
+		#if self.mode != 'edit':
+		#	self.data_checks['LHS Default Pitch'] = ['combo', self.lhs_pitch_combo, 'int greater than 27', 'LHS Pitch']
 		
-		labels = ['Number Rows RHS:', 'Default Seat RHS:', 'Default Pitch RHS (in):']
+		labels = ['Number Rows RHS:', 'Default Seat RHS:',]# 'Default Pitch RHS (in):']
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.seats_frame, labels, row, 4, 20, 2, 2)
 
@@ -910,9 +916,9 @@ class Edit_LOPA_Window_Tk(object):
 			self.data_checks['RHS Default Seat'] = ['combo', self.rhs_seat_combo, 'in values', 'RHS Seat']
 		
 		self.rhs_pitch_combo= ttk.Combobox(self.seats_frame, values=[28, 29, 30, 31, 32, 33],state=state)
-		self.rhs_pitch_combo.grid(row=4,column=5,padx=2, pady=2,sticky = 'NSEW')
-		if self.mode != 'edit':
-			self.data_checks['RHS Default Pitch'] = ['combo', self.rhs_pitch_combo, 'int greater than 27', 'RHS Pitch']
+		#self.rhs_pitch_combo.grid(row=4,column=5,padx=2, pady=2,sticky = 'NSEW')
+		#if self.mode != 'edit':
+		#	self.data_checks['RHS Default Pitch'] = ['combo', self.rhs_pitch_combo, 'int greater than 27', 'RHS Pitch']
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
@@ -976,7 +982,8 @@ class Edit_LOPA_Window_Tk(object):
 						if i == 0:
 							pitch = 340
 						else:
-							pitch = int(self.lhs_pitch_combo.get())
+							#pitch = int(self.lhs_pitch_combo.get())
+							pitch = 28
 						station += pitch
 						self.seat_layout['LHS'].append([i+1, self.lhs_seat_combo.get(), pitch, station])
 
@@ -986,7 +993,8 @@ class Edit_LOPA_Window_Tk(object):
 						if i == 0:
 							pitch = 340
 						else:
-							pitch = int(self.rhs_pitch_combo.get())
+							#pitch = int(self.rhs_pitch_combo.get())
+							pitch = 28
 						station += pitch
 						self.seat_layout['RHS'].append([i+1, self.rhs_seat_combo.get(), pitch, station])
 				
@@ -1031,6 +1039,8 @@ class Double_Click_Seat_Window_Tk(object):
 			self.min_row_number = 1
 		#self.seats, self.seats_dict = components_tk.get_all_seats(mainapp)
 		self.seats_dict = components_tk.get_all_components(mainapp, 'Seats')
+
+		self.data_checks = {}
 		self.setup_label_frames()
 		self.setup_widgets()
 
@@ -1062,8 +1072,9 @@ class Double_Click_Seat_Window_Tk(object):
 		self.row_entry=Entry(self.options_frame, width=20)		
 		self.row_entry.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')	
 		self.row_entry.insert(0,self.row_data[0])
+		self.data_checks['Row Number'] = ['entry', self.row_entry, 'int positive', 'Row Number']
 		
-		self.seat_combo= ttk.Combobox(self.options_frame, values=self.seats_dict[key])
+		self.seat_combo= ttk.Combobox(self.options_frame, values=self.seats_dict[key], state='readonly')
 		self.seat_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.seat_combo.set(self.row_data[1])
 		
@@ -1071,6 +1082,8 @@ class Double_Click_Seat_Window_Tk(object):
 		self.pitch_combo= ttk.Combobox(self.options_frame, values=pitches)
 		self.pitch_combo.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.pitch_combo.insert(0,self.row_data[2])
+		self.data_checks['Pitch'] = ['combo', self.pitch_combo, 'int greater than 27', 'Pitch']
+
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
 		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
@@ -1086,68 +1099,74 @@ class Double_Click_Seat_Window_Tk(object):
 		if button == 'ok':
 			self.button = 'ok'
 			
-			self.row_no = int(self.row_entry.get())
-			self.seat = self.seat_combo.get()
-			self.pitch = self.pitch_combo.get()
+			data_good, msg = data_input_checks_tk.check_data_input(self.data_checks, self.mainapp)
+		
+			if data_good:
+				self.row_no = int(self.row_entry.get())
+				self.seat = self.seat_combo.get()
+				self.pitch = self.pitch_combo.get()
+				msg = None
 
-			msg = None
+				if self.index == 0: 
+					if float(self.pitch) < 320: #first row pitch must be greater than 320
+						msg = 'As this is the first row, the pitch (first station) must be >= 320"'
+					
+					if not msg: #cheeck the seat is aft of WB
 
-			if self.index == 0: 
-				if float(self.pitch) < 320: #first row pitch must be greater than 320
-					msg = 'As this is the first row, the pitch (first station) must be >= 320"'
-				
-				if not msg: #cheeck the seat is aft of WB
+						#first check if WB installed
+						for wb in self.lopa.backend.windbreakers:
+							side = self.mainapp.frames[wb[0]].backend.side
+							if side == self.side:
+								sta = float(wb[1])
 
-					#first check if WB installed
-					for wb in self.lopa.backend.windbreakers:
-						side = self.mainapp.frames[wb[0]].backend.side
-						if side == self.side:
-							sta = float(wb[1])
+								if sta >= float(self.pitch):
+									 msg = f'As this is the first row, the pitch (first station) must be aft of WB station {sta}'
 
-							if sta >= float(self.pitch):
-								 msg = f'As this is the first row, the pitch (first station) must be aft of WB station {sta}'
+				if not msg: #check last seat is not in Lav and is forward of 1240
+					self.seat_layout[self.side][self.index] = [self.row_no, self.seat, self.pitch, None]
+					lopa_bk.LOPA_Backend.recalculate_stations(self)
 
-			if not msg: #check last seat is not in Lav and is forward of 1240
-				self.seat_layout[self.side][self.index] = [self.row_no, self.seat, self.pitch, None]
-				lopa_bk.LOPA_Backend.recalculate_stations(self)
+					#check if lav installed
 
-				#check if lav installed
+					lavs = {'LHS': 'Lav D', 'RHS': 'Lav E'}
 
-				lavs = {'LHS': 'Lav D', 'RHS': 'Lav E'}
+					for l in self.lavs:
+						if l[0] == lavs[self.side] and l[1] == 'Yes':
 
-				for l in self.lavs:
-					if l[0] == lavs[self.side] and l[1] == 'Yes':
+							sta = float(l[2])
 
-						sta = float(l[2])
+							last_seat = self.seat_layout[self.side][-1][1]
 
-						last_seat = self.seat_layout[self.side][-1][1]
+							last_sta = float(self.seat_layout[self.side][-1][3])
 
-						last_sta = float(self.seat_layout[self.side][-1][3])
+							last_sta += float(self.mainapp.frames[last_seat].backend.length_aft)
+							
+							if last_sta > sta:
+								msg = f'The last seat aft edge is located at {last_sta}", it must be forward of {lavs[self.side]} station {sta}"'
+					if not msg:
+						if float(self.seat_layout[self.side][-1][3]) > 1240:
+							msg = 'Last seat must be forward of station 1240"'
 
-						last_sta += float(self.mainapp.frames[last_seat].backend.length_aft)
-						
-						if last_sta > sta:
-							msg = f'The last seat aft edge is located at {last_sta}", it must be forward of {lavs[self.side]} station {sta}"'
 				if not msg:
-					if float(self.seat_layout[self.side][-1][3]) > 1240:
-						msg = 'Last seat must be forward of station 1240"'
+					if self.row_no < self.min_row_number:
+						msg = f'Row number must not be less than {self.min_row_number}'
 
-			if not msg:
-				if self.row_no < self.min_row_number:
-					msg = f'Row number must not be less than {self.min_row_number}'
+				if not msg:
+					if self.row_no != self.row_data[0]:
+						self.row_no_changed = True
+					else:
+						self.row_no_changed = False
 
-			if not msg:
-				if self.row_no != self.row_data[0]:
-					self.row_no_changed = True
+					self.top.destroy()
+
 				else:
-					self.row_no_changed = False
 
-				self.top.destroy()
+					tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
+					self.button = 'cancel'
 
 			else:
-
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
-				self.button = 'cancel'
+				self.button = 'cancel'				
 		else:
 			self.top.destroy()
 			

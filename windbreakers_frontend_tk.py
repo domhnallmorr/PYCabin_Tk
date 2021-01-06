@@ -315,15 +315,15 @@ class Edit_Windbreaker_Window_Tk(object):
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.details_frame, labels, row, 2, 20, 2, 2)
 
-		self.title_entry=Entry(self.details_frame, width=20)		
+		self.title_entry=Entry(self.details_frame, width=60)		
 		self.title_entry.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['Title'] = ['title', self.title_entry, self.orig_part_no]
 		
-		self.part_no_entry=Entry(self.details_frame, width=20)		
+		self.part_no_entry=Entry(self.details_frame, width=60)		
 		self.part_no_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 		#self.data_checks['Part Number'] = ['title', self.part_no_entry, self.orig_part_no]
 		
-		self.description_entry=Entry(self.details_frame, width=20)		
+		self.description_entry=Entry(self.details_frame, width=60)		
 		self.description_entry.grid(row=4,column=3,padx=2, pady=2,sticky = 'NSEW')
 		
 		self.side_combo= ttk.Combobox(self.details_frame, values=['LHS', 'RHS'])
@@ -374,12 +374,12 @@ class Edit_Windbreaker_Window_Tk(object):
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.options_frame, labels, row, 2, 20, 2, 2)
 
-		self.joggle_combo= ttk.Combobox(self.options_frame, values=['Yes', 'No'])
+		self.joggle_combo= ttk.Combobox(self.options_frame, values=['Yes', 'No'], state='readonly')
 		self.joggle_combo.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.joggle_combo.bind("<<ComboboxSelected>>", self.joggle_selected)
 		self.data_checks['Joggle'] = ['combo', self.joggle_combo, 'in values']
 		
-		self.bassinet_combo= ttk.Combobox(self.options_frame, values=['Yes', 'No'])
+		self.bassinet_combo= ttk.Combobox(self.options_frame, values=['Yes', 'No'], state='readonly')
 		self.bassinet_combo.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['Bassinet'] = ['combo', self.bassinet_combo, 'in values']
 		
@@ -387,11 +387,11 @@ class Edit_Windbreaker_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=7, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=4, columnspan=2, pady=5,sticky="nsew")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=8, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=6, columnspan=2, pady=5,sticky="nsew")
 
 		self.button = 'cancel'
 

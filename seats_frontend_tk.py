@@ -473,11 +473,11 @@ class Edit_Seat_Window_Tk(object):
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=10,columnspan=2, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=4,columnspan=2, pady=5,sticky="nsew")
 
 		# cancel button
 		self.cancel_button=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.cancel_button.grid(row=8,column=12, columnspan=2, pady=5,sticky="nsew")
+		self.cancel_button.grid(row=8,column=6, columnspan=2, pady=5,sticky="nsew")
 
 		self.button = 'cancel'
 		

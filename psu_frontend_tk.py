@@ -646,11 +646,11 @@ class Edit_PSU_Window_Tk(object):
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.details_frame, labels, row, 2, 20, 2, 2)
 		
-		self.title_entry=Entry(self.details_frame, width=20)		
+		self.title_entry=Entry(self.details_frame, width=60)		
 		self.title_entry.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['Title'] = ['title', self.title_entry, self.orig_part_no]			
 			
-		self.description_entry=Entry(self.details_frame, width=40)		
+		self.description_entry=Entry(self.details_frame, width=60)		
 		self.description_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 					
 		self.drawing_entry=Entry(self.details_frame, width=20)		
@@ -730,6 +730,8 @@ class Edit_Gasper_Window_Tk(object):
 
 		#get LOPA row numbers
 		self.row_numbers = self.mainapp.frames[self.parent_psu.backend.lopa].backend.get_all_row_numbers()
+		self.row_numbers['LHS'].append('N/A')
+		self.row_numbers['RHS'].append('N/A')
 
 		psu_bk.setup_variables(self)
 		psu_bk.PSU_Backend.update_variables(self, self.parent_psu.backend)
@@ -740,6 +742,8 @@ class Edit_Gasper_Window_Tk(object):
 		self.setup_buttons()
 
 		self.button = 'cancel'
+
+		self.top.geometry("900x600")
 
 	def setup_label_frames(self):
 
@@ -783,6 +787,7 @@ class Edit_Gasper_Window_Tk(object):
 				e = Entry(self.label_frames[side])
 				e.grid(row=row, column=2, pady=2, sticky='nsew')
 				e.insert(0, v[1])
+				e.config(state='disabled')
 				self.vent_frame_entries[side].append(e)
 
 				# vent stations
@@ -793,7 +798,7 @@ class Edit_Gasper_Window_Tk(object):
 				self.vent_station_entries[side].append(e)
 
 				# hose lengths
-				c = ttk.Combobox(self.label_frames[side], values=['400mm', '250mm', '150mm'])
+				c = ttk.Combobox(self.label_frames[side], values=['400mm', '250mm', '150mm', 'N/A'], state='readonly')
 				c.grid(row=row, column=4, pady=2, sticky='nsew')
 				c.insert(0, v[3])
 				self.hose_length_combos[side].append(c)
@@ -814,55 +819,56 @@ class Edit_Gasper_Window_Tk(object):
 
 	def auto_assign_hoses(self):
 
-		#TODO add data checks
+		
 
 		row_stations = copy.deepcopy(self.mainapp.frames[self.parent_psu.backend.lopa].backend.get_all_row_stations())
 		available_stations = copy.deepcopy(row_stations)
 		gasper_stations = self.parent_psu.backend.get_gasper_stations()
 
-		self.assigned_vents = {'LHS': {}, 'RHS': {}}
-		for side in ['LHS', 'RHS']:
-			#get selected vent stations
-			available_vents = []
-			for vent in self.vent_station_entries[side]:
-				available_vents.append(float(vent.get()))
+		if len(row_stations['LHS']) == len(gasper_stations['LHS']) and len(row_stations['RHS']) == len(gasper_stations['RHS']):
+			self.assigned_vents = {'LHS': {}, 'RHS': {}}
+			for side in ['LHS', 'RHS']:
+				#get selected vent stations
+				available_vents = []
+				for vent in self.vent_station_entries[side]:
+					available_vents.append(float(vent.get()))
 
-			#loop over each row
-			for idx, row in enumerate(row_stations[side]):
+				#loop over each row
+				for idx, row in enumerate(row_stations[side]):
 
-				row_gasper = gasper_stations[side][idx]
+					row_gasper = gasper_stations[side][idx]
 
-				closest = min(available_vents, key=lambda x:abs(x-row_gasper))
+					closest = min(available_vents, key=lambda x:abs(x-row_gasper))
 
-				available_vents.remove(closest)
+					available_vents.remove(closest)
 
-				distance = abs(closest-row_gasper)
-				
-				if distance > 10.5:
-					hose = '400mm'
-				elif distance > 4.5 and distance < 10.5:
-					hose = '250mm'
-				else:
-					hose = '150mm'
-				#print()
-				self.assigned_vents[side][self.row_numbers[side][idx]] = [closest, hose]
+					distance = abs(closest-row_gasper)
+					
+					if distance > 10.5:
+						hose = '400mm'
+					elif distance > 4.5 and distance < 10.5:
+						hose = '250mm'
+					else:
+						hose = '150mm'
+					#print()
+					self.assigned_vents[side][self.row_numbers[side][idx]] = [closest, hose]
 
-			#update combos
-			for idx, e in enumerate(self.vent_station_entries[side]):
-				e = float(e.get())
-				#print(f'entry {e}')
-				vent_used = False
-				for row in self.assigned_vents[side].keys():
-					#print(f'Assigned {self.assigned_vents[side][row][0]}')
-					if self.assigned_vents[side][row][0] == e:
-						vent_used = True
-						self.hose_length_combos[side][idx].set(self.assigned_vents[side][row][1])
-						self.row_combos[side][idx].set(row)
-						break
+				#update combos
+				for idx, e in enumerate(self.vent_station_entries[side]):
+					e = float(e.get())
+					#print(f'entry {e}')
+					vent_used = False
+					for row in self.assigned_vents[side].keys():
+						#print(f'Assigned {self.assigned_vents[side][row][0]}')
+						if self.assigned_vents[side][row][0] == e:
+							vent_used = True
+							self.hose_length_combos[side][idx].set(self.assigned_vents[side][row][1])
+							self.row_combos[side][idx].set(row)
+							break
 
-				if not vent_used:
-					self.hose_length_combos[side][idx].set('N/A')
-					self.row_combos[side][idx].set('N/A')
+					if not vent_used:
+						self.hose_length_combos[side][idx].set('N/A')
+						self.row_combos[side][idx].set('N/A')
 
 	def cleanup(self, button):
 
@@ -871,21 +877,35 @@ class Edit_Gasper_Window_Tk(object):
 		self.button = button
 
 		if self.button == 'ok':
-			self.gasper_layout = {'LHS': [], 'RHS': []}
 
-			for side in self.gasper_layout.keys():
-				
-				for idx, row in enumerate(self.row_combos[side]):
+			#check for any rows asigned, 
+			msg = None
 
-					row = self.row_combos[side][idx].get()
-					f = self.vent_frame_entries[side][idx].get()
-					s = self.vent_station_entries[side][idx].get()
-					h = self.hose_length_combos[side][idx].get()
+			for side in ['LHS', 'RHS']:
+				for i, c in enumerate(self.row_combos[side]):
+					if c.get() != 'N/A':
+						if self.hose_length_combos[side][i].get() == 'N/A':
+							msg = f'Gasper Hose Length Must be Selected for Row {c.get()} {side}'
 
-					self.gasper_layout[side].append([row, f, s, h])
+			if not msg:
+				self.gasper_layout = {'LHS': [], 'RHS': []}
+
+				for side in self.gasper_layout.keys():
+					
+					for idx, row in enumerate(self.row_combos[side]):
+
+						row = self.row_combos[side][idx].get()
+						f = self.vent_frame_entries[side][idx].get()
+						s = self.vent_station_entries[side][idx].get()
+						h = self.hose_length_combos[side][idx].get()
+
+						self.gasper_layout[side].append([row, f, s, h])
 
 
-			self.top.destroy()
+				self.top.destroy()
+
+			else:
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 
 		else:
 
@@ -1035,10 +1055,10 @@ class Gen_PSU_Window_Tk(object):
 				labels.append(f'Row {row[0]}:')
 				
 				if s == 'LHS':
-					self.lhs_combos[row[0]] = ttk.Combobox(lf, values=values)
+					self.lhs_combos[row[0]] = ttk.Combobox(lf, values=values, state='readonly')
 					self.lhs_combos[row[0]].grid(row=row_no,column=3,padx=2, pady=2,sticky = 'NSEW')
 				if s == 'RHS':
-					self.rhs_combos[row[0]] = ttk.Combobox(lf, values=values)
+					self.rhs_combos[row[0]] = ttk.Combobox(lf, values=values, state='readonly')
 					self.rhs_combos[row[0]].grid(row=row_no,column=3,padx=2, pady=2,sticky = 'NSEW')
 				row_no +=1	
 			row = 2
@@ -1063,8 +1083,9 @@ class Gen_PSU_Window_Tk(object):
 		
 		if self.button == 'ok':
 			
-			message = self.check_data()
-			
+			#message = self.check_data()
+			self.data_ok = True
+
 			if self.data_ok:
 				self.psiu_layout = {'LHS': [], 'RHS': []}
 				
@@ -1152,13 +1173,13 @@ class Gen_PSU_Window_Tk(object):
 			
 			if self.no_of_11_inch_psiu_lhs < (self.no_lhs/2) + 1:
 				self.data_ok = False
-				message = f'Error, Number of LHS PSIUs must be greater {self.no_lhs/2}'
+				message = f'Error, Number of LHS PSIUs must be greater {ceil(self.no_lhs/2)}'
 
 		if self.data_ok:
 			
 			if self.no_of_11_inch_psiu_rhs < (self.no_rhs/2) + 1:
 				self.data_ok = False
-				message = f'Error, Number of RHS PSIUs must be greater {self.no_rhs/2}'
+				message = f'Error, Number of RHS PSIUs must be greater {ceil(self.no_rhs/2)}'
 				
 		return message
 		
@@ -1405,31 +1426,39 @@ class Edit_DEU_Window_Tk(object):
 
 		if button == 'ok':
 
-			# TODO add data checks
-
-			self.deu_layout = {'LHS': [], 'RHS': []}
-
+			# check all title entries filled
+			msg = None
 			for side in ['LHS', 'RHS']:
-				for i, e in enumerate(self.title_entries[side]):
-					side = self.side_combos[side][i].get()
-					title = self.title_entries[side][i].get()
-					f=self.frame_entries[side][i].get()
-					s=self.station_entries[side][i].get()
+				for c in self.title_entries[side]:
+					if c.get() == '':
+						msg = 'All DEUs must be Assigned a Title'
 
-					self.deu_layout[side].append([title, f, s, side])
+			if not msg:
+				self.deu_layout = {'LHS': [], 'RHS': []}
 
-					# update DEU titles in vc_layout
-					orig_title = self.parent_psu.backend.deu_layout[side][i][0]
+				for side in ['LHS', 'RHS']:
+					for i, e in enumerate(self.title_entries[side]):
+						side = self.side_combos[side][i].get()
+						title = self.title_entries[side][i].get()
+						f=self.frame_entries[side][i].get()
+						s=self.station_entries[side][i].get()
 
-					if orig_title != title:
+						self.deu_layout[side].append([title, f, s, side])
 
-						for idx, v in enumerate(self.vc_layout[side]):
+						# update DEU titles in vc_layout
+						orig_title = self.parent_psu.backend.deu_layout[side][i][0]
 
-							if v[3] == orig_title:
+						if orig_title != title:
 
-								self.vc_layout[side][idx][3] = title
+							for idx, v in enumerate(self.vc_layout[side]):
 
-			self.top.destroy()
+								if v[3] == orig_title:
+
+									self.vc_layout[side][idx][3] = title
+
+				self.top.destroy()
+			else:
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 		else:
 			self.top.destroy()
 
@@ -1454,6 +1483,7 @@ class Edit_VCC_Window_Tk(object):
 		self.button = 'cancel'
 
 		self.top.geometry("900x600")
+		print(self.vc_layout)
 
 	def setup_variables(self):
 
@@ -1467,7 +1497,7 @@ class Edit_VCC_Window_Tk(object):
 		#get LOPA row numbers
 		self.row_numbers = self.mainapp.frames[self.parent_psu.backend.lopa].backend.get_all_row_numbers()
 		for side in self.row_numbers.keys():
-			self.row_numbers[side].insert(0, 'N/A')
+			self.row_numbers[side].append('N/A')
 
 		self.row_stations = copy.deepcopy(self.mainapp.frames[self.parent_psu.backend.lopa].backend.get_all_row_stations())
 
@@ -1527,13 +1557,15 @@ class Edit_VCC_Window_Tk(object):
 				self.station_entries[side][-1].insert(0, vcc[2])
 				self.station_entries[side][-1].config(state='disabled')
 
-				self.deu_combos[side].append(ttk.Combobox(self.label_frames[side], values=self.deus[side]))
+				self.deu_combos[side].append(ttk.Combobox(self.label_frames[side], values=self.deus[side]))#, state='readonly'))
 				self.deu_combos[side][-1].grid(row=count, column=5, sticky='nw')
 				self.deu_combos[side][-1].insert(0, vcc[3])
+				self.deu_combos[side][-1].config(state='readonly')
 
-				self.row_combos[side].append(ttk.Combobox(self.label_frames[side], values=self.row_numbers[side]))
+				self.row_combos[side].append(ttk.Combobox(self.label_frames[side], values=self.row_numbers[side]))#, state='readonly'))
 				self.row_combos[side][-1].grid(row=count, column=6, sticky='nw')
 				self.row_combos[side][-1].insert(0, vcc[4])
+				self.row_combos[side][-1].config(state='readonly')
 				count += 1
 
 	def setup_buttons(self):
@@ -1554,45 +1586,46 @@ class Edit_VCC_Window_Tk(object):
 		available_stations = copy.deepcopy(row_stations)
 		psiu_stations = self.parent_psu.backend.get_psiu_stations()
 
-		self.assigned_vccs = {'LHS': {}, 'RHS': {}}
+		if len(psiu_stations['LHS']) == len(row_stations['LHS']) and len(psiu_stations['RHS']) == len(row_stations['RHS']):
+			self.assigned_vccs = {'LHS': {}, 'RHS': {}}
 
-		for side in ['LHS', 'RHS']:
-			#get selected vent stations
-			available_vccs = []
-			for v in self.station_entries[side]:
-				available_vccs.append(float(v.get()))
+			for side in ['LHS', 'RHS']:
+				#get selected vent stations
+				available_vccs = []
+				for v in self.station_entries[side]:
+					available_vccs.append(float(v.get()))
 
-			#loop over each row
-			for idx, row in enumerate(row_stations[side]):
-				
-				row_psiu = psiu_stations[side][idx]
+				#loop over each row
+				for idx, row in enumerate(row_stations[side]):
+					
+					row_psiu = psiu_stations[side][idx]
 
-				closest = min(available_vccs, key=lambda x:abs(x-row_psiu))
+					closest = min(available_vccs, key=lambda x:abs(x-row_psiu))
 
-				available_vccs.remove(closest)
+					available_vccs.remove(closest)
 
-				distance = abs(closest-row_psiu)
-				
-				self.assigned_vccs[side][self.row_numbers[side][idx+1]] = [closest] #idx+1 to account for N/A inserted at start of row_numbers
-				print(f'{row}: {closest}')
+					distance = abs(closest-row_psiu)
+					
+					self.assigned_vccs[side][self.row_numbers[side][idx]] = [closest] 
+					#print(f'{row}: {closest}')
 
-			print(self.assigned_vccs)
-			print(self.row_numbers[side])
+				#print(self.assigned_vccs)
+				#print(self.row_numbers[side])
 
-			#update combos
-			for idx, e in enumerate(self.station_entries[side]):
-				e = float(e.get())
-				#print(f'entry {e}')
-				vcc_used = False
-				for row in self.assigned_vccs[side].keys():
-					#print(f'Assigned {self.assigned_vents[side][row][0]}')
-					if self.assigned_vccs[side][row][0] == e:
-						vcc_used = True
-						self.row_combos[side][idx].set(row)
-						break
+				#update combos
+				for idx, e in enumerate(self.station_entries[side]):
+					e = float(e.get())
+					#print(f'entry {e}')
+					vcc_used = False
+					for row in self.assigned_vccs[side].keys():
+						#print(f'Assigned {self.assigned_vents[side][row][0]}')
+						if self.assigned_vccs[side][row][0] == e:
+							vcc_used = True
+							self.row_combos[side][idx].set(row)
+							break
 
-				if not vcc_used:
-					self.row_combos[side][idx].set('N/A')
+					if not vcc_used:
+						self.row_combos[side][idx].set('N/A')
 
 	def cleanup(self, button):
 
@@ -1601,21 +1634,37 @@ class Edit_VCC_Window_Tk(object):
 
 		if button == 'ok':
 
-			# TODO add data checks
+			# check all titles have been entered, and no duplicates
+			msg = None
+			titles = []
+			for side in ['LHS', 'RHS']:
+				for e in self.title_entries[side]:
+					if e.get() == '':
+						msg = 'Title Must be Entered for all VCCs'
+						break
+					elif e.get() in titles:
+						msg = f'VCC Titles must be Unique. {e.get()} has Been Entered More Than Once'
+					else:
+						titles.append(e.get())
 
-			self.vc_layout = {'LHS': [], 'RHS': []}
+			if not msg:
 
-			for side in self.vc_layout.keys():
-				for i, e in enumerate(self.title_entries[side]):
+				self.vc_layout = {'LHS': [], 'RHS': []}
 
-					title = self.title_entries[side][i].get()
-					f=self.frame_entries[side][i].get()
-					s=self.station_entries[side][i].get()
-					d = self.deu_combos[side][i].get()
-					row = self.row_combos[side][i].get()
+				for side in self.vc_layout.keys():
+					for i, e in enumerate(self.title_entries[side]):
 
-					self.vc_layout[side].append([title, f, s, d, row])
+						title = self.title_entries[side][i].get()
+						f=self.frame_entries[side][i].get()
+						s=self.station_entries[side][i].get()
+						d = self.deu_combos[side][i].get()
+						row = self.row_combos[side][i].get()
 
-			self.top.destroy()
+						self.vc_layout[side].append([title, f, s, d, row])
+
+				self.top.destroy()
+
+			else:
+				tkinter.messagebox.showerror(title='Error', message=msg)
 		else:
 			self.top.destroy()

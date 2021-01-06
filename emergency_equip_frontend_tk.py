@@ -448,12 +448,16 @@ class Double_Click_Part_Window_Tk(object):
 
 			if data_good:
 
-				self.attach_type = self.type_combo.get()
-				self.attach_part_no = self.pn_entry.get()
-				self.attach_qty = self.qty_entry.get()
+				#check part number is entered
+				if self.pn_entry.get() == '':
+					tkinter.messagebox.showerror(master=self.top, title='Error', message='Part Number Must be Entered')
+				else:
+					self.attach_type = self.type_combo.get()
+					self.attach_part_no = self.pn_entry.get()
+					self.attach_qty = self.qty_entry.get()
 
-				self.attaching_hardware.append([len(self.attaching_hardware)+1, self.attach_type, self.attach_part_no, self.attach_qty])
-				self.top.destroy()
+					self.attaching_hardware.append([len(self.attaching_hardware)+1, self.attach_type, self.attach_part_no, self.attach_qty])
+					self.top.destroy()
 
 			else:
 				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)

@@ -255,14 +255,14 @@ class Edit_OHSC_Window_Tk(object):
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.details_frame, labels, row, 2, 20, 2, 2)	
 		
-		self.title_entry=Entry(self.details_frame, width=20)		
+		self.title_entry=Entry(self.details_frame, width=60)		
 		self.title_entry.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.data_checks['Title'] = ['title', self.title_entry, self.orig_title]
 		if self.mode == 'edit':
 			self.title_entry.insert(0, self.orig_title)
 
 
-		self.description_entry=Entry(self.details_frame, width=20)		
+		self.description_entry=Entry(self.details_frame, width=60)		
 		self.description_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 		if self.mode == 'edit':
 			self.description_entry.insert(0, self.description)

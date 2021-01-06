@@ -45,24 +45,33 @@ def check_combo_input(combo_data):
 		if user_input.strip() == '':
 			combo_good = False
 			combo_msg = 'Must be Entered'			
-	
-	elif 'int greater than' in combo_data[2]:
-		
-		if user_input.strip() == '':
+
+	elif 'int ' or 'float' in combo_data[2]:
+
+		try:
+			float(user_input)
+		except:
 			combo_good = False
-			combo_msg = 'Must be Entered'
-		
+			combo_msg = 'Must be numeric'
+
 		if combo_good:
-			if 'equal' in combo_data[2]: #handle equal greater than or equal to
+			if 'int greater than' in combo_data[2]:
 				
-				if int(user_input) < int(combo_data[2].split()[-1]):
+				if user_input.strip() == '':
 					combo_good = False
-					combo_msg = f'Should be an Integer Greater than or Equal to {int(combo_data[2].split()[-1])}'
-			else:		
-				if int(user_input) <= int(combo_data[2].split()[-1]):
-					combo_good = False
-					combo_msg = f'Should be an Integer Greater than {int(combo_data[2].split()[-1])}'
-			
+					combo_msg = 'Must be Entered'
+				
+				if combo_good:
+					if 'equal' in combo_data[2]: #handle equal greater than or equal to
+						
+						if int(user_input) < int(combo_data[2].split()[-1]):
+							combo_good = False
+							combo_msg = f'Should be an Integer Greater than or Equal to {int(combo_data[2].split()[-1])}'
+					else:		
+						if int(user_input) <= int(combo_data[2].split()[-1]):
+							combo_good = False
+							combo_msg = f'Should be an Integer Greater than {int(combo_data[2].split()[-1])}'
+					
 	return combo_good, combo_msg
 def check_entry_input(entry_data):
 	
@@ -86,13 +95,17 @@ def check_entry_input(entry_data):
 			entry_good = False
 
 	if 'int ' in entry_data[2]:
+
 		if user_input.strip() != '':
 			try:
 				user_input = int(user_input)
 			except:
 				entry_good = False
+				entry_msg = 'Enter a'
 		else:
 			entry_good = False
+			entry_msg = 'Must be Numeric'
+			
 
 	# If data good to this point, check if it is the right range
 	if entry_good:
