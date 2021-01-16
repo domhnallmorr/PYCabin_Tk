@@ -353,7 +353,7 @@ def create_points_list(x,y):
 	
 	return points
 	
-def gen_dxf(self):
+def gen_dxf(self, file):
 	canvas_type = 'dxf'
 	dxf = ezdxf.new(dxfversion='R2010')
 	linetypes = [("CENTER", "Center ____ _ ____ _ ____ _ ____ _ ____ _ ____",
@@ -419,7 +419,7 @@ def gen_dxf(self):
 					 #override={'dimtxt': p[1],})
 			dim.render()
 			#modelspace.add_text(p[1], dxfattribs={'height': 5.35}).set_pos((p[0], y),align='CENTER')
-	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.19\lopa.dxf')
+	dxf.saveas(file)
 	
 def add_seats_to_dxf(self, dxf, modelspace, draw_top, draw_side):
 
@@ -476,6 +476,7 @@ class LOPA_Drawing():
 
 		if not psu and not eel:
 			self.draw_top_down_view()
+			self.create_row_blocks()
 
 		if not eel:
 			self.draw_side_view()
@@ -524,8 +525,9 @@ class LOPA_Drawing():
 
 						canvas = self.seat_blocks[row[1]] = self.dxf.blocks.new(name=f'Seat_{row[1]}')
 
-					if self.canvas_type == 'dxf':
-						seats_draw.triple_economy_top_down(seat, self.seat_blocks[row[1]], self.canvas_type, [0, 0])
+					#if self.canvas_type == 'dxf':
+						item_number = self.lopa_backend.get_part_item_number(row[1])
+						seats_draw.triple_economy_top_down(seat, self.seat_blocks[row[1]], self.canvas_type, [0, 0], item_number)
 
 					elif self.canvas_type == 'matplotlib':
 
@@ -772,3 +774,27 @@ class LOPA_Drawing():
 				sta = float(wb[1])
 
 				self.top_canvas.add_blockref(wb[0], (sta, 0))
+
+	def create_row_blocks(self, mode='top_down'):
+
+		#get the longest side
+		if self.lopa_backend.seat_layout['LHS'] >= self.lopa_backend.seat_layout['RHS']:
+			longest_side = 'LHS'
+		else:
+			longest_side = 'RHS'
+
+
+		rows = []
+
+		for row in self.seat_layout[longest_side]:
+
+			block_name = f'Row {row[0]}'
+			block = self.dxf.blocks.new(name=block_name)
+
+			points = [(0, 0), (-7, -15.6), (7, -15.6), (0, 0),]
+			block.add_lwpolyline(points)
+
+			block.add_text(row[0], dxfattribs={'height': 6}).set_pos((0.0,-10), align='MIDDLE_CENTER')
+
+			if mode == 'top_down':
+				self.top_canvas.add_blockref(block_name, (float(row[3])+12, 7.8))

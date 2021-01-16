@@ -356,11 +356,11 @@ class Edit_Emergency_Equip_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=3, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=3, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=4, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=4, padx=5, pady=5,sticky="nw")
 
 		self.button = 'cancel'
 		
@@ -433,11 +433,11 @@ class Double_Click_Part_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=2, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=2, padx=5, pady=5,sticky="nw")
 		
 	def cleanup(self,button):
 		

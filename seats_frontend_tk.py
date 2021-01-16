@@ -257,6 +257,7 @@ class Seat_Page_Tk(tk.Frame):
 		# if orig_part_no != self.backend.part_no:
 			# self.update_lopa_tables(orig_part_no)
 			# print(self.backend.part_no)		
+		self.mainapp.update_titlebar('edit')
 
 	def update_label_text(self):
 				
@@ -473,11 +474,11 @@ class Edit_Seat_Window_Tk(object):
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=4,columnspan=2, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=4,columnspan=2, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.cancel_button=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.cancel_button.grid(row=8,column=6, columnspan=2, pady=5,sticky="nsew")
+		self.cancel_button.grid(row=8,column=6, columnspan=2, padx=5, pady=5,sticky="nw")
 
 		self.button = 'cancel'
 		
@@ -651,11 +652,11 @@ class Multiple_Seat_Window_Tk(object):
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=4,column=3,columnspan=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=4,column=3,columnspan=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.cancel_button=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.cancel_button.grid(row=4,column=4, columnspan=1, pady=5,sticky="nsew")
+		self.cancel_button.grid(row=4,column=4, columnspan=1, padx=5, pady=5,sticky="nw")
 
 		self.button = 'cancel'
 		

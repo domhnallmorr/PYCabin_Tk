@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 
 import copy
 import Default_AC_Models
+import pandas as pd
 
 def setup_variables(w):
 	w.type = 'PSU'
@@ -405,7 +406,56 @@ class PSU_Backend():
 					p[6] = required_qty - existing_qty + additonal_qty
 		
 
+	def gen_excel_data(self):
 
+		excel_data = {'type': 'df', 'data': {}}
+
+		df_parts = treeview_functions.treeview_to_df(self.parent_page.parts_tree)
+		df_parts.set_index('#')
+
+		excel_data['data']['Parts'] = df_parts
+
+		#Layout
+		df_lhs_layout = treeview_functions.treeview_to_df(self.parent_page.LHS_tree_psu)
+		df_lhs_layout.rename(columns={"Row": "LHS Row", "Component": "LHS Component", 'P/N': 'LHS P/N', 'Station': 'LHS Station'}, inplace=True)
+
+		df_rhs_layout = treeview_functions.treeview_to_df(self.parent_page.RHS_tree_psu)
+		df_rhs_layout.rename(columns={"Row": "RHS Row", "Component": "RHS Component", 'P/N': 'RHS P/N', 'Station': 'RHS Station'}, inplace=True)
+
+		df_layout = pd.concat([df_lhs_layout, df_rhs_layout], axis=1,)
+
+		excel_data['data']['Layout'] = df_layout
+
+		#Gasper Hoses
+		df_lhs_gasper = treeview_functions.treeview_to_df(self.parent_page.LHS_tree_gasper)
+		df_lhs_gasper.rename(columns={"Row": "LHS Row", "Vent Frame": "LHS Vent Frame", 'Vent Station': 'LHS Vent Station', 'Hose length': 'LHS Hose Length'}, inplace=True)
+
+		df_rhs_gasper = treeview_functions.treeview_to_df(self.parent_page.RHS_tree_gasper)
+		df_rhs_gasper.rename(columns={"Row": "RHS Row", "Vent Frame": "RHS Vent Frame", 'Vent Station': 'RHS Vent Station', 'Hose length': 'RHS Hose Length'}, inplace=True)
+
+		df_gasper = pd.concat([df_lhs_gasper, df_rhs_gasper], axis=1,)
+
+		excel_data['data']['Gasper Hoses'] = df_gasper
+
+		#DEU
+
+		df_deu = treeview_functions.treeview_to_df(self.parent_page.deu_tree)
+
+		excel_data['data']['DEU'] = df_deu
+
+		#VCC
+
+		df_lhs_vcc = treeview_functions.treeview_to_df(self.parent_page.lhs_vcc_tree)
+		df_lhs_vcc.rename(columns={"VC Title": "LHS VC Title", "Frame": "LHS Frame", 'Station (in)': 'LHS Station (in)', 'DEU': 'LHS DEU', 'Row': 'LHS Row'}, inplace=True)
+
+		df_rhs_vcc = treeview_functions.treeview_to_df(self.parent_page.rhs_vcc_tree)
+		df_rhs_vcc.rename(columns={"VC Title": "RHS VC Title", "Frame": "RHS Frame", 'Station (in)': 'RHS Station (in)', 'DEU': 'RHS DEU', 'Row': 'RHS Row'}, inplace=True)
+
+		df_vcc = pd.concat([df_lhs_vcc, df_rhs_vcc], axis=1,)
+
+		excel_data['data']['VCC'] = df_vcc
+
+		return excel_data
 
 	def determine_first_psu_station(self, side):
 
@@ -515,6 +565,20 @@ class PSU_Backend():
 					psiu_stations[side].append(float(part[3]))
 
 		return psiu_stations
+
+	def get_psiu_rows(self):
+
+		#get psiu size for each row
+
+		psiu_rows = {'LHS': [], 'RHS': []}
+
+		for side in ['LHS', 'RHS']:
+
+			for part in self.psu_layout[side]:
+				if 'PSIU' in part[1]:
+					psiu_rows[side].append(part[1])
+
+		return psiu_rows
 
 class PSU_Saved_State():
 	def __init__(self, psu):

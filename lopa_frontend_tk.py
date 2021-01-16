@@ -251,6 +251,7 @@ class LOPA_Page_Tk(tk.Frame):
 		self.item_tree.grid(row = 2, column = 0, columnspan = 8, sticky = 'NSEW')
 		
 		tree_height = 8
+		tree_height = 30
 		self.LHS_lopa_tree = ttk.Treeview(self.seats_frame,selectmode="extended",columns=("A","B",'C'),height = tree_height)
 		self.LHS_lopa_tree.grid(row=1,column=0, sticky="nsew")
 		self.LHS_lopa_tree.heading("#0", text="Row")
@@ -382,15 +383,15 @@ class LOPA_Page_Tk(tk.Frame):
 
 		self.add_wb_btn = Button(self.wb_frame, text = 'Add', image = self.mainapp.add_icon2, compound = LEFT,
 								command =  lambda event=None, type='Windbreaker', mode='new': self.add_monument(event, type, mode))
-		self.add_wb_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
+		self.add_wb_btn.grid(row = 1, column = 0, columnspan = 2, padx=10, pady=5, sticky = 'NE')
 
 		self.del_wb_btn = Button(self.wb_frame, text = 'Delete', image = self.mainapp.del_icon2, compound = LEFT,
 								command =  lambda type='Windbreaker': self.del_windbreaker())
-		self.del_wb_btn.grid(row = 1, column = 2, columnspan = 2, sticky = 'NSEW')
+		self.del_wb_btn.grid(row = 1, column = 2, columnspan = 2, padx=10, pady=5, sticky = 'NW')
 		
-		self.edit_item_btn = Button(self.items_frame, text = 'Edit',
+		self.edit_item_btn = Button(self.items_frame, text = 'Edit', image = self.mainapp.edit_icon2, compound = LEFT,
 								command = self.edit_seat_item_nos)
-		self.edit_item_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
+		self.edit_item_btn.grid(row = 1, column = 0, columnspan = 2, pady=5, sticky = 'NW')
 		
 		self.expand_lopa_tree_btn = Button(self.lopa_scroll_frame.inner, text = "Expand Tables", width=30, image = self.mainapp.expand_icon2, compound = LEFT,
 							  command = lambda height=30, trees = [self.LHS_lopa_tree,self.RHS_lopa_tree]: self.expand_tree(trees,height))
@@ -431,13 +432,13 @@ class LOPA_Page_Tk(tk.Frame):
 		
 		self.update_component(tmp_class, 'edit')
 	def expand_tree(self,trees,height):
-		#print(tree.configure(height))
+		
 		for tree in trees:
 			if tree['height'] < 30:
 				tree.configure(height = 30)
 			else:
 				tree.configure(height = 10)
-		
+	
 	def update_label_text(self):
 				
 		self.top_label.config(text=f'LOPA: {self.backend.title}')
@@ -512,7 +513,8 @@ class LOPA_Page_Tk(tk.Frame):
 			for e in eels:
 				e = self.mainapp.frames[e]
 				e.backend.lopa = self.backend.title
-				e.update_component(e.backend, 'lopa')					
+				e.update_component(e.backend, 'lopa')		
+		self.mainapp.update_titlebar('edit')			
 		
 	def update_lopa_plot(self):
 
@@ -692,8 +694,15 @@ class LOPA_Page_Tk(tk.Frame):
 			self.update_component(self.w, 'edit')
 			
 	def export_dxf(self):
-		lopa_draw.gen_dxf(self)
 		
+		mode = 'edit'
+		
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self, 'dxf')
+		self.master.wait_window(self.w.top)	
+
+	def draw_dxf(self, file):
+		lopa_draw.gen_dxf(self, file)
+
 	def export_word(self):
 
 		mode = 'edit'
@@ -922,11 +931,11 @@ class Edit_LOPA_Window_Tk(object):
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=3, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=3, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=4, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=4, padx=5, pady=5,sticky="nw")
 
 		self.button = 'cancel'
 		
@@ -1086,11 +1095,11 @@ class Double_Click_Seat_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=2, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=2, padx=5, pady=5,sticky="nw")
 
 		self.button = 'cancel'	
 
@@ -1289,11 +1298,11 @@ class Add_Monument_Window():
 			
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=2, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=2, padx=5, pady=5,sticky="nw")
 
 		self.button = 'cancel'
 
@@ -1442,11 +1451,11 @@ class Edit_Item_Window(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=2, pady=5,sticky="nsew")			
+		self.b.grid(row=8,column=2, padx=5, pady=5,sticky="nw")			
 			
 	def cleanup(self, button):
 	

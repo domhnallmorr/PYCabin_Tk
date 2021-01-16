@@ -179,21 +179,21 @@ class PSU_Page_Tk(tk.Frame):
 
 		self.parts_tree.bind("<Double-1>", lambda event: self.parts_double_click(event))
 
-		data = [[1, 'Oxygen Box', 'Oxy Box', 7],
-				[2, '11" PSIU', '11in', 7],
-				[3, '8" PSIU', '8in', 7],
-				[4, '6" PSIU', '6in', 7],
-				[5, '1" Filler Panel', '1in Filler', 7],
-				[6, '2" Filler Panel', '2in Filler', 7],
-				[7, '4" Filler Panel', '4in Filler', 7],
-				[8, '6" Filler Panel', '6in Filler', 3],
-				[9, '8" Filler Panel', '8in Filler', 1],
-				[10, 'Partition Panel', 'Partition', 1],
-				[11, 'Adjustment Panel', 'Adjust', 1],
-				[12, 'Clamping Panel', 'Clamp', 1],
-				[13, 'Gasper Hose 400mm', 'G400', 1],
-				[14, 'Gasper Hose 250mm', 'G250', 1],
-				[15, 'Gasper Hose 150mm', 'G150', 1],]
+		data = [[1, 'Oxygen Box', 'Oxy Box', 0],
+				[2, '11" PSIU', '11in', 0],
+				[3, '8" PSIU', '8in', 0],
+				[4, '6" PSIU', '6in', 0],
+				[5, '1" Filler Panel', '1in Filler', 0],
+				[6, '2" Filler Panel', '2in Filler', 0],
+				[7, '4" Filler Panel', '4in Filler', 0],
+				[8, '6" Filler Panel', '6in Filler', 0],
+				[9, '8" Filler Panel', '8in Filler', 0],
+				[10, 'Partition Panel', 'Partition', 0],
+				[11, 'Adjustment Panel', 'Adjust', 0],
+				[12, 'Clamping Panel', 'Clamp', 0],
+				[13, 'Gasper Hose 400mm', 'G400', 0],
+				[14, 'Gasper Hose 250mm', 'G250', 0],
+				[15, 'Gasper Hose 150mm', 'G150', 0],]
 
 		#treeview_functions.write_data_to_treeview(self.parts_tree, 'replace', data)
 
@@ -324,7 +324,7 @@ class PSU_Page_Tk(tk.Frame):
 		self.excel_btn = Button(self.main_scroll_frame.inner, image = self.mainapp.excel_icon2, compound = LEFT, text = 'Export to Excel',width = 30, command= lambda: self.export_excel())
 		self.excel_btn.grid(row=1, column=3, columnspan = 1, sticky='W',padx=5, pady=2, ipadx=2, ipady=2)
 		
-		self.gen_btn = Button(self.layout_scroll_frame.inner, text = 'Generate Layout',  width = 30,
+		self.gen_btn = Button(self.layout_scroll_frame.inner, text = 'Generate Layout',  width = 30, image = self.mainapp.edit_icon2, compound = LEFT,
 						command = self.gen_layout)
 		self.gen_btn.grid(row=0,column=0, padx=5, pady=2, ipadx=2, ipady=2, sticky="nw")
 
@@ -336,7 +336,7 @@ class PSU_Page_Tk(tk.Frame):
 						command = self.edit_deu_layout)
 		self.edit_deu_btn.grid(row=0,column=0, padx=5, pady=2, ipadx=2, ipady=2, sticky="w")
 
-		self.edit_vc_btn = Button(self.deu_scroll_frame.inner, width = 30, text = 'Edit VC Layout', image = self.mainapp.edit_icon2, compound = LEFT,
+		self.edit_vc_btn = Button(self.deu_scroll_frame.inner, width = 30, text = 'Edit VCC Layout', image = self.mainapp.edit_icon2, compound = LEFT,
 						command = self.edit_vc_layout)
 		self.edit_vc_btn.grid(row=0,column=1, padx=5, pady=2, ipadx=2, ipady=2, sticky="w")
 
@@ -468,6 +468,7 @@ class PSU_Page_Tk(tk.Frame):
 			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.title)
 			components_tk.component_renamed(self)
 		print("--- %s seconds ---" % (time.time() - start_time))
+		self.mainapp.update_titlebar('edit')
 		#self.backend.ax1.draw()
 		#self.backend.ax2.draw()
 		#self.backend.ax3.draw()
@@ -530,53 +531,27 @@ class PSU_Page_Tk(tk.Frame):
 
 		mode = 'edit'
 		
-		self.w=word_export.Export_Word_Window(self.mainapp, self.master, mode, self)
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self)
 		self.master.wait_window(self.w.top)	
 
 	def export_excel(self):
 		
-		df_parts = treeview_functions.treeview_to_df(self.parts_tree)
-		df_parts.set_index('#')
-
-		#Layout
-		df_lhs_layout = treeview_functions.treeview_to_df(self.LHS_tree_psu)
-		df_lhs_layout.rename(columns={"Row": "LHS Row", "Component": "LHS Component", 'P/N': 'LHS P/N', 'Station': 'LHS Station'}, inplace=True)
-
-		df_rhs_layout = treeview_functions.treeview_to_df(self.RHS_tree_psu)
-		df_rhs_layout.rename(columns={"Row": "RHS Row", "Component": "RHS Component", 'P/N': 'RHS P/N', 'Station': 'RHS Station'}, inplace=True)
-
-		df_layout = pd.concat([df_lhs_layout, df_rhs_layout], axis=1,)
-
-		#Gasper Hoses
-		df_lhs_gasper = treeview_functions.treeview_to_df(self.LHS_tree_gasper)
-		df_lhs_gasper.rename(columns={"Row": "LHS Row", "Vent Frame": "LHS Vent Frame", 'Vent Station': 'LHS Vent Station', 'Hose length': 'LHS Hose Length'}, inplace=True)
-
-		df_rhs_gasper = treeview_functions.treeview_to_df(self.RHS_tree_gasper)
-		df_rhs_gasper.rename(columns={"Row": "RHS Row", "Vent Frame": "RHS Vent Frame", 'Vent Station': 'RHS Vent Station', 'Hose length': 'RHS Hose Length'}, inplace=True)
-
-		df_gasper = pd.concat([df_lhs_gasper, df_rhs_gasper], axis=1,)
-
-		df_deu = treeview_functions.treeview_to_df(self.deu_tree)
-
-		df_lhs_vcc = treeview_functions.treeview_to_df(self.lhs_vcc_tree)
-		df_lhs_vcc.rename(columns={"VC Title": "LHS VC Title", "Frame": "LHS Frame", 'Station (in)': 'LHS Station (in)', 'DEU': 'LHS DEU', 'Row': 'LHS Row'}, inplace=True)
-
-		df_rhs_vcc = treeview_functions.treeview_to_df(self.rhs_vcc_tree)
-		df_rhs_vcc.rename(columns={"VC Title": "RHS VC Title", "Frame": "RHS Frame", 'Station (in)': 'RHS Station (in)', 'DEU': 'RHS DEU', 'Row': 'RHS Row'}, inplace=True)
-
-		df_vcc = pd.concat([df_lhs_vcc, df_rhs_vcc], axis=1,)
-
-		with pd.ExcelWriter(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.15\psu.xlsx') as writer:
-   			df_parts.to_excel(writer, sheet_name='Parts')
-   			df_layout.to_excel(writer, sheet_name='PSU Layout')
-   			df_gasper.to_excel(writer, sheet_name='Gasper Hose Layout')
-   			df_deu.to_excel(writer, sheet_name='DEU Layout')
-   			df_vcc.to_excel(writer, sheet_name='VCC Layout')
+		mode = 'edit'
+		
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self, 'excel')
+		self.master.wait_window(self.w.top)	
 
 	def export_dxf(self):
-		psu_draw.gen_dxf(self)
-
 		
+		mode = 'edit'
+		
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self, 'dxf')
+		self.master.wait_window(self.w.top)	
+
+
+	def draw_dxf(self, file):
+
+		psu_draw.gen_dxf(self, file)
 
 	def edit(self):
 
@@ -672,11 +647,11 @@ class Edit_PSU_Window_Tk(object):
 			self.lopa_combo.config(state='disabled')
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=2, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=2, padx=5, pady=5,sticky="nw")
 
 	def cleanup(self, button):
 		
@@ -693,24 +668,24 @@ class Edit_PSU_Window_Tk(object):
 				self.drawing_rev = self.revision_combo.get()
 				self.lopa = self.lopa_combo.get()
 				self.aircraft_type = self.mainapp.frames[self.lopa].backend.aircraft_type
-				self.parts = [[1, 'Oxygen Box LHS', 'Oxy Box L', 7, 0, 0, 0],
-						[2, 'Oxygen Box RHS', 'Oxy Box R', 7, 0, 0, 0],
-						[3, '11" PSIU', '11in', 7, 0, 0, 0],
-						[4, '8" PSIU', '8in', 7, 0, 0, 0],
-						[5, '6" PSIU', '6in', 7, 0, 0, 0],
-						[6, '1" Filler Panel', '1in Filler', 20, 0, 0, 0],
-						[7, '2" Filler Panel', '2in Filler', 7, 0, 0, 0],
-						[8, '4" Filler Panel', '4in Filler', 7, 0, 0, 0],
-						[9, '6" Filler Panel', '6in Filler', 7, 0, 0, 0],
-						[10, '8" Filler Panel', '8in Filler', 2, 0, 0, 0],
-						[11, 'Partition Panel LHS', 'Partition', 1, 0, 0, 0],
-						[12, 'Partition Panel RHS', 'Partition', 1, 0, 0, 0],
-						[13, 'Adjustment Panel LHS', 'Adjust', 1, 0, 0, 0],
-						[14, 'Adjustment Panel LHS', 'Adjust', 1, 0, 0, 0],
-						[15, 'Clamping Panel', 'Clamp', 1, 0, 0, 0],
-						[16, 'Gasper Hose 400mm', 'G400', 1, 0, 0, 0],
-						[17, 'Gasper Hose 250mm', 'G250', 1, 0, 0, 0],
-						[18, 'Gasper Hose 150mm', 'G150', 1, 0, 0, 0],]
+				self.parts = [[1, 'Oxygen Box LHS', 'Oxy Box L', 0, 0, 0, 0],
+						[2, 'Oxygen Box RHS', 'Oxy Box R', 0, 0, 0, 0],
+						[3, '11" PSIU', '11in', 0, 0, 0, 0],
+						[4, '8" PSIU', '8in', 0, 0, 0, 0],
+						[5, '6" PSIU', '6in', 0, 0, 0, 0],
+						[6, '1" Filler Panel', '1in Filler', 0, 0, 0, 0],
+						[7, '2" Filler Panel', '2in Filler', 0, 0, 0, 0],
+						[8, '4" Filler Panel', '4in Filler', 0, 0, 0, 0],
+						[9, '6" Filler Panel', '6in Filler', 0, 0, 0, 0],
+						[10, '8" Filler Panel', '8in Filler', 0, 0, 0, 0],
+						[11, 'Partition Panel LHS', 'Partition', 0, 0, 0, 0],
+						[12, 'Partition Panel RHS', 'Partition', 0, 0, 0, 0],
+						[13, 'Adjustment Panel LHS', 'Adjust', 0, 0, 0, 0],
+						[14, 'Adjustment Panel LHS', 'Adjust', 0, 0, 0, 0],
+						[15, 'Clamping Panel', 'Clamp', 0, 0, 0, 0],
+						[16, 'Gasper Hose 400mm', 'G400', 0, 0, 0, 0],
+						[17, 'Gasper Hose 250mm', 'G250', 0, 0, 0, 0],
+						[18, 'Gasper Hose 150mm', 'G150', 0, 0, 0, 0],]
 
 				self.top.destroy()
 			else:
@@ -743,7 +718,7 @@ class Edit_Gasper_Window_Tk(object):
 
 		self.button = 'cancel'
 
-		self.top.geometry("900x600")
+		self.top.geometry("1100x600")
 
 	def setup_label_frames(self):
 
@@ -778,7 +753,7 @@ class Edit_Gasper_Window_Tk(object):
 			for v in self.parent_psu.backend.gasper_layout[side]:
 
 				#Assigned Row
-				c = ttk.Combobox(self.label_frames[side], values=self.row_numbers[side])
+				c = ttk.Combobox(self.label_frames[side], values=self.row_numbers[side], state='readonly')
 				c.grid(row=row, column=1, pady=2, sticky='nsew')
 				c.insert(0, v[0])
 				self.row_combos[side].append(c)
@@ -811,11 +786,11 @@ class Edit_Gasper_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.main_scroll_frame.inner,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=11,column=7, pady=5,sticky="nsew")
+		self.ok_button.grid(row=11,column=10, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.main_scroll_frame.inner,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=11,column=8, pady=5,sticky="nsew")
+		self.b.grid(row=11,column=11, padx=5, pady=5,sticky="nw")
 
 	def auto_assign_hoses(self):
 
@@ -963,7 +938,11 @@ class Gen_PSU_Window_Tk(object):
 			self.rhs_end_combo.set('Station 1230')
 		self.rhs_end_combo.config(state='disabled')
 
-		self.auto_assign()
+		#if layout has already been generated get current psius
+		if len(self.parent_psu.backend.psu_layout['LHS']) > 0 or len(self.parent_psu.backend.psu_layout['RHS']) > 0:
+			self.assign_existing_psius()
+		else: #or else auto assign psiu locations
+			self.auto_assign()
 		self.count_psius(None)
 
 		for c in self.lhs_combos:
@@ -1071,11 +1050,11 @@ class Gen_PSU_Window_Tk(object):
 		
 		# ok button
 		self.ok_button=Button(self.lopa_frame,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=11,column=7, pady=5,sticky="nsew")
+		self.ok_button.grid(row=11,column=7, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.lopa_frame,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=11,column=8, pady=5,sticky="nsew")
+		self.b.grid(row=11,column=8, padx=5, pady=5,sticky="nw")
 
 	def cleanup(self, button):
 		
@@ -1218,7 +1197,22 @@ class Gen_PSU_Window_Tk(object):
 			self.lhs_combos[row[0]].set(row[-1])
 		for row in psiu_layout['RHS']:
 			self.rhs_combos[row[0]].set(row[-1])
-			
+
+	def assign_existing_psius(self):
+
+		psiu_rows = self.parent_psu.backend.get_psiu_rows()
+
+		for side in ['LHS', 'RHS']:
+
+			for idx, psiu in enumerate(psiu_rows[side]):
+
+				if side == 'LHS':
+					key = list(self.lhs_combos.keys())[idx]
+					self.lhs_combos[key].set(psiu)
+				elif side == 'RHS':
+					key = list(self.rhs_combos.keys())[idx]
+					self.rhs_combos[key].set(psiu)
+
 class Double_Click_Part_Window_Tk(object):			
 	def __init__(self, parent_psu, mainapp, master, parts_data, index):
 		top=self.top=Toplevel(master)
@@ -1266,11 +1260,11 @@ class Double_Click_Part_Window_Tk(object):
 		
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=2, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=2, padx=5, pady=5,sticky="nw")
 		
 	def cleanup(self,button):
 		
@@ -1341,7 +1335,7 @@ class Edit_DEU_Window_Tk(object):
 
 		self.button = 'cancel'
 
-		self.top.geometry("900x600")
+		self.top.geometry("1100x600")
 
 	def setup_label_frames(self):
 		self.main_scroll_frame = double_scrollbar.Double_ScrollableFrame(self.top, self.mainapp)
@@ -1413,11 +1407,11 @@ class Edit_DEU_Window_Tk(object):
 	def setup_buttons(self):
 		# ok button
 		self.ok_button=Button(self.main_scroll_frame.inner,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=11,column=7, pady=5,sticky="nsew")
+		self.ok_button.grid(row=11,column=7, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.main_scroll_frame.inner,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=11,column=8, pady=5,sticky="nsew")
+		self.b.grid(row=11,column=8, padx=5, pady=5,sticky="nw")
 
 	def cleanup(self, button):
 
@@ -1482,7 +1476,7 @@ class Edit_VCC_Window_Tk(object):
 
 		self.button = 'cancel'
 
-		self.top.geometry("900x600")
+		self.top.geometry("1100x600")
 		print(self.vc_layout)
 
 	def setup_variables(self):
@@ -1574,11 +1568,11 @@ class Edit_VCC_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.main_scroll_frame.inner,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=11,column=7, pady=5,sticky="nsew")
+		self.ok_button.grid(row=11,column=7, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.main_scroll_frame.inner,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=11,column=8, pady=5,sticky="nsew")
+		self.b.grid(row=11,column=8, padx=5, pady=5,sticky="nw")
 
 	def auto_assign_vccs(self):
 

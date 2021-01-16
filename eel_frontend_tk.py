@@ -208,7 +208,7 @@ class EEL_Page_Tk(tk.Frame):
 
 	def setup_treeviews(self):
 		self.eel_tree = ttk.Treeview(self.parts_frame,selectmode="extended",columns=("A","B",'C'), height=25)
-		self.eel_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
+		self.eel_tree.grid(row=2,column=0, rowspan=2, columnspan=16,sticky="nsew")
 		self.eel_tree.heading("#0", text="Item")
 		self.eel_tree.column("#0",minwidth=0,width=250, stretch='NO')
 		self.eel_tree.heading("#1", text="Part Number")
@@ -221,7 +221,7 @@ class EEL_Page_Tk(tk.Frame):
 		self.eel_tree.bind("<Double-1>", lambda event: self.eel_double_click(event))
 		
 		eel_tree_scrollbar = Scrollbar(self.parts_frame, command=self.eel_tree.yview)
-		eel_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
+		eel_tree_scrollbar.grid(row=2, rowspan=2, column=16, sticky='nsew')
 		self.eel_tree.config(yscrollcommand=eel_tree_scrollbar.set)
 
 		self.eel_tree.tag_configure('odd_row', background='gray65', foreground='black')
@@ -259,11 +259,11 @@ class EEL_Page_Tk(tk.Frame):
 
 		self.add_part_btn = Button(self.parts_frame, text = 'Add Part', image = self.mainapp.add_icon2, compound = LEFT,
 								command = self.add_part)
-		self.add_part_btn.grid(row = 1, column = 0, columnspan = 2, sticky = 'NSEW')
+		self.add_part_btn.grid(row = 1, column = 0, columnspan = 1, padx=5, pady=5, sticky = 'NW')
 
 		self.del_part_btn = Button(self.parts_frame, text = 'Delete Part',  image = self.mainapp.del_icon2, compound = LEFT,
 								command = self.del_part)
-		self.del_part_btn.grid(row = 1, column = 2, columnspan = 2, sticky = 'NSEW')
+		self.del_part_btn.grid(row = 1, column = 1, columnspan = 1, padx=5, pady=5, sticky = 'NW')
 
 		self.edit_comment_button=Button(self.comments_tab,text='Edit', image = self.mainapp.edit_icon2, compound = LEFT,
 										command= lambda self=self :comment_box.edit_comments(self))
@@ -286,13 +286,18 @@ class EEL_Page_Tk(tk.Frame):
 		index, data = treeview_functions.get_current_selection(self.eel_tree)
 
 		count = 0
+		found = False
 		for loc in w.layout.keys():
 			
+			if found:
+				break
+
 			for idx, part in enumerate(w.layout[loc]):
 				
 				if count == index:
 
 					w.layout[loc].pop(idx)
+					found = True
 					break
 				else:
 					count += 1
@@ -397,11 +402,11 @@ class Edit_EEL_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=3, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=3, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=4, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=4, padx=5, pady=5,sticky="nw")
 
 	def cleanup(self, button):
 	
@@ -505,11 +510,11 @@ class Add_Part_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=11,column=3, pady=5,sticky="nsew")
+		self.ok_button.grid(row=11,column=3, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=11,column=4, pady=5,sticky="nsew")
+		self.b.grid(row=11,column=4, padx=5, pady=5,sticky="nw")
 
 	def filter_parts(self, event):
 

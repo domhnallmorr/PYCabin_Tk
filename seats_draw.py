@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def triple_economy_top_down(seat, canvas, canvas_type, top_down_datum):
+def triple_economy_top_down(seat, canvas, canvas_type, top_down_datum, item_number=None):
 
 	width = float(seat.width)
 	width_inbd = float(seat.width_inbd)
@@ -33,6 +33,16 @@ def triple_economy_top_down(seat, canvas, canvas_type, top_down_datum):
 			points.append((v, y_coords[index]))
 			canvas.add_lwpolyline(points)
 		
+		if item_number:
+
+			if seat.side == 'LHS':
+				y = 10
+			else:
+				y = -10
+
+			canvas.add_text(item_number, dxfattribs={'height': 8}).set_pos((12.0,y), align='MIDDLE_CENTER')
+			canvas.add_circle((12, y), 7)
+
 def economy_seat_generic_side_view(seat, canvas, canvas_type, side_datum):
 	
 	l_fwd = float(seat.length_fwd)

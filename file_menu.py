@@ -3,10 +3,14 @@ import tkinter.messagebox
 
 import components_tk
 import comment_box
+import word_export
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+
+import os
 
 def new_project(event=None, mainapp=None):
 
-	msg = tkinter.messagebox.askokcancel(title='Create New Project', message='Any Unsaved Data Will Be Lost, This Cannot Be Undone, Do You Want To Continue?')
+	msg = check_clear_project(mainapp)
 	
 	if msg:
 		mainapp.frames['Project'].clear_project_data()
@@ -19,6 +23,15 @@ def new_project(event=None, mainapp=None):
 			del mainapp.frames[component.backend.title]
 			
 	components_tk.show_frame(mainapp, 'Project')
+
+def check_clear_project(mainapp):
+
+	if len(mainapp.frames.keys()) > mainapp.no_of_default_pages:
+		msg = tkinter.messagebox.askokcancel(title='Create New Project', message='Any Unsaved Data Will Be Lost, This Cannot Be Undone, Do You Want To Continue?')
+	else:
+		msg = False
+
+	return msg	
 	
 def save(event=None, mainapp=None):
 
@@ -27,11 +40,21 @@ def save(event=None, mainapp=None):
 	else:
 		write_save_file(mainapp)
 
-def save_as(mainapp):
+def save_as(event=None, mainapp=None):
 
-	mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.20\test.json'
-	#mainapp.save_file = r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json'
-	write_save_file(mainapp)
+	#mainapp.save_file = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.21\test.json'
+	filename = asksaveasfilename(filetypes=[('JSON files', '*.json')])
+
+	if filename[-5:] != '.json':
+		filename = f'{filename}.json'
+
+	msg = check_filename(filename, 'save')
+
+	if not msg:
+		mainapp.save_file = filename
+		write_save_file(mainapp)
+	else:
+		tkinter.messagebox.showerror(master=mainapp, title='Error', message=msg)
 	
 def write_save_file(mainapp):
 
@@ -102,10 +125,51 @@ def write_save_file(mainapp):
 	with open(mainapp.save_file, 'w') as outfile:
 		json.dump(save_dict, outfile, indent=4)
 		
-		
+
+	mainapp.update_titlebar('save')
+
+def check_filename(filename, mode):
+
+	msg = None
+
+	if mode == 'load':
+		#check file exists
+		if not os.path.isfile(filename):
+			msg = f'File Not Found'
+
+	#check file is .json
+	if not msg:
+		if filename[-5:].lower() != '.json':
+			msg = 'File Extension Must be .json'
+
+	return msg
+
 def load(event=None, mainapp=None):
 
-	with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.20\test.json') as f:
+
+	filename = askopenfilename(filetypes=[('JSON files', '*.json')])
+
+	if filename != '':
+
+		msg = check_filename(filename, 'load')
+
+		#load the file
+		if not msg:
+			#check if we have to clear the existing project
+			new_project(event, mainapp)
+
+			load_file(filename, event, mainapp)
+
+			mainapp.save_file = filename
+			mainapp.update_titlebar('save')
+		else:
+			tkinter.messagebox.showerror(master=mainapp, title='Error', message=msg)
+
+
+def load_file(file, event=None, mainapp=None):
+
+	#with open(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.21\test.json') as f:
+	with open(file) as f:
 	#with open(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\test.json') as f:
 		data = json.load(f)
 		
@@ -325,6 +389,7 @@ class Load():
 			self.layout = component_data["Layout"]
 			self.instructions = component_data["Instructions"]
 			self.bom = component_data['BOM']
+			self.equip_item_nos = component_data['Item Numbers']
 			self.comments = component_data["Comments"]		
 
 		if type == 'Change':

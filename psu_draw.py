@@ -183,7 +183,7 @@ def draw_deus(self, canvas, canvas_type, datum, side, view='side'):
 	if canvas_type == 'matplotlib':
 		canvas.scatter(vccs[0], vccs[1], s=20, marker='o', color='blue')	
 
-def gen_dxf(self):
+def gen_dxf(self, file):
 
 	canvas_type = 'dxf'
 	dxf = ezdxf.new(dxfversion='R2010')
@@ -327,7 +327,7 @@ def gen_dxf(self):
 					modelspace.add_lwpolyline(points,dxfattribs={'color': 50})
 
 
-	dxf.saveas(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.19\psu.dxf')
+	dxf.saveas(file)
 	
 
 def setup_psu_blocks(self, dxf):

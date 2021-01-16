@@ -16,6 +16,7 @@ def setup_variables(w):
 	w.bom = {}
 	w.layout = {}
 	w.instructions = []
+	w.equip_item_nos = []
 
 def update_variables(self, source):
 	self.title = source.title
@@ -27,6 +28,7 @@ def update_variables(self, source):
 	self.layout = copy.deepcopy(source.layout)
 	self.instructions = copy.deepcopy(source.instructions)
 	self.bom = copy.deepcopy(source.bom)
+	self.equip_item_nos = copy.deepcopy(source.equip_item_nos)
 
 	#EEL_Backend.gen_summary_dict(self)
 	#EEL_Backend.gen_summary_table(self)
@@ -70,85 +72,56 @@ class EEL_Comparison_Backend():
 				'Layout': self.layout,
 				'Instructions': self.instructions,
 				'BOM': self.bom,
+				'Item Numbers': self.equip_item_nos,
 				'Comments': comments}
 
 	def gen_bom(self):
 	
 		pass
 		
-	def export_excel(self):
-	
-		wb = openpyxl.Workbook()
+	def gen_excel_data(self):
 		
-		sheet_styles = excel_functions.setup_styles()
+		excel_data = {'type': 'list', 'data': {}}
+
 		#Current EEL
-		
-		wb.create_sheet(index=1, title=('Current EEL'))
-		wb.active = 1
-		sheet = wb.active
-		
-		data = self.mainapp.frames[self.current_eel].backend.compile_data_for_excel()
-		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
-		
+		if self.current_eel:
+			excel_data['data']['Current EEL'] = self.mainapp.frames[self.current_eel].backend.compile_data_for_excel()
+	
 		#GoTo EEL
 
-		wb.create_sheet(index=2, title=('Go To EEL'))
-		wb.active = 2
-		sheet = wb.active
+		excel_data['data']['Go To EEL'] =  self.mainapp.frames[self.go_to_eel].backend.compile_data_for_excel()
+
 		
-		data = self.mainapp.frames[self.go_to_eel].backend.compile_data_for_excel()
-		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+		#Comparison By Item		
+		excel_data['data']['Comparison by Item'] =  treeview_functions.get_all_treeview_items(self.parent_page.comp_item_tree)
+		excel_data['data']['Comparison by Item'].insert(0, ['Item', 'Current Qty', 'Go To Qty', 'Delta'])
 		
-		#Comparison By Item
+		#Comparison By Part	
 		
-		wb.create_sheet(index=3, title=('Comparison by Item'))
-		wb.active = 3
-		sheet = wb.active		
-		
-		data = treeview_functions.get_all_treeview_items(self.parent_page.comp_item_tree)
-		data.insert(0, ['Item', 'Current Qty', 'Go To Qty', 'Delta'])
-		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
-		
-		#Comparison By Part
-		wb.create_sheet(index=4, title=('Comparison by Part No'))
-		wb.active = 4
-		sheet = wb.active		
-		
-		data = treeview_functions.get_all_treeview_items(self.parent_page.comp_part_tree)
-		data.insert(0, ['Part Number', 'Item', 'Current Qty', 'Go To Qty', 'Delta'])
-		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+		excel_data['data']['Comparison by Part No'] =  treeview_functions.get_all_treeview_items(self.parent_page.comp_part_tree)
+		excel_data['data']['Comparison by Part No'].insert(0, ['Part Number', 'Item', 'Current Qty', 'Go To Qty', 'Delta'])
+
 		
 		#Final Layout
-		wb.create_sheet(index=5, title=('Final Layout'))
-		wb.active = 5
-		sheet = wb.active
 
-
-		data = [['Item', 'Part Number', 'Location', 'Qty', 'Existing/New']]
+		excel_data['data']['Final Layout'] = [['Item', 'Part Number', 'Location', 'Qty', 'Existing/New']]
 
 		for loc in self.layout.keys():
 			for part in self.layout[loc]:
-				data.append(part)
-		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
+				excel_data['data']['Final Layout'].append(part)
+
+
+		#Item Numbers
+		excel_data['data']['Item Numbers']= self.equip_item_nos
 
 		#BOM
-		print(self.bom)
-
-		wb.create_sheet(index=6, title=('BOM'))
-		wb.active = 6
-		sheet = wb.active
-
-		data = [['Part Number', 'Item', 'Qty']]	
+		excel_data['data']['BOM'] = [['Part Number', 'Item', 'Qty']]	
 
 		for part in self.bom.keys():
 			item = self.mainapp.frames[part].backend.equipment_type
-			data.append([part, item, self.bom[part]])
+			excel_data['data']['BOM'].append([part, item, self.bom[part]])
 
-		excel_functions.add_data_to_sheet(wb, sheet, data, 1, 1, sheet_styles['Normal'])
-
-		#wb.save(r'C:\Users\domhnall.morrisey.WOODGROUP\Downloads\PYCabin_Tk-master\PYCabin_Tk-master\eel.xlsx')
-		wb.save(r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.14\eel.xlsx')
-
+		return excel_data
 	def gen_parts_table(self):
 		parts_table = []
 
@@ -189,7 +162,33 @@ class EEL_Comparison_Backend():
 				ipc_table.append([item_number, a[2], a[1], '', qty])
 				item_number += 1
 
-		return ipc_table		
+		return ipc_table	
+
+	def get_part_item_number(self, part):
+
+		item_number = None
+
+		for i in self.equip_item_nos:
+			if i[0] == part:
+				item_number = i[1]
+				break
+
+		return item_number	
+
+	def combine_existing_new_items(self, loc):
+
+		#for a given location, combine qtys of existing and new items
+		qtys = {}
+		if loc in self.layout.keys():
+			for part in self.layout[loc]:
+				if part[1] not in qtys.keys():
+					qtys[part[1]] = int(part[3])
+				else:
+					qtys[part[1]] += int(part[3])
+
+		return qtys
+
+		
 class EEL_Comparison_Saved_State():
 	def __init__(self, ohsc):
 

@@ -65,10 +65,13 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 
 	def setup_label_frames(self):
 		self.main_frame = LabelFrame(self.main_scroll_frame.inner,text="EEL Details:")
-		self.main_frame.grid(row=2, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)		
+		self.main_frame.grid(row=2, column=0, columnspan = 16, rowspan = 2,sticky='NSEW',padx=5, pady=5, ipadx=2, ipady=5)		
 
 		self.parts_frame = LabelFrame(self.main_scroll_frame.inner,text="EEL Parts:")
-		self.parts_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
+		self.parts_frame.grid(row=4, column=0, columnspan = 4, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
+
+		self.item_numbers_frame = LabelFrame(self.main_scroll_frame.inner,text="Item Numbers:")
+		self.item_numbers_frame.grid(row=4, column=4, columnspan = 2, rowspan = 2,sticky='NW',padx=1, pady=5, ipadx=2, ipady=5)	
 
 		self.instr_frame = LabelFrame(self.inst_scroll_frame.inner,text="Instructions:")
 		self.instr_frame.grid(row=4, column=0, columnspan = 8, rowspan = 2,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
@@ -121,6 +124,17 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 		eel_tree_scrollbar = Scrollbar(self.parts_frame, command=self.eel_tree.yview)
 		eel_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
 		self.eel_tree.config(yscrollcommand=eel_tree_scrollbar.set)
+
+		self.item_numbers_tree = ttk.Treeview(self.item_numbers_frame,selectmode="extended",columns=("A"), height=23)
+		self.item_numbers_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
+		self.item_numbers_tree.heading("#0", text="Part Number")
+		self.item_numbers_tree.column("#0",minwidth=0,width=250, stretch='NO')
+		self.item_numbers_tree.heading("#1", text="Item Number")
+		self.item_numbers_tree.column("#1",minwidth=0,width=80, stretch='NO')
+
+		item_tree_scrollbar = Scrollbar(self.item_numbers_frame, command=self.item_numbers_tree.yview)
+		item_tree_scrollbar.grid(row=2, rowspan=2, column=6, sticky='nsew')
+		self.item_numbers_tree.config(yscrollcommand=item_tree_scrollbar.set)
 
 		self.instructions_tree = ttk.Treeview(self.instr_frame,selectmode="extended",columns=("A","B"), height=25)
 		self.instructions_tree.grid(row=2,column=0, rowspan=2, columnspan=6,sticky="nsew")
@@ -292,13 +306,35 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 										command= lambda self=self :comment_box.edit_comments(self))
 		self.edit_comment_button.grid(row=0,column=0, pady=5,sticky="nsew", ipadx=2, ipady=2)
 
+		self.edit_item_btn = Button(self.item_numbers_frame, text = 'Edit',image = self.mainapp.edit_icon2, compound = LEFT,
+								command = self.edit_item_nos)
+		self.edit_item_btn.grid(row = 1, column = 0, columnspan = 2, pady=5, sticky = 'NW')
+
 	def edit(self):
 
-		pass
+		self.w = Edit_EEL_Comparison_Window_Tk(self.mainapp, self.master, 'edit', self)
+		self.master.wait_window(self.w.top)	
+			
+		if self.w.button == 'ok':
+			self.update_component(self.w, 'edit')
+
+	def edit_item_nos(self):
+
+		mode = 'edit'
+		
+		self.w=Edit_Item_Window(self.mainapp, self.master, mode, self)
+		self.master.wait_window(self.w.top)	
+		
+		if self.w.button == 'ok':
+			#treeview_functions.write_data_to_treeview(self.item_tree, 'replace',self.w.data) 
+			self.update_component(self.w, 'edit')
 
 	def export_excel(self):
 	
-		self.backend.export_excel()
+		mode = 'edit'
+		
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self, 'excel')
+		self.master.wait_window(self.w.top)
 
 	def gen_final_layout(self):
 
@@ -441,9 +477,18 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 				else:
 					trees[side].item(child,tag='positive')
 
+		treeview_functions.write_data_to_treeview(self.item_numbers_tree, 'replace', self.backend.equip_item_nos)
+
 	def export_dxf(self):
 
-		eel_draw.gen_dxf(self)
+		mode = 'edit'
+		
+		self.w=word_export.Export_Word_Excel_Window(self.mainapp, self.master, mode, self, 'dxf')
+		self.master.wait_window(self.w.top)
+		
+	def draw_dxf(self, file):
+
+		eel_draw.gen_dxf(self, file)
 
 	def export_word(self):
 
@@ -464,6 +509,12 @@ class Edit_EEL_Comparison_Window_Tk(object):
 		self.eel_dict = components_tk.get_all_components(mainapp, 'EELs')
 		eel_comp_bk.setup_variables(self)
 
+		if self.mode == 'edit':
+			self.orig_title = parent_page.backend.title
+			eel_comp_bk.update_variables(self, self.parent_page.backend)
+		else:
+			self.orig_title = None
+
 		self.data_checks = {}
 		self.setup_label_frames()
 		self.setup_widgets()
@@ -479,15 +530,15 @@ class Edit_EEL_Comparison_Window_Tk(object):
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.details_frame, labels, row, 2, 20, 2, 2)	
 		
-		self.title_entry=Entry(self.details_frame, width=20)		
+		self.title_entry=Entry(self.details_frame, width=60)		
 		self.title_entry.grid(row=2,column=3,padx=2, pady=2,sticky = 'NSEW')
-		#self.data_checks['Title'] = ['title', self.title_entry, self.orig_title]
+		self.data_checks['Title'] = ['title', self.title_entry, self.orig_title]
 
 		if self.mode == 'edit':
 			self.title_entry.insert(0, self.parent_page.backend.title)
 
 
-		self.description_entry=Entry(self.details_frame, width=20)		
+		self.description_entry=Entry(self.details_frame, width=60)		
 		self.description_entry.grid(row=3,column=3,padx=2, pady=2,sticky = 'NSEW')
 
 		if self.mode == 'edit':
@@ -498,19 +549,30 @@ class Edit_EEL_Comparison_Window_Tk(object):
 		self.ac_combo.set('A320')
 
 		self.eel_dict['A320'].insert(0, '')
-		self.current_combo= ttk.Combobox(self.details_frame, values=self.eel_dict['A320'], state='readonly')
+		self.current_combo= ttk.Combobox(self.details_frame, values=self.eel_dict['A320'])
 		self.current_combo.grid(row=5,column=3,padx=2, pady=2,sticky = 'NSEW')
 
-		self.goto_combo= ttk.Combobox(self.details_frame, values=self.eel_dict['A320'], state='readonly')
+		if self.mode == 'edit':
+			self.current_combo.insert(0, self.parent_page.backend.current_eel)
+
+		self.current_combo.config(state='readonly')
+
+		self.goto_combo= ttk.Combobox(self.details_frame, values=self.eel_dict['A320'])
 		self.goto_combo.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')
+		self.data_checks['Go To EEL'] = ['combo', self.goto_combo, 'not empty', 'Go To EEL']
+
+		if self.mode == 'edit':
+			self.goto_combo.insert(0, self.parent_page.backend.go_to_eel)
+
+		self.goto_combo.config(state='readonly')
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=3, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=3, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=4, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=4, padx=5, pady=5,sticky="nw")
 
 	def cleanup(self, button):
 	
@@ -518,16 +580,22 @@ class Edit_EEL_Comparison_Window_Tk(object):
 		
 		if button == 'ok':
 
-			self.title = self.title_entry.get()
-			self.aircraft_type = self.ac_combo.get()
-			self.description = self.description_entry.get()
-			self.current_eel = self.current_combo.get()
+			data_good, msg = data_input_checks_tk.check_data_input(self.data_checks, self.mainapp)
 
-			if self.current_eel == '':
-				self.current_eel = None
+			if data_good:
+				self.title = self.title_entry.get()
+				self.aircraft_type = self.ac_combo.get()
+				self.description = self.description_entry.get()
+				self.current_eel = self.current_combo.get()
 
-			self.go_to_eel = self.goto_combo.get()
-			self.top.destroy()
+				if self.current_eel == '':
+					self.current_eel = None
+
+				self.go_to_eel = self.goto_combo.get()
+				self.top.destroy()
+			else:
+
+				tkinter.messagebox.showerror(master=self.top, title='Error', message=msg)
 
 		else:
 			self.top.destroy()
@@ -628,11 +696,11 @@ class Gen_Layout_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.main_scroll_frame.inner,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=11,column=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=11,column=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.main_scroll_frame.inner,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=11,column=2, pady=5,sticky="nsew")
+		self.b.grid(row=11,column=2, padx=5, pady=5,sticky="nw")
 
 	def setup_totals(self):
 
@@ -1045,3 +1113,117 @@ class Gen_Layout_Window_Tk(object):
 							self.bom[part[0]] = qty_available
 						else:
 							self.bom[part[0]] += qty_available
+
+
+class Edit_Item_Window(object):
+	def __init__(self, mainapp, master, mode, parent_page):
+		#self.drawing_dictionary = drawing_dictionary
+		top=self.top=Toplevel(master)
+		top.grab_set()
+		self.mainapp = mainapp
+		self.mode = mode
+		self.parent_page = parent_page
+
+		eel_comp_bk.setup_variables(self)
+		eel_comp_bk.update_variables(self, self.parent_page.backend)
+
+		self.setup_label_frames()
+		
+		self.parts = {}
+		
+		#current_items = treeview_functions.get_all_treeview_items(self.parent_lopa.item_tree)
+		for loc in self.layout:
+			for part in self.parent_page.backend.layout[loc]:
+				if part[1] not in self.parts:
+					self.parts[part[1]] = Entry(self.items_frame)
+					
+					#insert current number in tree
+					for c in self.equip_item_nos:
+						if c[0] == part[1]:
+							self.parts[part[1]].insert(0, c[1])
+
+		self.setup_widgets()		
+		
+		self.button = 'cancel'
+
+	def setup_label_frames(self):
+	
+		self.auto_frame = LabelFrame(self.top,text="Autogen Options:")
+		self.auto_frame.grid(row=2, column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)
+
+		self.items_frame = LabelFrame(self.top,text="Item Numbers:")
+		self.items_frame.grid(row=3,column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=5, ipadx=2, ipady=5)	
+
+	def setup_widgets(self):
+	
+		# ____ AUTOGEN OPTIONS ____
+		
+		Button(self.auto_frame, text = 'Autogen Numbers', command=self.autogen).grid(row=0, column = 1, sticky='NSEW')
+		# starting number
+		Label(self.auto_frame, text = 'Starting Number:').grid(row=1, column = 1, sticky='NSEW')
+		self.start_entry = Entry(self.auto_frame)
+		self.start_entry.grid(row=1, column = 2, padx=1, pady=1, sticky='NSEW')
+		
+		# format
+		Label(self.auto_frame, text = 'Format:').grid(row=2, column = 1, sticky='NSEW')
+		self.format_combo = ttk.Combobox(self.auto_frame, values=['1, 2, 3, etc', '01, 02, 03, etc'], state='readonly')
+		self.format_combo.grid(row=2, column = 2, padx=1, pady=1, sticky='NSEW')
+		
+		# ____ Parts ____
+
+		column = 1
+
+		row = 2
+		for part in self.parts:
+			Label(self.items_frame, text = part).grid(row=row, column=column, sticky='NSEW')
+			self.parts[part].grid(row=row, column=column+1, sticky='NSEW', padx = 2)
+			row +=1
+
+		# ok button
+		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
+		self.ok_button.grid(row=8,column=1, padx=5, pady=5,sticky="ne")
+
+		# cancel button
+		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
+		self.b.grid(row=8,column=2, padx=5, pady=5,sticky="nw")	
+
+	def autogen(self):
+	
+		start_no = 1
+		
+		try:
+			start_no = int(self.start_entry.get())
+		except:
+			pass
+			
+		no = start_no
+		for part in self.parts:
+			self.parts[part].delete(0, 'end')
+			if self.format_combo.get() == '01, 02, 03, etc'and no < 10:
+				text = f'0{no}'
+			else:
+				text = no
+				
+			self.parts[part].insert(0, text)
+			
+			no += 1
+
+	def cleanup(self, button):
+	
+		self.button = button
+
+		if self.button == 'ok':
+			
+			count = 1
+			self.equip_item_nos = []
+
+			for part in self.parts:
+
+				self.equip_item_nos.append([part, self.parts[part].get()])
+				count += 1
+					
+			self.top.destroy()
+			
+		else:
+			
+			self.top.destroy()

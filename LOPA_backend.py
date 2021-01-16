@@ -451,6 +451,17 @@ class LOPA_Backend():
 
 		return excel_data
 
+	def get_part_item_number(self, part):
+
+		item_number = None
+
+		for i in self.seat_item_nos:
+			if i[1] == part:
+				item_number = i[2]
+				break
+
+		return item_number
+
 class LOPA_Saved_State():
 	def __init__(self, lopa):
 	

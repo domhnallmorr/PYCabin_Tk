@@ -234,6 +234,7 @@ class Windbreaker_Page_Tk(tk.Frame):
 		if wb_used:
 			for l in lopas:
 				self.mainapp.frames[l].update_lopa_plot()
+		self.mainapp.update_titlebar('edit')
 				
 	def edit(self):
 		orig_treeview_node = self.backend.treeview_node

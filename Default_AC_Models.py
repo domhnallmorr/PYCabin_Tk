@@ -59,6 +59,16 @@ class A320_Family_Model():
 
 			self.draw_floor(self.rhs_canvas, y_datum)
 
+	def draw_eel_items(self):
+
+		if self.top_canvas != None:
+			self.draw_outline()
+			self.draw_windows()
+			self.draw_doors()
+			self.draw_ow_exits('top only')
+			
+			
+
 	def draw_outline(self):
 
 		if self.dxf:
@@ -201,7 +211,7 @@ class A320_Family_Model():
 
 			pass
 
-	def draw_ow_exits(self):
+	def draw_ow_exits(self, mode='all'):
 
 		if self.dxf:
 			block = self.dxf.blocks.new(name='OW Exit Top')
@@ -216,22 +226,23 @@ class A320_Family_Model():
 			hatch = block.add_hatch(color=2)
 			hatch.paths.add_polyline_path(points, is_closed=1)
 
-			block = self.dxf.blocks.new(name='OW Exit Side')
+			if mode=='all':
+				block = self.dxf.blocks.new(name='OW Exit Side')
 
-			w = 24.3
-			btm = 14.1
-			h=41.16
-			r =7.5
+				w = 24.3
+				btm = 14.1
+				h=41.16
+				r =7.5
 
-			block.add_line(((w/-2)+r, btm), ((w/2)-r, btm)) #btm edge
-			block.add_line(((w/-2)+r, btm+h), ((w/2)-r, btm+h)) #top edge
-			block.add_line((w/-2, r+btm), (w/-2, -r+btm+h)) #left edge
-			block.add_line((w/2, r+btm), (w/2, -r+btm+h)) #right edge
+				block.add_line(((w/-2)+r, btm), ((w/2)-r, btm)) #btm edge
+				block.add_line(((w/-2)+r, btm+h), ((w/2)-r, btm+h)) #top edge
+				block.add_line((w/-2, r+btm), (w/-2, -r+btm+h)) #left edge
+				block.add_line((w/2, r+btm), (w/2, -r+btm+h)) #right edge
 
-			block.add_ellipse(((w/-2)+r, btm+r), major_axis=(0, -r), start_param=1.5*pi, end_param=2*pi, ratio=1.0) #btm left
-			block.add_ellipse(((w/2)-r, btm+r), major_axis=(0, -r), start_param=0*pi, end_param=0.5*pi, ratio=1.0) #btm right
-			block.add_ellipse(((w/-2)+r, btm-r+h), major_axis=(0, -r), start_param=1.0*pi, end_param=1.5*pi, ratio=1.0) #top left
-			block.add_ellipse(((w/2)-r, btm-r+h), major_axis=(0, -r), start_param=0.5*pi, end_param=1.0*pi, ratio=1.0) #top right
+				block.add_ellipse(((w/-2)+r, btm+r), major_axis=(0, -r), start_param=1.5*pi, end_param=2*pi, ratio=1.0) #btm left
+				block.add_ellipse(((w/2)-r, btm+r), major_axis=(0, -r), start_param=0*pi, end_param=0.5*pi, ratio=1.0) #btm right
+				block.add_ellipse(((w/-2)+r, btm-r+h), major_axis=(0, -r), start_param=1.0*pi, end_param=1.5*pi, ratio=1.0) #top left
+				block.add_ellipse(((w/2)-r, btm-r+h), major_axis=(0, -r), start_param=0.5*pi, end_param=1.0*pi, ratio=1.0) #top right
 
 		if self.canvas_type=='dxf':
 
@@ -241,8 +252,9 @@ class A320_Family_Model():
 			self.top_canvas.add_blockref('OW Exit Top', (668.15, 73.6), dxfattribs={'rotation': 180})
 			self.top_canvas.add_blockref('OW Exit Top', (701.5, 73.6), dxfattribs={'rotation': 180})
 
-			self.top_canvas.add_blockref('OW Exit side', (668.15, -180))
-			self.top_canvas.add_blockref('OW Exit Side', (701.5, -180))
+			if mode == 'all':
+				self.top_canvas.add_blockref('OW Exit side', (668.15, -180))
+				self.top_canvas.add_blockref('OW Exit Side', (701.5, -180))
 
-			self.top_canvas.add_blockref('OW Exit side', (668.15, 130))
-			self.top_canvas.add_blockref('OW Exit Side', (701.5, 130))
+				self.top_canvas.add_blockref('OW Exit side', (668.15, 130))
+				self.top_canvas.add_blockref('OW Exit Side', (701.5, 130))

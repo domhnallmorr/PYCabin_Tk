@@ -15,6 +15,7 @@ import components_tk
 import undo_redo_tk
 import database_tk
 import seat_summary_tk
+import time
 
 class MainApplication(tk.Frame):
 	def __init__(self, parent, *args, **kwargs):
@@ -25,13 +26,23 @@ class MainApplication(tk.Frame):
 
 		self.parent = parent
 		
-		
+		parent.withdraw()
+		splash = Splash(parent)
+		self.parent.wait_window(splash)
+
+		if splash.agree:
+			parent.deiconify()
+		else:
+			quit()
+
+
 		self.icons_folder = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\Icons'
 		gui_styles.setup_icons(self)
 		self.setup_colors()
 		self.setup_variables()
-		
-		self.parent.title(f"PYCabin V{self.version}")
+
+		self.parent.title(self.titlebar_text)
+
 		gui_styles.setup_fonts(self)
 		
 		self.setup_menu()
@@ -49,12 +60,31 @@ class MainApplication(tk.Frame):
 		self.style = ttk.Style()
 		self.style.map('Treeview', foreground=self.fixed_map('foreground'), background=self.fixed_map('background'))
 
+		self.no_of_default_pages = len(self.frames.keys())
+
 	def setup_variables(self):
 		
-		self.version = '0.20.0'
+		self.frames = {}
+		self.version = '0.21.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
-		
+		self.version_title = f"PYCabin V{self.version}"
+		self.titlebar_text = f"PYCabin V{self.version}"
+
+	def update_titlebar(self, mode):
+
+		if not self.save_file:
+			text = ''
+		else:
+			text = self.save_file
+
+		if mode == 'save':
+			self.titlebar_text = f"{text} - PYCabin V{self.version}"
+		elif mode == 'edit':
+			self.titlebar_text = f"{text}* - PYCabin V{self.version}"
+
+		self.parent.title(self.titlebar_text)
+
 	def setup_main_frames(self):
 	
 		self.rootpane = tk.PanedWindow(self.parent, orient=tk.HORIZONTAL)
@@ -71,11 +101,10 @@ class MainApplication(tk.Frame):
 		self.frame.grid(row=0,column=0, sticky="n")
 		
 		# the container is where we'll stack a bunch of frames
-		self.container = tk.Frame(self.rootpane, bg="pink")
+		self.container = tk.Frame(self.rootpane)
 		self.container.grid_columnconfigure(0, weight=1)
 		self.rootpane.add(self.container,stretch="always")
 		
-		self.frames = {}
 
 	def fixed_map(self, option):
 		# Fix for setting text colour for Tkinter 8.6.9
@@ -196,6 +225,7 @@ class MainApplication(tk.Frame):
 		file_menu.add_command(label = 'New                     Ctrl+N', command = lambda self=self: fm.new_project(mainapp=self))
 		file_menu.add_command(label = 'Load                    Ctrl+O', command = lambda self=self: fm.load(mainapp = self))
 		file_menu.add_command(label = 'Save                     Ctrl+S', command = lambda self=self: fm.save(mainapp= self))
+		file_menu.add_command(label = 'Save As                Ctrl+Shift+S', command = lambda self=self: fm.save_as(mainapp= self))
 		#file_menu.add_command(label = 'Save As', command = lambda self=self, mode='save as': fm.save(self, mode))
 
 		#________ EDIT ________				  
@@ -237,11 +267,11 @@ class MainApplication(tk.Frame):
 		# insert_menu.add_command(label = 'Change', command = lambda self=self, type='Change': components_tk.new_component(self, type))
 		
 		# ________ DATABASE ________
-		db_menu = tk.Menu(menu, tearoff = 0)
-		menu.add_cascade(label='Database',menu=db_menu)
+		#db_menu = tk.Menu(menu, tearoff = 0)
+		#menu.add_cascade(label='Database',menu=db_menu)
 
-		db_menu.add_command(label = 'Add Components to Database', command = lambda self=self: database_tk.add_components(self))
-		db_menu.add_command(label = 'Load Components From Database', command = lambda self=self: database_tk.load_components(self))
+		#db_menu.add_command(label = 'Add Components to Database', command = lambda self=self: database_tk.add_components(self))
+		#db_menu.add_command(label = 'Load Components From Database', command = lambda self=self: database_tk.load_components(self))
 		
 		# ________ ABOUT ________
 		about_menu = tk.Menu(menu, tearoff = 0)
@@ -323,21 +353,62 @@ class MainApplication(tk.Frame):
 				self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
 		finally:
 				self.popup_menu.grab_release()	
-				
+
+class Splash(tk.Toplevel):
+	def __init__(self, parent):
+		tk.Toplevel.__init__(self, parent)
+		self.title("Splash")
+
+		## required to make window show before the program gets to the mainloop
+		self.update()
+
+		self.agree = False
+		
+		l = tk.Label(self, text="""
+		PYCabin is an app intended to help engineers manage Part 21 DOA projects.
+
+		Note this app is currently in Beta stage and development and testing are 
+		both ongoing.
+					
+		PYCabin makes no promise of warranty, satisfaction, performance, or
+		anything else. Understand that your use of this app is completely
+		at your own risk. Please select Agree below to continue using this app.""", anchor="e", justify=LEFT)
+
+		l.grid(row=0, column=0, columnspan=4, sticky='nw')
+
+		button1 = ttk.Button(self, text="Agree", 
+								command=self.cleanup)
+		button2 = ttk.Button(self, text="Disagree",
+								command=self.disagree)
+
+		button1.grid(row=1, column=1, columnspan=1, sticky='ne')
+		button2.grid(row=1, column=2, columnspan=1, sticky='nw')
+
+		self.geometry("550x200")
+
+	def cleanup(self):
+
+		self.agree = True
+		self.destroy()
+
+	def disagree(self):
+
+		self.destroy()
+
 if __name__ == "__main__":
 	root = tk.Tk()
 	root.resizable(width=tk.TRUE, height=tk.TRUE)
 	#MainApplication(root).pack(side="top", fill="both", expand=True)
 	MA = MainApplication(root)
 	MA.grid(row=1, columnspan=4, sticky='nsew')
-	#root.bind('<Control-z>', MA.states.undo)
-	#root.bind('<Control-y>', MA.states.redo)
+
 	
 	root.geometry('{}x{}'.format(MA.screen_width, MA.screen_height))    
 	
 	root.bind('<Control-n>', lambda event, MA=MA: fm.new_project(event, MA))
 	root.bind('<Control-o>', lambda event, MA=MA: fm.load(event, MA))
 	root.bind('<Control-s>', lambda event, MA=MA: fm.save(event, MA))
+	root.bind('<Control-Shift-KeyPress-S>', lambda event, MA=MA: fm.save_as(event, MA))
 	root.bind('<Control-z>', lambda event, MA=MA: MA.states.undo())
 	root.bind('<Control-y>', lambda event, MA=MA: MA.states.redo())
 	root.state('zoomed')

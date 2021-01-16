@@ -382,9 +382,9 @@ def draw_lav_side(lopa_bk, lav, canvas, canvas_type, side_datum):
 			if canvas_type == 'matplotlib':
 				rect = patches.Rectangle((s-8, 0),8,24,linewidth=1,edgecolor='grey',facecolor='grey')
 				if lav[0] == 'Lav D':
-					canvas[0].add_patch(rect)
+					canvas[1].add_patch(rect)
 				elif lav[0] == 'Lav E':
-					canvas.add_patch(rect)
+					canvas[0].add_patch(rect)
 			
 			elif canvas_type == 'dxf':
 				points = []

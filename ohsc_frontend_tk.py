@@ -277,11 +277,11 @@ class Edit_OHSC_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=3, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=3, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=4, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=4, padx=5, pady=5,sticky="nw")
 
 	def cleanup(self, button):
 	
@@ -301,14 +301,15 @@ class Edit_OHSC_Window_Tk(object):
 					bins = [['20','21',10],['21','26',20],['26','30',20],['30','35',20],
 						['35','36',20],['36','OW_FWD',10],['OW_FWD','OW_AFT',20],
 						['OW_AFT','43',20],['43','51',20], ['51','55',20],
-						['55','59',20], ['59','63',20], ['63','64',20]]
-				
+						['55','59',20], ['59','63',20], ['63','64',20], ['64', 'Lav D', 10]]
+					
 					for index, b in enumerate(bins):
 						b.insert(0, '-')
 						b.insert(0, index+1)
 					
 
-					self.layout = {'LHS': bins, 'RHS': bins}
+					self.layout = {'LHS': bins, 'RHS': copy.deepcopy(bins)}
+					self.layout['RHS'][-1][1] = 'Lav E'
 				self.top.destroy()
 			else:
 
@@ -372,11 +373,11 @@ class Double_Click_Layout_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=1, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=1, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=2, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=2, padx=5, pady=5,sticky="nw")
 		
 	def cleanup(self,button):
 		
