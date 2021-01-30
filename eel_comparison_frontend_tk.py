@@ -259,6 +259,7 @@ class EEL_Comparison_Page_Tk(tk.Frame):
 			self.mainapp.main_treeview.item(self.treeview_iid, text = self.backend.title)
 			components_tk.component_renamed(self)
 
+		self.mainapp.update_titlebar('edit')
 	def update_label_text(self):
 				
 		self.top_label.config(text=f'EEL Comparison: {self.backend.title}')
@@ -688,7 +689,7 @@ class Gen_Layout_Window_Tk(object):
 		for loc in self.locations:
 			lf = LabelFrame(self.main_scroll_frame.inner,text=loc)
 			self.locations_frames[loc] = lf
-			lf.grid(row=self.label_frame_row, column=0, columnspan = 3, rowspan = 1,sticky='NW',padx=5, pady=25, ipadx=2, ipady=5)
+			lf.grid(row=self.label_frame_row, column=0, columnspan = 4, rowspan = 1,sticky='NW',padx=5, pady=25, ipadx=2, ipady=5)
 			self.label_frame_row += 1
 
 
@@ -696,11 +697,11 @@ class Gen_Layout_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.main_scroll_frame.inner,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=11,column=1, padx=5, pady=5,sticky="ne")
+		self.ok_button.grid(row=11,column=0, padx=5, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.main_scroll_frame.inner,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=11,column=2, padx=5, pady=5,sticky="nw")
+		self.b.grid(row=11,column=1, padx=5, pady=5,sticky="nw")
 
 	def setup_totals(self):
 
@@ -790,8 +791,8 @@ class Gen_Layout_Window_Tk(object):
 				
 				row = 1
 
-				if loc in item_part_nos.keys():
-					for part_no in item_part_nos[loc]:
+				if loc in item_part_nos.keys(): # loop through each location
+					for part_no in item_part_nos[loc]: #add part number label and qty combo for each part number
 
 						tk.Label(lf,text=part_no,bg="white",borderwidth=2, relief="groove",width=20).grid(row = row, column = 1, sticky = 'W')
 
@@ -808,6 +809,11 @@ class Gen_Layout_Window_Tk(object):
 
 						self.combos[loc]['Current'][part_no] = c
 						row += 1
+
+				else: #if no current parts at this location add label indicating so
+
+					tk.Label(lf,text='No Parts Available',borderwidth=2, relief="groove",width=41).grid(row = 1, column = 1, columnspan = 2,  padx=15, sticky = 'E')
+
 
 			#Add Go To Parts
 
@@ -840,6 +846,8 @@ class Gen_Layout_Window_Tk(object):
 					self.combos[loc]['Go To'][part_no] = c
 					row += 1
 
+			else:
+				tk.Label(lf,text='No Parts Available',borderwidth=2, relief="groove",width=41).grid(row = 1, column = 4, columnspan = 2, padx=15, sticky = 'E')
 			# Add Total 
 
 			tk.Label(lf,width=15).grid(row = 1, column = 6, sticky = 'W') #dummy  label to add blank space

@@ -138,6 +138,8 @@ class EEL_Page_Tk(tk.Frame):
 					eel.backend.go_to_eel = self.backend.title
 
 				eel.update_component(eel.backend, 'ohsc')
+		self.mainapp.update_titlebar('edit')
+		
 	def update_label_text(self):
 				
 		self.top_label.config(text=f'EEL: {self.backend.title}')

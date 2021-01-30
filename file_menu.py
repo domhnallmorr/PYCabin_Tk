@@ -9,11 +9,14 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 import os
 
 def new_project(event=None, mainapp=None):
-
-	msg = check_clear_project(mainapp)
+	
+	if mainapp.done_something == True:
+		msg = check_clear_project(mainapp)
+	else:
+		msg = True
 	
 	if msg:
-		mainapp.frames['Project'].clear_project_data()
+		#mainapp.frames['Project'].clear_project_data()
 		
 		components = components_tk.get_all_components(mainapp, 'all')
 		
@@ -24,9 +27,11 @@ def new_project(event=None, mainapp=None):
 			
 	components_tk.show_frame(mainapp, 'Project')
 
+	return msg
+
 def check_clear_project(mainapp):
 
-	if len(mainapp.frames.keys()) > mainapp.no_of_default_pages:
+	if len(mainapp.frames.keys()) > mainapp.no_of_default_pages-1: 
 		msg = tkinter.messagebox.askokcancel(title='Create New Project', message='Any Unsaved Data Will Be Lost, This Cannot Be Undone, Do You Want To Continue?')
 	else:
 		msg = False
@@ -35,8 +40,8 @@ def check_clear_project(mainapp):
 	
 def save(event=None, mainapp=None):
 
-	if not mainapp.save_file:
-		save_as(mainapp)
+	if mainapp.save_file == None:
+		save_as(mainapp = mainapp)
 	else:
 		write_save_file(mainapp)
 
@@ -59,7 +64,7 @@ def save_as(event=None, mainapp=None):
 def write_save_file(mainapp):
 
 
-	save_dict = {'Project': mainapp.frames['Project'].gen_save_dict(), 'Aircraft': [], 'Seats': [],
+	save_dict = {'Project': mainapp.frames['Project'].backend.gen_save_dict(), 'Aircraft': [], 'Seats': [],
 					'Windbreakers': [], 'LOPAs': [], 'PSUs': [], 'OHSCs': [], 'Emergency Equipment': [], 'EELs': [],
 					'EEL Comparisons': []}
 	
@@ -156,12 +161,13 @@ def load(event=None, mainapp=None):
 		#load the file
 		if not msg:
 			#check if we have to clear the existing project
-			new_project(event, mainapp)
+			msg = new_project(event, mainapp)
 
-			load_file(filename, event, mainapp)
+			if msg:
+				load_file(filename, event, mainapp)
 
-			mainapp.save_file = filename
-			mainapp.update_titlebar('save')
+				mainapp.save_file = filename
+				mainapp.update_titlebar('save')
 		else:
 			tkinter.messagebox.showerror(master=mainapp, title='Error', message=msg)
 
@@ -175,7 +181,7 @@ def load_file(file, event=None, mainapp=None):
 		
 	# ______ Project _________________
 	if 'Project' in data.keys():
-	
+		pass
 		mainapp.frames['Project'].load_project_data(data['Project'])
 	
 	if 'Aircraft' in data.keys():

@@ -233,7 +233,7 @@ class Emergency_Equipment_Page_Tk(tk.Frame):
 
 
 					e.update_component(e.backend, 'ohsc')
-
+		self.mainapp.update_titlebar('edit')
 	def update_parts_tree(self):
 
 		treeview_functions.write_data_to_treeview(self.parts_tree, 'replace', self.backend.attaching_hardware)
@@ -417,7 +417,7 @@ class Double_Click_Part_Window_Tk(object):
 
 	def setup_widgets(self):
 	
-		labels = ['Type', 'Part Number:', 'Qty:']
+		labels = ['Type:', 'Part Number:', 'Qty:']
 		row = 2
 		gui_styles_tk.create_multiple_labels(self.options_frame, labels, row, 2, 20, 2, 2)			
 

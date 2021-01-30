@@ -472,6 +472,7 @@ class PSU_Page_Tk(tk.Frame):
 		#self.backend.ax1.draw()
 		#self.backend.ax2.draw()
 		#self.backend.ax3.draw()
+		self.mainapp.update_titlebar('edit')
 	def update_label_text(self):
 		self.top_label.config(text=f'PSU Layout: {self.backend.title}')
 		self.lopa_label.config(text=f' LOPA: {self.backend.lopa}')
@@ -718,7 +719,7 @@ class Edit_Gasper_Window_Tk(object):
 
 		self.button = 'cancel'
 
-		self.top.geometry("1100x600")
+		self.top.geometry("1200x600")
 
 	def setup_label_frames(self):
 
@@ -951,6 +952,7 @@ class Gen_PSU_Window_Tk(object):
 		for c in self.rhs_combos:
 			self.rhs_combos[c].bind("<<ComboboxSelected>>", self.count_psius)
 
+		self.button == 'cancel'
 	def setup_label_frames(self):
 	
 		self.lhs_frame = LabelFrame(self.lopa_frame,text="LHS Options:")
@@ -1516,6 +1518,7 @@ class Edit_VCC_Window_Tk(object):
 			Label(f, text='VCC Frame').grid(row=0, column=3, sticky='nw')
 			Label(f, text='VCC Station (in)').grid(row=0, column=4, sticky='nw')
 			Label(f, text='DEU').grid(row=0, column=5, sticky='nw')
+			Label(f, text='Assigned Row').grid(row=0, column=6, sticky='nw')
 			# number labels
 
 			count = 1

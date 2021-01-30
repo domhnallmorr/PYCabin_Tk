@@ -333,9 +333,11 @@ class Edit_Windbreaker_Window_Tk(object):
 		if self.wb_used:
 			self.side_combo.config(state='disabled')
 		
-		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320 Family'], state=state)
+		self.aircraft_combo= ttk.Combobox(self.details_frame, values=['A320 Family'])
 		self.aircraft_combo.grid(row=6,column=3,padx=2, pady=2,sticky = 'NSEW')
 		self.aircraft_combo.set('A320 Family')
+		self.aircraft_combo.config(state='disabled')
+
 		self.data_checks['Aircraft Type'] = ['combo', self.aircraft_combo, 'in values']
 		
 		labels = ['Thickness (in)', 'Width (in) ', 'Height (in):', 'Distance From C/L (in):',
@@ -388,11 +390,11 @@ class Edit_Windbreaker_Window_Tk(object):
 
 		# ok button
 		self.ok_button=Button(self.top,text='OK', command= lambda button = 'ok': self.cleanup(button))
-		self.ok_button.grid(row=8,column=4, columnspan=2, pady=5,sticky="nsew")
+		self.ok_button.grid(row=8,column=4, columnspan=2, pady=5,sticky="ne")
 
 		# cancel button
 		self.b=Button(self.top,text='Cancel', command= lambda button = 'cancel': self.cleanup(button))
-		self.b.grid(row=8,column=6, columnspan=2, pady=5,sticky="nsew")
+		self.b.grid(row=8,column=6, columnspan=2, pady=5,sticky="nw")
 
 		self.button = 'cancel'
 

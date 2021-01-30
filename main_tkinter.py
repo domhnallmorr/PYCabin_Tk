@@ -6,6 +6,11 @@ from tkinter.ttk import *
 from tkinter import font as tkfont
 
 import tkinter.messagebox
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+
+from PIL import ImageGrab
+from PIL import Image
+import base64
 
 import project_tk as project_tk
 import gui_styles_tk as gui_styles
@@ -15,6 +20,7 @@ import components_tk
 import undo_redo_tk
 import database_tk
 import seat_summary_tk
+import toolbar
 import time
 
 class MainApplication(tk.Frame):
@@ -47,12 +53,16 @@ class MainApplication(tk.Frame):
 		
 		self.setup_menu()
 		self.setup_main_frames()
+
+		#Toolbar
+		toolbar.create_toolbar(self)
 		
 		
 		self.setup_seat_summary_page()
-		self.setup_project_page()
+	
 		
 		self.states = undo_redo_tk.Undo_Redo(self)
+		self.setup_project_page()
 		components_tk.show_frame(self, 'Seats')
 		components_tk.show_frame(self, 'Project')
 		
@@ -61,15 +71,18 @@ class MainApplication(tk.Frame):
 		self.style.map('Treeview', foreground=self.fixed_map('foreground'), background=self.fixed_map('background'))
 
 		self.no_of_default_pages = len(self.frames.keys())
+		self.done_something = False # if the user has edited something or not
 
 	def setup_variables(self):
 		
 		self.frames = {}
-		self.version = '0.21.0'
+		self.version = '0.22.0'
 		self.save_file = None
 		self.cabin_database = r'C:\Users\domhn\Documents\Python\Pycabin_Tkinter\V0.08\test.db'
 		self.version_title = f"PYCabin V{self.version}"
 		self.titlebar_text = f"PYCabin V{self.version}"
+		self.in_fullscreen = False
+		
 
 	def update_titlebar(self, mode):
 
@@ -84,12 +97,13 @@ class MainApplication(tk.Frame):
 			self.titlebar_text = f"{text}* - PYCabin V{self.version}"
 
 		self.parent.title(self.titlebar_text)
+		self.done_something = True
 
 	def setup_main_frames(self):
-	
+		ttk.Separator(self.parent,orient=HORIZONTAL).grid(row=1, column=0, columnspan=4, sticky='nsew')
 		self.rootpane = tk.PanedWindow(self.parent, orient=tk.HORIZONTAL)
-		self.rootpane.grid(row=1,column=0, columnspan=4,sticky="nsew")
-		self.parent.grid_rowconfigure(1, weight=1)
+		self.rootpane.grid(row=2,column=0, columnspan=4,sticky="nsew")
+		self.parent.grid_rowconfigure(2, weight=1)
 		self.parent.grid_columnconfigure(3, weight=1)
 		self.frame = Frame(self.parent)
 		
@@ -120,14 +134,14 @@ class MainApplication(tk.Frame):
 		
 	def setup_main_treeview(self):
 	
-		tk.Button(self.sidebar_frame, image = self.close_icon2, background='white', relief=FLAT,
-			command= lambda action = False: self.open_close_all_nodes(action)).grid(row=0, column=0, sticky='w', padx = 0)
-		tk.Button(self.sidebar_frame, image = self.open_icon2, background='white', relief=FLAT,
-			command= lambda action = True: self.open_close_all_nodes(action)).grid(row=0, column=1, sticky='w', padx = 0)
-		tk.Button(self.sidebar_frame, image = self.up_icon2, background='white', relief=FLAT,
-			command = self.moveUp).grid(row=0, column=2, sticky='w', padx = 0)
-		tk.Button(self.sidebar_frame, image = self.down_icon2, background='white', relief=FLAT,
-			command = self.moveDown).grid(row=0, column=3, sticky='w', padx = 0)
+		# tk.Button(self.sidebar_frame, image = self.close_icon2, background='white', relief=FLAT,
+		# 	command= lambda action = False: self.open_close_all_nodes(action)).grid(row=0, column=0, sticky='w', padx = 0)
+		# tk.Button(self.sidebar_frame, image = self.open_icon2, background='white', relief=FLAT,
+		# 	command= lambda action = True: self.open_close_all_nodes(action)).grid(row=0, column=1, sticky='w', padx = 0)
+		# tk.Button(self.sidebar_frame, image = self.up_icon2, background='white', relief=FLAT,
+		# 	command = self.moveUp).grid(row=0, column=2, sticky='w', padx = 0)
+		# tk.Button(self.sidebar_frame, image = self.down_icon2, background='white', relief=FLAT,
+		# 	command = self.moveDown).grid(row=0, column=3, sticky='w', padx = 0)
 
 		self.main_treeview = ttk.Treeview(self.sidebar_frame,selectmode='browse', show="tree")
 		self.main_treeview.grid(row=1, column=0, columnspan = 20, sticky='nsew')
@@ -354,6 +368,22 @@ class MainApplication(tk.Frame):
 		finally:
 				self.popup_menu.grab_release()	
 
+	def grab_screen(self):
+
+		img = ImageGrab.grab()
+		name = asksaveasfilename()
+		img = img.crop((0, 0, 1920, 1010)) 
+		img.save(name)
+
+	def fullscreen(self, root):
+
+		if not self.in_fullscreen:
+			root.attributes("-fullscreen", True)
+			self.in_fullscreen = True
+		else:
+			root.attributes("-fullscreen", False)
+			self.in_fullscreen = False
+
 class Splash(tk.Toplevel):
 	def __init__(self, parent):
 		tk.Toplevel.__init__(self, parent)
@@ -395,6 +425,8 @@ class Splash(tk.Toplevel):
 
 		self.destroy()
 
+
+
 if __name__ == "__main__":
 	root = tk.Tk()
 	root.resizable(width=tk.TRUE, height=tk.TRUE)
@@ -411,6 +443,19 @@ if __name__ == "__main__":
 	root.bind('<Control-Shift-KeyPress-S>', lambda event, MA=MA: fm.save_as(event, MA))
 	root.bind('<Control-z>', lambda event, MA=MA: MA.states.undo())
 	root.bind('<Control-y>', lambda event, MA=MA: MA.states.redo())
+	root.bind('<Control-g>', lambda event, MA=MA: MA.grab_screen())
+	root.bind('<F12>', lambda event, root=root, MA=MA: MA.fullscreen(root))
 	root.state('zoomed')
+
+	# add logo
+	icondata= base64.b64decode(MA.pycabin_logo)
+	## The temp file is icon.ico
+	tempFile= "icon.ico"
+	iconfile= open(tempFile,"wb")
+	## Extract the icon
+	iconfile.write(icondata)
+	iconfile.close()
+	root.wm_iconbitmap(tempFile)
+
 
 	root.mainloop()

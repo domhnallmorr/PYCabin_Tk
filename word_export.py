@@ -185,6 +185,7 @@ class Export_Word_Excel_Window(object):
 					excel_data['data'][table].to_excel(writer, sheet_name=table)
 					saved=True
 
+		return saved
 	def load_json(self):
 
 		try:
