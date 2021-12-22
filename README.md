@@ -1,7 +1,7 @@
 # PYCabin (Not being actively worked on) ![python](https://img.shields.io/badge/python-3.6+-blue)
 
 ## Description
-Proof of concept app for Part 21 DOA engineering.
+Proof of concept app for Part 21 DOA engineering. Written in python (Tkinter).
 Not currently being worked on and not fully tested. Making this public on the off chance someone is interested.
 
 Intention of the app is improve productivity on typcial Part 21 tasks (LOPS/PSUs/EELs).
