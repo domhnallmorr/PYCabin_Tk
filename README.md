@@ -8,7 +8,7 @@ Intention of the app is improve productivity on typcial Part 21 tasks (LOPS/PSUs
 App allows the use to define parts and generate the various layouts.
 Generated layouts can be exported to dxf CAD files, MS Word/Excel tables.
 
-For EELs the user can define a current layout and a go-to layout. A final layout to be installed on the aircraft (choosing which existing items to keep) can be defined and a BOM generated accordiingly.
+For EELs the user can define a current layout and a go-to layout. A final layout to be installed on the aircraft (choosing which existing items to keep) can be defined and a BOM generated accordingly.
 
 The intention was to include a database system, where details of parts could be stored for future reference. As an example, weight, documenation and attaching hardware for a piece of emergency equipment could be stored in a database, and be quickly obtainable for future projects. This was never implemented.
 
